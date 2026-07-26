@@ -22,6 +22,8 @@ const buttonVariants = cva("group/button inline-flex shrink-0 items-center justi
             ghost: "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
             destructive: "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
             link: "text-primary underline-offset-4 hover:underline",
+            brand: "bg-[var(--portal-accent,var(--primary))] text-white shadow-[0_0_35px_rgba(12,98,237,0.2)] hover:-translate-y-0.5 hover:bg-[#2877f0]",
+            light: "bg-white text-[#09090b] hover:-translate-y-0.5 hover:bg-blue-100",
         },
         size: {
             default: "h-10 gap-2 rounded-lg px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
