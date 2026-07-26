@@ -21,7 +21,7 @@ function CardHeader(_a) {
 }
 function CardTitle(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
-    return (_jsx("div", Object.assign({ "data-slot": "card-title", className: cn("font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm", className) }, props)));
+    return (_jsx("div", Object.assign({ "data-slot": "card-title", className: cn("min-w-0 break-words font-heading text-base leading-snug font-medium [overflow-wrap:anywhere] group-data-[size=sm]/card:text-sm", className) }, props)));
 }
 function CardDescription(_a) {
     var { className } = _a, props = __rest(_a, ["className"]);
