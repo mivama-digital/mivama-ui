@@ -1,58 +1,56 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "../../lib/utils"
 
-const messageVariants = cva("flex w-full", {
-  variants: {
-    align: {
-      start: "justify-start",
-      end: "justify-end",
-    },
-  },
-  defaultVariants: {
-    align: "start",
-  },
-})
-
-const messageBubbleVariants = cva(
-  "grid w-full max-w-[min(100%,46rem)] gap-3 rounded-2xl px-4 py-3 text-sm shadow-sm",
-  {
-    variants: {
-      tone: {
-        default: "bg-card text-card-foreground ring-1 ring-foreground/10",
-        accent: "bg-[var(--portal-accent)] text-white",
-      },
-    },
-    defaultVariants: {
-      tone: "default",
-    },
-  }
-)
-
-function Message({
-  className,
-  align,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof messageVariants>) {
+function MessageGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="message"
-      className={cn(messageVariants({ align }), className)}
+      data-slot="message-group"
+      className={cn("flex min-w-0 flex-col gap-2", className)}
       {...props}
     />
   )
 }
 
-function MessageBubble({
+function Message({
   className,
-  tone,
+  align = "start",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof messageBubbleVariants>) {
+}: React.ComponentProps<"div"> & { align?: "start" | "end" }) {
   return (
     <div
-      data-slot="message-bubble"
-      className={cn(messageBubbleVariants({ tone }), className)}
+      data-slot="message"
+      data-align={align}
+      className={cn(
+        "group/message relative flex w-full min-w-0 gap-2 text-sm data-[align=end]:flex-row-reverse",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function MessageAvatar({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="message-avatar"
+      className={cn(
+        "flex w-fit min-w-8 shrink-0 items-center justify-center self-end overflow-hidden rounded-full bg-muted group-has-data-[slot=message-footer]/message:-translate-y-8",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function MessageContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="message-content"
+      className={cn(
+        "flex w-full min-w-0 flex-col gap-2.5 wrap-break-word group-data-[align=end]/message:*:data-slot:self-end",
+        className
+      )}
       {...props}
     />
   )
@@ -62,58 +60,33 @@ function MessageHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="message-header"
-      className={cn("flex flex-wrap items-center gap-x-2 gap-y-1", className)}
+      className={cn(
+        "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0",
+        className
+      )}
       {...props}
     />
   )
 }
 
-function MessageAuthor({ className, ...props }: React.ComponentProps<"div">) {
+function MessageFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      data-slot="message-author"
-      className={cn("text-sm font-medium", className)}
-      {...props}
-    />
-  )
-}
-
-function MessageMeta({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="message-meta"
-      className={cn("text-xs opacity-80", className)}
-      {...props}
-    />
-  )
-}
-
-function MessageTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="message-title"
-      className={cn("text-sm font-medium", className)}
-      {...props}
-    />
-  )
-}
-
-function MessageBody({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="message-body"
-      className={cn("min-w-0", className)}
+      data-slot="message-footer"
+      className={cn(
+        "flex max-w-full min-w-0 items-center px-3 text-xs font-medium text-muted-foreground group-has-data-[variant=ghost]/message:px-0 group-data-[align=end]/message:justify-end",
+        className
+      )}
       {...props}
     />
   )
 }
 
 export {
+  MessageGroup,
   Message,
-  MessageAuthor,
-  MessageBody,
-  MessageBubble,
+  MessageAvatar,
+  MessageContent,
+  MessageFooter,
   MessageHeader,
-  MessageMeta,
-  MessageTitle,
 }

@@ -17,7 +17,6 @@ export {
   AttachmentContent,
   AttachmentDescription,
   AttachmentGroup,
-  AttachmentHeader,
   AttachmentMedia,
   AttachmentTitle,
   AttachmentTrigger,
@@ -47,12 +46,11 @@ export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 export { Input } from "./components/ui/input";
 export {
   Message,
-  MessageAuthor,
-  MessageBody,
-  MessageBubble,
+  MessageAvatar,
+  MessageContent,
+  MessageFooter,
+  MessageGroup,
   MessageHeader,
-  MessageMeta,
-  MessageTitle,
 } from "./components/ui/message";
 export {
   Pagination,
@@ -80,15 +78,30 @@ export {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
+  SidebarInput,
   SidebarInset,
   SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarProvider,
+  SidebarRail,
+  SidebarSeparator,
+  SidebarTrigger,
+  useSidebar,
 } from "./components/ui/sidebar";
 export { Skeleton } from "./components/ui/skeleton";
 export { Switch } from "./components/ui/switch";
 export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./components/ui/tabs";
 export { Textarea } from "./components/ui/textarea";
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/ui/tooltip";
 export { cn } from "./lib/utils";
