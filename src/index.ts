@@ -104,4 +104,5 @@ export { Switch } from "./components/ui/switch";
 export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./components/ui/tabs";
 export { Textarea } from "./components/ui/textarea";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/ui/tooltip";
+export { Eyebrow, Heading, Text, headingVariants, textVariants } from "./components/ui/typography";
 export { cn } from "./lib/utils";
