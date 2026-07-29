@@ -61,6 +61,18 @@ is independent from the rendered element:
 
 Keep each foreground/background override at WCAG AA contrast.
 
+Normal controls use a minimum 44px interaction target. `xs` and `icon-xs` are
+reserved for dense desktop interfaces and should not be used for primary,
+navigation, or touch actions. `Button` accepts `loading` to preserve its size,
+set `aria-busy`, and prevent repeated activation while work is pending.
+
+Cards use comfortable spacing by default. Use `size="sm"` for dense surfaces
+and `size="lg"` for prominent content rather than overriding subcomponent
+padding at each call site.
+
+The stylesheet explicitly scans the packaged component source so utilities
+used only by shared components are included in Tailwind v4 consumer builds.
+
 ## Accessibility
 
 `Alert` uses the upstream `role="alert"` contract. Use it for urgent content;

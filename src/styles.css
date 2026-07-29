@@ -2,6 +2,8 @@
 @import "tw-animate-css";
 @import "./tailwind.css";
 
+@source "../src/**/*.{ts,tsx}";
+
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
@@ -42,8 +44,17 @@
     --color-input: var(--input);
     --color-border: var(--border);
     --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+    --color-destructive-subtle: var(--destructive-subtle);
+    --color-destructive-border: var(--destructive-border);
     --color-success: var(--success);
+    --color-success-foreground: var(--success-foreground);
+    --color-success-subtle: var(--success-subtle);
+    --color-success-border: var(--success-border);
     --color-warning: var(--warning);
+    --color-warning-foreground: var(--warning-foreground);
+    --color-warning-subtle: var(--warning-subtle);
+    --color-warning-border: var(--warning-border);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
     --color-muted-foreground: var(--muted-foreground);
@@ -83,8 +94,17 @@
     --accent: oklch(0.96 0.025 257);
     --accent-foreground: oklch(0.28 0.12 257);
     --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.45 0.19 27.325);
+    --destructive-subtle: oklch(0.97 0.018 27.325);
+    --destructive-border: oklch(0.86 0.065 27.325);
     --success: oklch(0.47 0.16 145);
+    --success-foreground: oklch(0.36 0.12 145);
+    --success-subtle: oklch(0.97 0.025 145);
+    --success-border: oklch(0.84 0.08 145);
     --warning: oklch(0.48 0.13 75);
+    --warning-foreground: oklch(0.38 0.1 75);
+    --warning-subtle: oklch(0.97 0.03 75);
+    --warning-border: oklch(0.84 0.09 75);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
     --ring: #0c62ed;
@@ -120,8 +140,17 @@
     --accent: oklch(0.27 0.045 257);
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.88 0.08 22.216);
+    --destructive-subtle: oklch(0.24 0.045 22.216);
+    --destructive-border: oklch(0.43 0.09 22.216);
     --success: oklch(0.74 0.17 145);
+    --success-foreground: oklch(0.86 0.1 145);
+    --success-subtle: oklch(0.23 0.04 145);
+    --success-border: oklch(0.42 0.08 145);
     --warning: oklch(0.82 0.16 85);
+    --warning-foreground: oklch(0.9 0.09 85);
+    --warning-subtle: oklch(0.24 0.04 85);
+    --warning-border: oklch(0.45 0.09 85);
     --border: oklch(1 0 0 / 16%);
     --input: oklch(1 0 0 / 20%);
     --ring: #4f8fff;
@@ -154,14 +183,14 @@
 
   .mivama-heading-display {
     font-size: clamp(2.75rem, 7vw, 5.5rem);
-    line-height: 0.98;
-    letter-spacing: -0.045em;
+    line-height: 1;
+    letter-spacing: -0.04em;
   }
 
   .mivama-heading-page {
     font-size: clamp(2.5rem, 5.5vw, 4rem);
-    line-height: 1.03;
-    letter-spacing: -0.035em;
+    line-height: 1.07;
+    letter-spacing: -0.03em;
   }
 
   .mivama-heading-section {
@@ -229,5 +258,17 @@
     }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable both-edges;
     }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
