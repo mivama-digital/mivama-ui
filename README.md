@@ -66,6 +66,11 @@ reserved for dense desktop interfaces and should not be used for primary,
 navigation, or touch actions. `Button` accepts `loading` to preserve its size,
 set `aria-busy`, and prevent repeated activation while work is pending.
 
+Built-in English labels can be localized with `closeLabel` on `DialogContent`,
+`DialogFooter`, and `SheetContent`; `label` on `Pagination`, pagination previous
+and next controls, `Breadcrumb`, `SidebarTrigger`, and `SidebarRail`; and
+`mobileTitle`/`mobileDescription` on `Sidebar`.
+
 Cards use comfortable spacing by default. Use `size="sm"` for dense surfaces
 and `size="lg"` for prominent content rather than overriding subcomponent
 padding at each call site.
@@ -75,8 +80,8 @@ used only by shared components are included in Tailwind v4 consumer builds.
 
 ## Accessibility
 
-`Alert` uses the upstream `role="alert"` contract. Use it for urgent content;
-use another semantic container for static informational notices.
+`Alert` defaults to `role="alert"` for urgent content. Pass `role="status"` for
+polite announcements or `role={undefined}` for static informational notices.
 
 Give every `Switch` and `Progress` an accessible name with `aria-label` or
 `aria-labelledby`. Visible sibling text alone does not name these ARIA widgets;
@@ -99,6 +104,8 @@ npm run verify
 
 ## Checks
 
-Run `npm run verify` for type checking, declaration build, stylesheet copy,
-and an `npm pack --dry-run` package-content smoke test. Linting is intentionally
-not exposed until the package has a project-specific ESLint configuration.
+Run `npm run verify` for type checking, declaration build, source contract
+tests, and a package smoke test. The smoke test packs the tarball and imports
+the extracted package by its `@mivama/ui` name in Node ESM. Linting is
+intentionally not exposed until the package has a project-specific ESLint
+configuration.

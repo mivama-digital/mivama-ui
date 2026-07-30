@@ -2,13 +2,17 @@ import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
-import { cn } from "../../lib/utils"
+import { cn } from "../../lib/utils.js"
 import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 
-function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
+function Breadcrumb({
+  className,
+  label = "Breadcrumb",
+  ...props
+}: React.ComponentProps<"nav"> & { label?: string }) {
   return (
     <nav
-      aria-label="breadcrumb"
+      aria-label={label}
       data-slot="breadcrumb"
       className={cn(className)}
       {...props}
@@ -48,7 +52,7 @@ function BreadcrumbLink({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
-        className: cn("transition-colors hover:text-foreground", className),
+        className: cn("inline-flex min-h-11 items-center transition-colors hover:text-foreground", className),
       },
       props
     ),
@@ -108,7 +112,6 @@ function BreadcrumbEllipsis({
       {...props}
     >
       <MoreHorizontalIcon />
-      <span className="sr-only">More</span>
     </span>
   )
 }

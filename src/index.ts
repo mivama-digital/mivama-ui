@@ -1,5 +1,5 @@
-export { Badge, badgeVariants } from "./components/ui/badge";
-export { Button, buttonVariants } from "./components/ui/button";
+export { Badge, badgeVariants } from "./components/ui/badge.js";
+export { Button, buttonVariants } from "./components/ui/button.js";
 export {
   Card,
   CardAction,
@@ -8,8 +8,8 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./components/ui/card";
-export { Alert, AlertAction, AlertDescription, AlertTitle } from "./components/ui/alert";
+} from "./components/ui/card.js";
+export { Alert, AlertAction, AlertDescription, AlertTitle } from "./components/ui/alert.js";
 export {
   Attachment,
   AttachmentAction,
@@ -20,7 +20,7 @@ export {
   AttachmentMedia,
   AttachmentTitle,
   AttachmentTrigger,
-} from "./components/ui/attachment";
+} from "./components/ui/attachment.js";
 export {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -29,7 +29,7 @@ export {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "./components/ui/breadcrumb";
+} from "./components/ui/breadcrumb.js";
 export {
   Dialog,
   DialogClose,
@@ -41,9 +41,9 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from "./components/ui/dialog";
-export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./components/ui/empty";
-export { Input } from "./components/ui/input";
+} from "./components/ui/dialog.js";
+export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./components/ui/empty.js";
+export { Input } from "./components/ui/input.js";
 export {
   Message,
   MessageAvatar,
@@ -51,7 +51,7 @@ export {
   MessageFooter,
   MessageGroup,
   MessageHeader,
-} from "./components/ui/message";
+} from "./components/ui/message.js";
 export {
   Pagination,
   PaginationContent,
@@ -60,9 +60,9 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./components/ui/pagination";
-export { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from "./components/ui/progress";
-export { Separator } from "./components/ui/separator";
+} from "./components/ui/pagination.js";
+export { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from "./components/ui/progress.js";
+export { Separator } from "./components/ui/separator.js";
 export {
   Sheet,
   SheetClose,
@@ -70,9 +70,11 @@ export {
   SheetDescription,
   SheetFooter,
   SheetHeader,
+  SheetOverlay,
+  SheetPortal,
   SheetTitle,
   SheetTrigger,
-} from "./components/ui/sheet";
+} from "./components/ui/sheet.js";
 export {
   Sidebar,
   SidebarContent,
@@ -98,11 +100,11 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   useSidebar,
-} from "./components/ui/sidebar";
-export { Skeleton } from "./components/ui/skeleton";
-export { Switch } from "./components/ui/switch";
-export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./components/ui/tabs";
-export { Textarea } from "./components/ui/textarea";
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/ui/tooltip";
-export { Eyebrow, Heading, Text, headingVariants, textVariants } from "./components/ui/typography";
-export { cn } from "./lib/utils";
+} from "./components/ui/sidebar.js";
+export { Skeleton } from "./components/ui/skeleton.js";
+export { Switch } from "./components/ui/switch.js";
+export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./components/ui/tabs.js";
+export { Textarea } from "./components/ui/textarea.js";
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/ui/tooltip.js";
+export { Eyebrow, Heading, Text, headingVariants, textVariants } from "./components/ui/typography.js";
+export { cn } from "./lib/utils.js";

@@ -1,14 +1,18 @@
 import * as React from "react"
 
-import { cn } from "../../lib/utils"
-import { Button } from "./button"
+import { cn } from "../../lib/utils.js"
+import { Button } from "./button.js"
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 
-function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+function Pagination({
+  className,
+  label = "Pagination",
+  ...props
+}: React.ComponentProps<"nav"> & { label?: string }) {
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label={label}
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
@@ -65,11 +69,12 @@ function PaginationLink({
 function PaginationPrevious({
   className,
   text = "Previous",
+  label = "Go to previous page",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & { text?: string; label?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={label}
       size="default"
       className={cn("pl-1.5!", className)}
       {...props}
@@ -83,11 +88,12 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   text = "Next",
+  label = "Go to next page",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & { text?: string; label?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={label}
       size="default"
       className={cn("pr-1.5!", className)}
       {...props}
@@ -113,7 +119,6 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon />
-      <span className="sr-only">More pages</span>
     </span>
   )
 }

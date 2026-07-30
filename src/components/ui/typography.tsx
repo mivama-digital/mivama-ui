@@ -3,7 +3,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import type { ComponentProps } from "react"
 
-import { cn } from "../../lib/utils"
+import { cn } from "../../lib/utils.js"
 
 const headingVariants = cva("", {
   variants: {
