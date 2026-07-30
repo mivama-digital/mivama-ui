@@ -62,6 +62,7 @@
     --color-secondary-foreground: var(--secondary-foreground);
     --color-secondary: var(--secondary);
     --color-primary-foreground: var(--primary-foreground);
+    --color-primary-hover: var(--primary-hover);
     --color-primary: var(--primary);
     --color-popover-foreground: var(--popover-foreground);
     --color-popover: var(--popover);
@@ -79,6 +80,16 @@
 }
 
 :root {
+    color-scheme: light;
+    --page-gutter: 20px;
+    --container-reading: 44rem;
+    --container-standard: 80rem;
+    --container-wide: 90rem;
+    --section-compact: 40px;
+    --section-default: 56px;
+    --section-hero: 64px;
+    --card-grid-gap: 20px;
+    --card-grid-gap-compact: 16px;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -86,6 +97,7 @@
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
     --primary: #0c62ed;
+    --primary-hover: color-mix(in oklch, var(--primary), black 12%);
     --primary-foreground: #ffffff;
     --secondary: oklch(0.97 0 0);
     --secondary-foreground: oklch(0.205 0 0);
@@ -125,6 +137,7 @@
 }
 
 .dark {
+    color-scheme: dark;
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -132,6 +145,7 @@
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
     --primary: #78a9ff;
+    --primary-hover: color-mix(in oklch, var(--primary), white 12%);
     --primary-foreground: #071225;
     --secondary: oklch(0.269 0 0);
     --secondary-foreground: oklch(0.985 0 0);
@@ -178,6 +192,9 @@
     color: var(--foreground);
     font-family: var(--font-heading);
     font-weight: 620;
+    min-width: 0;
+    hyphens: auto;
+    overflow-wrap: anywhere;
     text-wrap: balance;
   }
 
@@ -246,6 +263,29 @@
     font-weight: 650;
     line-height: 1.4;
     letter-spacing: 0.045em;
+  }
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --page-gutter: 24px;
+    --section-compact: 56px;
+    --section-default: 80px;
+    --section-hero: 96px;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --page-gutter: 32px;
+    --section-default: 96px;
+    --section-hero: 112px;
+  }
+}
+
+@media (min-width: 96rem) {
+  :root {
+    --page-gutter: 40px;
   }
 }
 

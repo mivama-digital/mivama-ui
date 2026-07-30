@@ -9,6 +9,8 @@ export {
   CardHeader,
   CardTitle,
 } from "./components/ui/card.js";
+export { Container, containerVariants } from "./components/ui/container.js";
+export type { ContainerProps } from "./components/ui/container.js";
 export { Alert, AlertAction, AlertDescription, AlertTitle } from "./components/ui/alert.js";
 export {
   Attachment,
@@ -63,6 +65,8 @@ export {
 } from "./components/ui/pagination.js";
 export { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from "./components/ui/progress.js";
 export { Separator } from "./components/ui/separator.js";
+export { Section, sectionVariants } from "./components/ui/section.js";
+export type { SectionProps } from "./components/ui/section.js";
 export {
   Sheet,
   SheetClose,
