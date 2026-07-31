@@ -7,6 +7,22 @@ import { cn } from "../../lib/utils.js"
 import { Button } from "./button.js"
 import { XIcon } from "lucide-react"
 
+type SheetSize = "sm" | "md" | "full"
+
+type SheetContentProps = SheetPrimitive.Popup.Props & {
+  side?: "top" | "right" | "bottom" | "left"
+  size?: SheetSize
+  overlayClassName?: string
+  showCloseButton?: boolean
+  closeLabel?: string
+}
+
+const sheetSizeClasses: Record<SheetSize, string> = {
+  sm: "data-[side=left]:w-3/4 data-[side=right]:w-3/4 data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
+  md: "data-[side=left]:w-full data-[side=right]:w-full data-[side=left]:sm:max-w-lg data-[side=right]:sm:max-w-lg",
+  full: "data-[side=left]:w-full data-[side=right]:w-full data-[side=left]:max-w-none data-[side=right]:max-w-none",
+}
+
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
@@ -28,7 +44,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/10 transition-opacity duration-150 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+        "fixed inset-0 z-50 bg-overlay transition-opacity duration-(--motion-duration-fast) ease-(--motion-easing-standard) data-ending-style:opacity-0 data-starting-style:opacity-0 supports-backdrop-filter:backdrop-blur-xs motion-reduce:transition-none",
         className
       )}
       {...props}
@@ -40,22 +56,22 @@ function SheetContent({
   className,
   children,
   side = "right",
+  size = "sm",
+  overlayClassName,
   showCloseButton = true,
   closeLabel = "Close",
   ...props
-}: SheetPrimitive.Popup.Props & {
-  side?: "top" | "right" | "bottom" | "left"
-  showCloseButton?: boolean
-  closeLabel?: string
-}) {
+}: SheetContentProps) {
   return (
     <SheetPortal>
-      <SheetOverlay />
+      <SheetOverlay className={overlayClassName} />
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         data-side={side}
+        data-size={size}
         className={cn(
-          "fixed z-50 flex max-h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain bg-popover bg-clip-padding text-sm text-popover-foreground shadow-lg transition duration-200 ease-in-out data-ending-style:opacity-0 data-starting-style:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:max-h-[calc(100dvh-env(safe-area-inset-top))] data-[side=bottom]:border-t data-[side=bottom]:pb-[env(safe-area-inset-bottom)] data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:top-[env(safe-area-inset-top)] data-[side=left]:bottom-[env(safe-area-inset-bottom)] data-[side=left]:left-0 data-[side=left]:w-3/4 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:top-[env(safe-area-inset-top)] data-[side=right]:right-0 data-[side=right]:bottom-[env(safe-area-inset-bottom)] data-[side=right]:w-3/4 data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:max-h-[calc(100dvh-env(safe-area-inset-bottom))] data-[side=top]:border-b data-[side=top]:pt-[env(safe-area-inset-top)] data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] data-[side=left]:sm:max-w-sm data-[side=right]:sm:max-w-sm",
+          "fixed z-50 flex max-h-[100dvh] flex-col gap-4 overflow-y-auto overscroll-contain bg-popover bg-clip-padding text-sm text-popover-foreground shadow-(--shadow-elevated) transition duration-(--motion-duration-default) ease-(--motion-easing-standard) data-ending-style:opacity-0 data-starting-style:opacity-0 data-[side=bottom]:inset-x-0 data-[side=bottom]:bottom-0 data-[side=bottom]:h-auto data-[side=bottom]:max-h-[calc(100dvh-env(safe-area-inset-top))] data-[side=bottom]:border-t data-[side=bottom]:pb-[env(safe-area-inset-bottom)] data-[side=bottom]:data-ending-style:translate-y-[2.5rem] data-[side=bottom]:data-starting-style:translate-y-[2.5rem] data-[side=left]:top-[env(safe-area-inset-top)] data-[side=left]:bottom-[env(safe-area-inset-bottom)] data-[side=left]:left-0 data-[side=left]:border-r data-[side=left]:data-ending-style:translate-x-[-2.5rem] data-[side=left]:data-starting-style:translate-x-[-2.5rem] data-[side=right]:top-[env(safe-area-inset-top)] data-[side=right]:right-0 data-[side=right]:bottom-[env(safe-area-inset-bottom)] data-[side=right]:border-l data-[side=right]:data-ending-style:translate-x-[2.5rem] data-[side=right]:data-starting-style:translate-x-[2.5rem] data-[side=top]:inset-x-0 data-[side=top]:top-0 data-[side=top]:h-auto data-[side=top]:max-h-[calc(100dvh-env(safe-area-inset-bottom))] data-[side=top]:border-b data-[side=top]:pt-[env(safe-area-inset-top)] data-[side=top]:data-ending-style:translate-y-[-2.5rem] data-[side=top]:data-starting-style:translate-y-[-2.5rem] motion-reduce:transition-none motion-reduce:data-ending-style:translate-none motion-reduce:data-starting-style:translate-none",
+          sheetSizeClasses[size],
           showCloseButton &&
             "[&>[data-slot=sheet-header]]:pr-16 [&>[data-slot=sheet-title]]:pr-16",
           className
@@ -141,3 +157,4 @@ export {
   SheetOverlay,
   SheetPortal,
 }
+export type { SheetContentProps, SheetSize }

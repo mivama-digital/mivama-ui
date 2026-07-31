@@ -6,11 +6,13 @@ import { renderToStaticMarkup } from "react-dom/server"
 
 import {
   Alert,
+  Card,
   Container,
   EmptyDescription,
   Section,
   badgeVariants,
   buttonVariants,
+  cardVariants,
   containerVariants,
   sectionVariants,
 } from "../dist/index.js"
@@ -55,6 +57,23 @@ test("modal contracts include localization, scrolling, and safe areas", async ()
   assert.match(sheet, /SheetOverlay,[\s\S]*SheetPortal,/)
 })
 
+test("sheets expose reusable overlays and typed horizontal sizes", async () => {
+  const [index, sheet] = await Promise.all([
+    readFile(new URL("../src/index.ts", import.meta.url), "utf8"),
+    source("sheet"),
+  ])
+  assert.match(sheet, /type SheetSize = "sm" \| "md" \| "full"/)
+  assert.match(sheet, /overlayClassName\?: string/)
+  assert.match(sheet, /side = "right"/)
+  assert.match(sheet, /size = "sm"/)
+  assert.match(sheet, /<SheetOverlay className=\{overlayClassName\} \/>/)
+  assert.match(sheet, /sm: "[^"]*w-3\/4[^"]*sm:max-w-sm/)
+  assert.match(sheet, /md: "[^"]*w-full[^"]*sm:max-w-lg/)
+  assert.match(sheet, /full: "[^"]*w-full[^"]*max-w-none/)
+  assert.match(index, /export type \{ SheetContentProps, SheetSize \}/)
+  assert.doesNotMatch(sheet, /navigation/i)
+})
+
 test("normal targets are 44px while xs remains explicitly dense", async () => {
   const [button, tabs, sidebar] = await Promise.all([
     source("button"),
@@ -94,6 +113,9 @@ test("layout primitives centralize width and rhythm without fixing document sema
   assert.match(containerVariants(), /px-\(--page-gutter\)/)
   assert.match(sectionVariants(), /py-\(--section-default\)/)
   assert.match(sectionVariants(), /border-b/)
+  assert.doesNotMatch(sectionVariants(), /bg-(?:surface|accent)/)
+  assert.match(sectionVariants({ tone: "muted" }), /bg-surface/)
+  assert.match(sectionVariants({ tone: "accent" }), /bg-accent/)
   assert.match(
     renderToStaticMarkup(
       React.createElement(
@@ -116,6 +138,7 @@ test("layout primitives centralize width and rhythm without fixing document sema
   )
   assert.match(index, /export type \{ ContainerProps \}/)
   assert.match(index, /export type \{ SectionProps \}/)
+  assert.match(index, /export type \{ CardProps \}/)
 })
 
 test("layout tokens preserve the approved responsive website rhythm", async () => {
@@ -126,18 +149,53 @@ test("layout tokens preserve the approved responsive website rhythm", async () =
   assert.match(styles, /--container-wide: 90rem;/)
   assert.match(styles, /--section-compact: 40px;/)
   assert.match(styles, /--section-default: 56px;/)
-  assert.match(styles, /--section-hero: 64px;/)
+  assert.match(styles, /--section-hero: 72px;/)
+  assert.match(styles, /--layout-gap: 32px;/)
+  assert.match(styles, /--content-stack: 24px;/)
   assert.match(styles, /--card-grid-gap: 20px;/)
   assert.match(styles, /--card-grid-gap-compact: 16px;/)
   assert.match(
     styles,
-    /@media \(min-width: 40rem\)[\s\S]*?--page-gutter: 24px;[\s\S]*?--section-compact: 56px;[\s\S]*?--section-default: 80px;[\s\S]*?--section-hero: 96px;/
+    /@media \(min-width: 40rem\)[\s\S]*?--page-gutter: 24px;[\s\S]*?--section-compact: 56px;[\s\S]*?--section-default: 80px;[\s\S]*?--section-hero: 96px;[\s\S]*?--layout-gap: 48px;[\s\S]*?--content-stack: 32px;/
   )
   assert.match(
     styles,
-    /@media \(min-width: 64rem\)[\s\S]*?--page-gutter: 32px;[\s\S]*?--section-default: 96px;[\s\S]*?--section-hero: 112px;/
+    /@media \(min-width: 64rem\)[\s\S]*?--page-gutter: 32px;[\s\S]*?--section-default: 96px;[\s\S]*?--section-hero: 112px;[\s\S]*?--layout-gap: 64px;[\s\S]*?--content-stack: 40px;/
   )
   assert.match(styles, /@media \(min-width: 96rem\)[\s\S]*?--page-gutter: 40px;/)
+})
+
+test("semantic surface, focus, shadow, overlay, and motion tokens are reusable", async () => {
+  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  for (const token of [
+    "surface",
+    "surface-elevated",
+    "border-strong",
+    "overlay",
+    "shadow-subtle",
+    "shadow-elevated",
+    "focus-ring",
+    "motion-duration-fast",
+    "motion-duration-default",
+    "motion-easing-standard",
+  ]) {
+    assert.match(styles, new RegExp(`--${token}:`))
+  }
+  assert.match(styles, /--color-surface: var\(--surface\);/)
+  assert.match(styles, /--color-surface-elevated: var\(--surface-elevated\);/)
+  assert.match(styles, /--color-border-strong: var\(--border-strong\);/)
+  assert.match(styles, /--color-overlay: var\(--overlay\);/)
+  assert.match(styles, /--focus-ring: #0c62ed;/)
+  assert.match(styles, /--primary: #0c62ed;/)
+
+  const light = styles.slice(styles.indexOf(":root {"), styles.indexOf(".dark {"))
+  const dark = styles.slice(styles.indexOf(".dark {"), styles.indexOf("@layer components"))
+  const value = (block, token) =>
+    block.match(new RegExp(`--${token}: ([^;]+);`))?.[1]
+  for (const theme of [light, dark]) {
+    assert.notEqual(value(theme, "background"), value(theme, "surface"))
+    assert.notEqual(value(theme, "surface"), value(theme, "surface-elevated"))
+  }
 })
 
 test("shared headings reflow only when a word cannot fit", async () => {
@@ -150,7 +208,46 @@ test("shared headings reflow only when a word cannot fit", async () => {
   assert.match(headingRules, /hyphens: auto;/)
   assert.match(headingRules, /overflow-wrap: anywhere;/)
   assert.doesNotMatch(headingRules, /word-break: break-all/)
-  assert.equal((styles.match(/!important/g) ?? []).length, 4)
+  assert.match(styles, /font-size: clamp\(3rem, 7vw, 5rem\);/)
+  assert.match(
+    styles,
+    /\.mivama-text-body,\s+\.mivama-text-small \{\s+color: var\(--foreground\);/
+  )
+  assert.match(
+    styles,
+    /\.mivama-text-lead,\s+\.mivama-text-meta,\s+\.mivama-text-eyebrow \{\s+color: var\(--muted-foreground\);/
+  )
+})
+
+test("reduced motion is non-important and explicit on changed motion components", async () => {
+  const [styles, button, card, sheet] = await Promise.all([
+    readFile(new URL("../src/styles.css", import.meta.url), "utf8"),
+    source("button"),
+    source("card"),
+    source("sheet"),
+  ])
+  assert.doesNotMatch(styles, /!important/)
+  assert.match(
+    styles,
+    /@media \(prefers-reduced-motion: reduce\)[\s\S]*animation-duration: 0\.01ms;[\s\S]*animation-iteration-count: 1;[\s\S]*transition-duration: 0\.01ms;/
+  )
+  assert.match(button, /motion-reduce:transition-none/)
+  assert.match(button, /motion-reduce:active:translate-y-0/)
+  assert.match(button, /motion-reduce:animate-none/)
+  assert.match(card, /motion-reduce:transition-none/)
+  assert.match(sheet, /motion-reduce:transition-none/)
+  assert.match(sheet, /motion-reduce:data-starting-style:translate-none/)
+  assert.match(sheet, /motion-reduce:data-ending-style:translate-none/)
+})
+
+test("navigation buttons retain shared targets, wrapping, focus, and state semantics", () => {
+  const navigation = buttonVariants({ variant: "navigation" })
+  assert.match(navigation, /min-h-11/)
+  assert.match(navigation, /hover:bg-surface/)
+  assert.match(navigation, /aria-expanded:bg-surface/)
+  assert.match(navigation, /aria-\[current=page\]:bg-accent/)
+  assert.match(navigation, /focus-visible:ring-3/)
+  assert.match(buttonVariants(), /bg-primary/)
 })
 
 test("wrapping variants opt into shrinking and emergency label reflow", async () => {
@@ -199,6 +296,28 @@ test("large cards stay compact on phones and expand from sm upward", async () =>
   assert.match(card, /data-\[size=sm\]:\[--card-spacing:--spacing\(4\)\]/)
 })
 
+test("card variants preserve the surface default and pair hover with focus-within", () => {
+  assert.match(cardVariants(), /bg-card/)
+  assert.match(cardVariants(), /ring-1 ring-border/)
+  assert.match(cardVariants({ variant: "subtle" }), /bg-surface/)
+
+  const interactive = cardVariants({ variant: "interactive" })
+  for (const state of [
+    "bg-surface-elevated",
+    "ring-border-strong",
+    "shadow-(--shadow-subtle)",
+  ]) {
+    assert.ok(interactive.includes(`hover:${state}`))
+    assert.ok(interactive.includes(`focus-within:${state}`))
+  }
+  assert.doesNotMatch(interactive, /(?:hover|focus-within):border(?:-|\b)/)
+  assert.match(interactive, /motion-reduce:transition-none/)
+  assert.match(
+    renderToStaticMarkup(React.createElement(Card)),
+    /data-variant="surface"[^>]*class="[^"]*bg-card/
+  )
+})
+
 test("built-in modal closes reserve title space without taxing custom composition", async () => {
   const [dialog, sheet] = await Promise.all([source("dialog"), source("sheet")])
   assert.match(
@@ -227,4 +346,18 @@ test("disabled inputs keep their cursor feedback and remain inspectable", async 
   assert.match(input, /disabled:bg-input\/50/)
   assert.match(input, /disabled:opacity-50/)
   assert.doesNotMatch(input, /disabled:pointer-events-none/)
+})
+
+test("package metadata and consumer archive instructions target 2.1.0", async () => {
+  const [packageJson, lockfile, readme] = await Promise.all([
+    readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../README.md", import.meta.url), "utf8"),
+  ])
+  assert.equal(packageJson.version, "2.1.0")
+  assert.equal(lockfile.version, "2.1.0")
+  assert.equal(lockfile.packages[""].version, "2.1.0")
+  assert.match(readme, /npm run verify/)
+  assert.match(readme, /npm pack --ignore-scripts --pack-destination/)
+  assert.match(readme, /mivama-ui-2\.1\.0\.tgz/)
 })

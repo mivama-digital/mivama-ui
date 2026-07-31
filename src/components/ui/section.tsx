@@ -11,6 +11,11 @@ const sectionVariants = cva("min-w-0 border-border", {
       default: "py-(--section-default)",
       hero: "py-(--section-hero)",
     },
+    tone: {
+      default: null,
+      muted: "bg-surface",
+      accent: "bg-accent text-accent-foreground",
+    },
     bordered: {
       true: "border-b",
       false: null,
@@ -18,6 +23,7 @@ const sectionVariants = cva("min-w-0 border-border", {
   },
   defaultVariants: {
     density: "default",
+    tone: "default",
     bordered: true,
   },
 })
@@ -28,6 +34,7 @@ type SectionProps = useRender.ComponentProps<"section"> &
 function Section({
   className,
   density = "default",
+  tone = "default",
   bordered = true,
   render,
   ...props
@@ -35,11 +42,11 @@ function Section({
   return useRender({
     defaultTagName: "section",
     props: mergeProps<"section">(
-      { className: cn(sectionVariants({ density, bordered }), className) },
+      { className: cn(sectionVariants({ density, tone, bordered }), className) },
       props
     ),
     render,
-    state: { slot: "section", density, bordered },
+    state: { slot: "section", density, tone, bordered },
   })
 }
 

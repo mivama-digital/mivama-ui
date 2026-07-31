@@ -8,7 +8,9 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
+  cardVariants,
 } from "./components/ui/card.js";
+export type { CardProps } from "./components/ui/card.js";
 export { Container, containerVariants } from "./components/ui/container.js";
 export type { ContainerProps } from "./components/ui/container.js";
 export { Alert, AlertAction, AlertDescription, AlertTitle } from "./components/ui/alert.js";
@@ -79,6 +81,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from "./components/ui/sheet.js";
+export type { SheetContentProps, SheetSize } from "./components/ui/sheet.js";
 export {
   Sidebar,
   SidebarContent,
