@@ -74,6 +74,14 @@
     --color-surface: var(--surface);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
+    --color-signal: var(--signal);
+    --color-instrument: var(--instrument);
+    --color-instrument-elevated: var(--instrument-elevated);
+    --color-instrument-foreground: var(--instrument-foreground);
+    --color-instrument-muted: var(--instrument-muted);
+    --color-instrument-border: var(--instrument-border);
+    --color-brand: var(--brand);
+    --color-brand-foreground: var(--brand-foreground);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -105,7 +113,22 @@
     --focus-ring: #0c62ed;
     --motion-duration-fast: 150ms;
     --motion-duration-default: 200ms;
+    --motion-duration-slow: 600ms;
     --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --motion-easing-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-distance-8: 8px;
+    --motion-distance-16: 16px;
+    --motion-distance-24: 24px;
+    --motion-distance-32: 32px;
+    --motion-distance-48: 48px;
+    --signal: #c9ff45;
+    --instrument: #0b1018;
+    --instrument-elevated: #121a27;
+    --instrument-foreground: #f7f8f4;
+    --instrument-muted: #aeb7c4;
+    --instrument-border: rgb(247 248 244 / 18%);
+    --brand: var(--primary);
+    --brand-foreground: var(--primary-foreground);
     --background: oklch(0.985 0.004 257);
     --foreground: oklch(0.145 0 0);
     --card: var(--surface-elevated);
@@ -150,6 +173,45 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: #0c62ed;
+}
+
+.mivama-editorial-theme {
+    color-scheme: light;
+    --editorial-paper: #f3f4ef;
+    --editorial-cobalt: #1649ff;
+    --editorial-lime: #c9ff45;
+    --editorial-instrument: #0b1018;
+    --background: var(--editorial-paper);
+    --foreground: #0b0f17;
+    --surface: #e9ebe5;
+    --surface-elevated: #fbfcf8;
+    --card: #fbfcf8;
+    --card-foreground: #0b0f17;
+    --popover: #fbfcf8;
+    --popover-foreground: #0b0f17;
+    --muted: #e8eae4;
+    --muted-foreground: #5b626b;
+    --secondary: #e5e8e1;
+    --secondary-foreground: #171c25;
+    --primary: var(--editorial-cobalt);
+    --primary-hover: #0b38d8;
+    --primary-foreground: #ffffff;
+    --accent: #dfe5ff;
+    --accent-foreground: #102b92;
+    --border: color-mix(in srgb, #0b0f17 14%, transparent);
+    --border-strong: color-mix(in srgb, #0b0f17 32%, transparent);
+    --input: color-mix(in srgb, #0b0f17 18%, transparent);
+    --ring: var(--editorial-cobalt);
+    --focus-ring: var(--editorial-cobalt);
+    --signal: var(--editorial-lime);
+    --instrument: var(--editorial-instrument);
+    --instrument-elevated: #121a27;
+    --instrument-foreground: #f7f8f4;
+    --instrument-muted: #aeb7c4;
+    --instrument-border: rgb(247 248 244 / 18%);
+    --brand: var(--editorial-cobalt);
+    --brand-foreground: #ffffff;
+    --shadow-editorial: 0 28px 80px -42px rgb(11 15 23 / 42%);
 }
 
 .dark {
@@ -204,10 +266,59 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 16%);
     --sidebar-ring: #4f8fff;
+    --instrument: #05080d;
+    --instrument-elevated: #111925;
+    --instrument-foreground: #f7f8f4;
+    --instrument-muted: #aeb7c4;
+    --instrument-border: rgb(247 248 244 / 18%);
+    --brand: var(--primary);
+    --brand-foreground: var(--primary-foreground);
+}
+
+.dark .mivama-editorial-theme,
+.mivama-editorial-theme.dark {
+    color-scheme: dark;
+    --editorial-paper: #080b10;
+    --editorial-cobalt: #7792ff;
+    --editorial-lime: #c9ff45;
+    --editorial-instrument: #05080d;
+    --background: var(--editorial-paper);
+    --foreground: #f1f4ef;
+    --surface: #0e131b;
+    --surface-elevated: #141a23;
+    --card: #141a23;
+    --card-foreground: #f1f4ef;
+    --popover: #141a23;
+    --popover-foreground: #f1f4ef;
+    --muted: #111821;
+    --muted-foreground: #a7afb9;
+    --secondary: #19212d;
+    --secondary-foreground: #f1f4ef;
+    --primary: var(--editorial-cobalt);
+    --primary-hover: #98aaff;
+    --primary-foreground: #071022;
+    --accent: #1b2850;
+    --accent-foreground: #dce3ff;
+    --border: rgb(255 255 255 / 13%);
+    --border-strong: rgb(255 255 255 / 28%);
+    --input: rgb(255 255 255 / 18%);
+    --ring: #91a5ff;
+    --focus-ring: #91a5ff;
+    --signal: var(--editorial-lime);
+    --instrument: var(--editorial-instrument);
+    --instrument-elevated: #111925;
+    --instrument-foreground: #f7f8f4;
+    --instrument-muted: #aeb7c4;
+    --instrument-border: rgb(247 248 244 / 18%);
+    --brand: #2442c8;
+    --brand-foreground: #ffffff;
+    --shadow-editorial: 0 34px 100px -46px rgb(0 0 0 / 90%);
 }
 
 @layer components {
   .mivama-heading-display,
+  .mivama-heading-hero,
+  .mivama-heading-statement,
   .mivama-heading-page,
   .mivama-heading-section,
   .mivama-heading-title,
@@ -225,6 +336,20 @@
     font-size: clamp(3rem, 7vw, 5rem);
     line-height: 1;
     letter-spacing: -0.04em;
+  }
+
+  .mivama-heading-hero {
+    font-size: clamp(3.5rem, 8.2vw, 7.6rem);
+    font-weight: 720;
+    line-height: 0.91;
+    letter-spacing: -0.068em;
+  }
+
+  .mivama-heading-statement {
+    font-size: clamp(2.6rem, 5vw, 5rem);
+    font-weight: 730;
+    line-height: 0.95;
+    letter-spacing: -0.06em;
   }
 
   .mivama-heading-page {
@@ -296,6 +421,130 @@
     font-weight: 650;
     line-height: 1.4;
     letter-spacing: 0.045em;
+  }
+
+  .mivama-text-signal {
+    color: var(--muted-foreground);
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    font-size: 0.7rem;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+  }
+
+  .mivama-tone-inherit {
+    color: inherit;
+  }
+
+  .mivama-editorial-grid {
+    --editorial-grid-columns: 4;
+    display: grid;
+    grid-template-columns: repeat(var(--editorial-grid-columns), minmax(0, 1fr));
+    gap: var(--editorial-grid-gap, var(--card-grid-gap));
+    min-width: 0;
+  }
+
+  .mivama-editorial-subgrid {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    min-width: 0;
+  }
+
+  .mivama-bento-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--card-grid-gap);
+    min-width: 0;
+  }
+
+  .mivama-bento-grid-item {
+    min-width: 0;
+  }
+
+  .mivama-scroll-scene {
+    view-timeline-name: --mivama-scroll-scene;
+    view-timeline-axis: block;
+  }
+
+  .mivama-scroll-layer {
+    --mivama-scroll-distance: var(--motion-distance-16);
+    transform: translateY(0);
+  }
+
+  .mivama-scroll-layer[data-distance="8"] {
+    --mivama-scroll-distance: var(--motion-distance-8);
+  }
+
+  .mivama-scroll-layer[data-distance="24"] {
+    --mivama-scroll-distance: var(--motion-distance-24);
+  }
+
+  .mivama-scroll-layer[data-distance="32"] {
+    --mivama-scroll-distance: var(--motion-distance-32);
+  }
+
+  .mivama-scroll-layer[data-distance="48"] {
+    --mivama-scroll-distance: var(--motion-distance-48);
+  }
+
+  .mivama-scroll-layer[data-direction="down"] {
+    --mivama-scroll-direction: -1;
+  }
+}
+
+@media (min-width: 40rem) {
+  .mivama-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mivama-bento-grid-item[data-span="2"] {
+    grid-column: span 2;
+  }
+
+  .mivama-editorial-grid {
+    --editorial-grid-columns: 8;
+  }
+}
+
+@media (min-width: 64rem) {
+  .mivama-editorial-grid {
+    --editorial-grid-columns: 12;
+  }
+}
+
+@keyframes mivama-scroll-layer-reveal {
+  from {
+    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1)));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mivama-scroll-layer-parallax {
+  from {
+    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1)));
+  }
+  to {
+    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1) * -1));
+  }
+}
+
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .mivama-scroll-layer[data-effect="reveal"] {
+      animation: mivama-scroll-layer-reveal var(--motion-duration-slow) var(--motion-easing-emphasized) both;
+      animation-timeline: --mivama-scroll-scene;
+      animation-range: entry 10% cover 45%;
+    }
+
+    .mivama-scroll-layer[data-effect="parallax"] {
+      animation: mivama-scroll-layer-parallax linear both;
+      animation-timeline: --mivama-scroll-scene;
+      animation-range: entry 0% exit 100%;
+    }
   }
 }
 

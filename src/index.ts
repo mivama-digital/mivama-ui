@@ -1,5 +1,7 @@
 export { Badge, badgeVariants } from "./components/ui/badge.js";
 export { Button, buttonVariants } from "./components/ui/button.js";
+export { BentoGrid, BentoGridItem } from "./components/ui/bento-grid.js";
+export type { BentoGridItemProps, BentoGridProps } from "./components/ui/bento-grid.js";
 export {
   Card,
   CardAction,
@@ -47,6 +49,26 @@ export {
   DialogTrigger,
 } from "./components/ui/dialog.js";
 export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "./components/ui/empty.js";
+export { EditorialGrid } from "./components/ui/editorial-grid.js";
+export type { EditorialGridProps } from "./components/ui/editorial-grid.js";
+export {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  Fieldset,
+} from "./components/ui/field.js";
+export type {
+  FieldDescriptionProps,
+  FieldErrorProps,
+  FieldLabelProps,
+  FieldLegendProps,
+  FieldProps,
+  FieldsetProps,
+} from "./components/ui/field.js";
+export { Choice, ChoiceGroup } from "./components/ui/choice.js";
+export type { ChoiceGroupProps, ChoiceProps } from "./components/ui/choice.js";
 export { Input } from "./components/ui/input.js";
 export {
   Message,
@@ -67,6 +89,8 @@ export {
 } from "./components/ui/pagination.js";
 export { Progress, ProgressIndicator, ProgressLabel, ProgressTrack, ProgressValue } from "./components/ui/progress.js";
 export { Separator } from "./components/ui/separator.js";
+export { Select } from "./components/ui/select.js";
+export type { SelectProps } from "./components/ui/select.js";
 export { Section, sectionVariants } from "./components/ui/section.js";
 export type { SectionProps } from "./components/ui/section.js";
 export {
@@ -109,9 +133,12 @@ export {
   useSidebar,
 } from "./components/ui/sidebar.js";
 export { Skeleton } from "./components/ui/skeleton.js";
+export { ScrollLayer, ScrollScene } from "./components/ui/scroll-scene.js";
+export type { ScrollLayerProps, ScrollSceneProps } from "./components/ui/scroll-scene.js";
 export { Switch } from "./components/ui/switch.js";
 export { Tabs, TabsContent, TabsList, TabsTrigger, tabsListVariants } from "./components/ui/tabs.js";
 export { Textarea } from "./components/ui/textarea.js";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./components/ui/tooltip.js";
 export { Eyebrow, Heading, Text, headingVariants, textVariants } from "./components/ui/typography.js";
+export type { HeadingProps, TextProps, TypographyTone } from "./components/ui/typography.js";
 export { cn } from "./lib/utils.js";

@@ -12,6 +12,9 @@ const cardVariants = cva(
       variant: {
         surface: "bg-card",
         subtle: "bg-surface",
+        outline: "bg-transparent ring-border-strong",
+        instrument:
+          "bg-instrument text-instrument-foreground ring-instrument-border",
         interactive:
           "bg-card transition-[background-color,box-shadow] duration-(--motion-duration-fast) ease-(--motion-easing-standard) hover:bg-surface-elevated hover:ring-border-strong hover:shadow-(--shadow-subtle) focus-within:bg-surface-elevated focus-within:ring-border-strong focus-within:shadow-(--shadow-subtle) motion-reduce:transition-none",
       },
@@ -78,7 +81,10 @@ function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "text-sm text-muted-foreground group-data-[variant=instrument]/card:text-instrument-muted",
+        className
+      )}
       {...props}
     />
   )
@@ -112,7 +118,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing)",
+        "flex items-center rounded-b-xl border-t bg-muted/50 p-(--card-spacing) group-data-[variant=instrument]/card:border-instrument-border group-data-[variant=instrument]/card:bg-instrument-elevated",
         className
       )}
       {...props}

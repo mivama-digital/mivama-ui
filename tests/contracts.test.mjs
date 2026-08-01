@@ -6,15 +6,30 @@ import { renderToStaticMarkup } from "react-dom/server"
 
 import {
   Alert,
+  BentoGrid,
+  BentoGridItem,
   Card,
+  Choice,
+  ChoiceGroup,
   Container,
+  EditorialGrid,
   EmptyDescription,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  Fieldset,
+  ScrollLayer,
+  ScrollScene,
+  Select,
   Section,
   badgeVariants,
   buttonVariants,
   cardVariants,
   containerVariants,
+  headingVariants,
   sectionVariants,
+  textVariants,
 } from "../dist/index.js"
 
 const source = async (name) =>
@@ -274,7 +289,7 @@ test("primary hover and keyboard focus remain opaque across themes", async () =>
     source("badge"),
   ])
   assert.match(styles, /--color-primary-hover: var\(--primary-hover\);/)
-  assert.equal((styles.match(/^\s+--primary-hover:/gm) ?? []).length, 2)
+  assert.equal((styles.match(/^\s+--primary-hover:/gm) ?? []).length, 4)
   assert.match(button, /hover:bg-primary-hover/)
   assert.doesNotMatch(button, /hover:bg-primary\/80/)
   assert.match(button, /focus-visible:ring-3 focus-visible:ring-ring /)
@@ -289,6 +304,96 @@ test("native controls inherit the active light or dark color scheme", async () =
   assert.match(styles, /\.dark \{\s+color-scheme: dark;/)
 })
 
+test("editorial theme is opt-in and carries the verified light and dark palette", async () => {
+  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  const editorial = styles.slice(
+    styles.indexOf(".mivama-editorial-theme {"),
+    styles.indexOf(".dark {")
+  )
+  const editorialDark = styles.slice(
+    styles.indexOf(".dark .mivama-editorial-theme,"),
+    styles.indexOf("@layer components")
+  )
+  assert.match(editorial, /--editorial-paper: #f3f4ef;/)
+  assert.match(editorial, /--editorial-cobalt: #1649ff;/)
+  assert.match(editorial, /--editorial-lime: #c9ff45;/)
+  assert.match(editorial, /--editorial-instrument: #0b1018;/)
+  assert.match(editorialDark, /--editorial-paper: #080b10;/)
+  assert.match(editorialDark, /--editorial-cobalt: #7792ff;/)
+  assert.doesNotMatch(styles.slice(styles.indexOf(":root {"), styles.indexOf(".mivama-editorial-theme {")), /--editorial-paper:/)
+})
+
+test("editorial motion and typography contracts are reusable and inheritable", async () => {
+  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  for (const token of [
+    "motion-duration-slow",
+    "motion-easing-emphasized",
+    "motion-distance-8",
+    "motion-distance-16",
+    "motion-distance-24",
+  ]) {
+    assert.match(styles, new RegExp(`--${token}:`))
+  }
+  assert.match(headingVariants({ variant: "hero" }), /mivama-heading-hero/)
+  assert.match(headingVariants({ variant: "statement" }), /mivama-heading-statement/)
+  assert.match(textVariants({ variant: "signal" }), /mivama-text-signal/)
+  assert.match(textVariants({ tone: "inherit" }), /mivama-tone-inherit/)
+})
+
+test("editorial layout and section variants expose additive contracts", () => {
+  assert.match(sectionVariants({ tone: "brand" }), /bg-brand/)
+  assert.match(sectionVariants({ tone: "instrument" }), /bg-instrument/)
+  assert.match(buttonVariants({ variant: "inverse" }), /bg-primary-foreground/)
+  assert.match(
+    renderToStaticMarkup(React.createElement(EditorialGrid, null, "Grid")),
+    /data-slot="editorial-grid" class="mivama-editorial-grid"/
+  )
+})
+
+test("bento grids stay server-compatible and expand spans only after mobile", async () => {
+  const [styles, bento] = await Promise.all([
+    readFile(new URL("../src/styles.css", import.meta.url), "utf8"),
+    source("bento-grid"),
+  ])
+  assert.doesNotMatch(bento, /["']use client["']/)
+  assert.match(styles, /\.mivama-bento-grid \{[\s\S]*grid-template-columns: minmax\(0, 1fr\);/)
+  assert.match(styles, /@media \(min-width: 40rem\)[\s\S]*\.mivama-bento-grid-item\[data-span="2"\] \{[\s\S]*grid-column: span 2;/)
+  assert.match(renderToStaticMarkup(React.createElement(BentoGrid)), /data-slot="bento-grid"/)
+  assert.match(renderToStaticMarkup(React.createElement(BentoGridItem, { span: 2 })), /data-span="2"/)
+})
+
+test("field, choice, and select primitives retain native server-rendered semantics", () => {
+  assert.match(renderToStaticMarkup(React.createElement(FieldLabel, { htmlFor: "email" }, "Email")), /^<label/)
+  assert.match(renderToStaticMarkup(React.createElement(FieldDescription, { id: "hint" }, "Hint")), /^<p/)
+  assert.match(renderToStaticMarkup(React.createElement(FieldError, { id: "error" }, "Error")), /^<p/)
+  assert.match(renderToStaticMarkup(React.createElement(Fieldset)), /^<fieldset/)
+  assert.match(renderToStaticMarkup(React.createElement(FieldLegend, null, "Options")), /^<legend/)
+  assert.match(renderToStaticMarkup(React.createElement(Choice, { type: "radio", name: "plan" })), /<input type="radio"/)
+  assert.match(renderToStaticMarkup(React.createElement(ChoiceGroup)), /^<fieldset/)
+  assert.match(renderToStaticMarkup(React.createElement(Select, { "aria-invalid": true })), /^<select/)
+})
+
+test("scroll scenes are server components with progressive transform-only motion", async () => {
+  const [styles, scene] = await Promise.all([
+    readFile(new URL("../src/styles.css", import.meta.url), "utf8"),
+    source("scroll-scene"),
+  ])
+  assert.doesNotMatch(scene, /["']use client["']/)
+  assert.match(styles, /@supports \(animation-timeline: view\(\)\)/)
+  assert.match(styles, /prefers-reduced-motion: no-preference/)
+  assert.match(styles, /mivama-scroll-layer-parallax/)
+  assert.match(styles, /data-effect="parallax"/)
+  const keyframes = styles.slice(
+    styles.indexOf("@keyframes mivama-scroll-layer-reveal"),
+    styles.indexOf("@media (min-width: 48rem)")
+  )
+  assert.match(keyframes, /transform:/)
+  assert.doesNotMatch(keyframes, /opacity|filter|top:|left:/)
+  assert.match(renderToStaticMarkup(React.createElement(ScrollScene)), /data-slot="scroll-scene"/)
+  assert.match(renderToStaticMarkup(React.createElement(ScrollLayer, { distance: 24 })), /data-distance="24"/)
+  assert.match(renderToStaticMarkup(React.createElement(ScrollLayer, { effect: "parallax", distance: 48 })), /data-effect="parallax"[^>]*data-distance="48"|data-distance="48"[^>]*data-effect="parallax"/)
+})
+
 test("large cards stay compact on phones and expand from sm upward", async () => {
   const card = await source("card")
   assert.match(card, /data-\[size=lg\]:\[--card-spacing:--spacing\(6\)\]/)
@@ -300,6 +405,11 @@ test("card variants preserve the surface default and pair hover with focus-withi
   assert.match(cardVariants(), /bg-card/)
   assert.match(cardVariants(), /ring-1 ring-border/)
   assert.match(cardVariants({ variant: "subtle" }), /bg-surface/)
+  assert.match(cardVariants({ variant: "outline" }), /bg-transparent/)
+  assert.match(cardVariants({ variant: "outline" }), /ring-border-strong/)
+  assert.match(cardVariants({ variant: "instrument" }), /bg-instrument/)
+  assert.match(cardVariants({ variant: "instrument" }), /text-instrument-foreground/)
+  assert.match(cardVariants({ variant: "instrument" }), /ring-instrument-border/)
 
   const interactive = cardVariants({ variant: "interactive" })
   for (const state of [
@@ -342,22 +452,27 @@ test("built-in modal closes reserve title space without taxing custom compositio
 
 test("disabled inputs keep their cursor feedback and remain inspectable", async () => {
   const input = await source("input")
+  assert.doesNotMatch(input, /@base-ui\/react\/input/)
+  assert.match(input, /<input/)
   assert.match(input, /disabled:cursor-not-allowed/)
   assert.match(input, /disabled:bg-input\/50/)
   assert.match(input, /disabled:opacity-50/)
   assert.doesNotMatch(input, /disabled:pointer-events-none/)
 })
 
-test("package metadata and consumer archive instructions target 2.1.0", async () => {
+test("package metadata, subpaths, and consumer archive instructions target 2.3.0", async () => {
   const [packageJson, lockfile, readme] = await Promise.all([
     readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
     readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(JSON.parse),
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ])
-  assert.equal(packageJson.version, "2.1.0")
-  assert.equal(lockfile.version, "2.1.0")
-  assert.equal(lockfile.packages[""].version, "2.1.0")
+  assert.equal(packageJson.version, "2.3.0")
+  assert.equal(lockfile.version, "2.3.0")
+  assert.equal(lockfile.packages[""].version, "2.3.0")
+  for (const subpath of ["button", "sheet", "card", "scroll-scene", "bento-grid", "forms"]) {
+    assert.ok(packageJson.exports[`./${subpath}`])
+  }
   assert.match(readme, /npm run verify/)
   assert.match(readme, /npm pack --ignore-scripts --pack-destination/)
-  assert.match(readme, /mivama-ui-2\.1\.0\.tgz/)
+  assert.match(readme, /mivama-ui-2\.3\.0\.tgz/)
 })

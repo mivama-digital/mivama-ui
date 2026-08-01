@@ -41,7 +41,13 @@ try {
   await writeFile(
     checkFile,
     'import * as ui from "@mivama/ui";\n' +
-      'if (typeof ui.Button !== "function" || typeof ui.SheetPortal !== "function") process.exit(1);\n'
+      'import { BentoGrid } from "@mivama/ui/bento-grid";\n' +
+      'import { Button } from "@mivama/ui/button";\n' +
+      'import { Card } from "@mivama/ui/card";\n' +
+      'import { Input } from "@mivama/ui/forms";\n' +
+      'import { ScrollScene } from "@mivama/ui/scroll-scene";\n' +
+      'import { SheetPortal } from "@mivama/ui/sheet";\n' +
+      'if ([ui.Button, BentoGrid, Button, Card, Input, ScrollScene, SheetPortal].some((value) => typeof value !== "function")) process.exit(1);\n'
   )
   await execFileAsync(process.execPath, [checkFile], { cwd: temp })
 

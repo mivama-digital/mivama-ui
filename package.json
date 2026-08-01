@@ -1,6 +1,6 @@
 {
   "name": "@mivama/ui",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "description": "Shared Mivama design tokens and React UI primitives.",
   "license": "MIT",
   "private": false,
@@ -15,6 +15,36 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./button": {
+      "types": "./dist/components/ui/button.d.ts",
+      "import": "./dist/components/ui/button.js",
+      "default": "./dist/components/ui/button.js"
+    },
+    "./sheet": {
+      "types": "./dist/components/ui/sheet.d.ts",
+      "import": "./dist/components/ui/sheet.js",
+      "default": "./dist/components/ui/sheet.js"
+    },
+    "./card": {
+      "types": "./dist/components/ui/card.d.ts",
+      "import": "./dist/components/ui/card.js",
+      "default": "./dist/components/ui/card.js"
+    },
+    "./scroll-scene": {
+      "types": "./dist/components/ui/scroll-scene.d.ts",
+      "import": "./dist/components/ui/scroll-scene.js",
+      "default": "./dist/components/ui/scroll-scene.js"
+    },
+    "./bento-grid": {
+      "types": "./dist/components/ui/bento-grid.d.ts",
+      "import": "./dist/components/ui/bento-grid.js",
+      "default": "./dist/components/ui/bento-grid.js"
+    },
+    "./forms": {
+      "types": "./dist/forms.d.ts",
+      "import": "./dist/forms.js",
+      "default": "./dist/forms.js"
     },
     "./styles.css": "./dist/styles.css"
   },

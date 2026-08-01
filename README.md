@@ -12,6 +12,9 @@ Shared brand tokens and React UI primitives for Mivama projects.
 - `Breadcrumb`
 - `Dialog` and `Sheet`
 - `Empty` states
+- `EditorialGrid`
+- `BentoGrid` and `BentoGridItem`
+- `Field`, native `Choice`, and native `Select` primitives
 - `Input` and `Textarea`
 - `Message` primitives
 - `Pagination`
@@ -24,6 +27,7 @@ Shared brand tokens and React UI primitives for Mivama projects.
 - `Tabs`
 - `Tooltip`
 - `Heading`, `Text`, and `Eyebrow`
+- `ScrollScene` and `ScrollLayer`
 - `cn` utility
 
 The package is the single UI source for Mivama websites and client portals. It
@@ -34,6 +38,17 @@ Its base components retain the official `base-nova` shadcn/ui composition APIs.
 import { Button, Card } from "@mivama/ui";
 import "@mivama/ui/styles.css";
 ```
+
+Frequently used client-facing modules can bypass the root barrel:
+
+```tsx
+import { Button } from "@mivama/ui/button";
+import { Card } from "@mivama/ui/card";
+import { Field, Input } from "@mivama/ui/forms";
+```
+
+Explicit subpaths are available for `button`, `sheet`, `card`, `scroll-scene`,
+`bento-grid`, and `forms`.
 
 ## Theme contract
 
@@ -55,7 +70,12 @@ ancestor to switch themes.
   `--input`, `--ring`, `--focus-ring`, `--overlay`
 - Elevation and motion: `--shadow-subtle`, `--shadow-elevated`,
   `--motion-duration-fast`, `--motion-duration-default`,
-  `--motion-easing-standard`
+  `--motion-duration-slow`, `--motion-easing-standard`,
+  `--motion-easing-emphasized`, `--motion-distance-8`,
+  `--motion-distance-16`, `--motion-distance-24`, `--motion-distance-32`,
+  `--motion-distance-48`
+- Instrument surfaces: `--instrument`, `--instrument-elevated`,
+  `--instrument-foreground`, `--instrument-muted`, `--instrument-border`
 - Sidebar: `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`,
   `--sidebar-accent`, `--sidebar-border`, `--sidebar-ring`
 - Shape and typography: `--radius`, `--font-heading`, `--font-sans`
@@ -66,7 +86,35 @@ is independent from the rendered element:
 ```tsx
 <Heading render={<h1 />} variant="display">A clear proposition</Heading>
 <Text variant="lead">Supporting context for the page.</Text>
+<Heading variant="hero" tone="inherit">Designed to move work forward.</Heading>
+<Heading variant="statement">A decisive closing statement.</Heading>
+<Text variant="signal">Signal 01</Text>
 ```
+
+Use `tone="inherit"` when typography should take the foreground color from a
+brand or instrument surface. Existing variants retain their current default
+colors.
+
+### Editorial theme
+
+Add `.mivama-editorial-theme` to an application shell to opt into the verified
+warm-paper/cobalt/lime/instrument palette without changing the package's root
+theme. A surrounding `.dark` class, or `.dark` on the shell itself, selects its
+dark contract.
+
+```tsx
+<main className="mivama-editorial-theme">
+  <Section tone="brand">
+    <Heading variant="statement" tone="inherit">Clear systems. Useful outcomes.</Heading>
+    <Button variant="inverse">Start a project</Button>
+  </Section>
+</main>
+```
+
+The named palette tokens are `--editorial-paper`, `--editorial-cobalt`,
+`--editorial-lime`, and `--editorial-instrument`. Semantic aliases include
+`--signal`, `--instrument`, `--instrument-elevated`, `--instrument-foreground`,
+`--brand`, and `--brand-foreground`.
 
 Tailwind exposes the semantic color utilities `bg-surface`,
 `bg-surface-elevated`, `border-border-strong`, and `bg-overlay`. Layout,
@@ -78,8 +126,67 @@ WCAG AA contrast.
 
 `Container` retains the reading, standard, and wide widths with responsive
 20/24/32/40px gutters. `Section` retains its bordered default and supports
-`tone="default"`, `tone="muted"`, and `tone="accent"`; combine these with the
-existing compact, default, and hero densities.
+`tone="default"`, `tone="muted"`, `tone="accent"`, `tone="brand"`, and
+`tone="instrument"`; combine these with the existing compact, default, and
+hero densities. `Button variant="inverse"` provides the contrasting action.
+
+`EditorialGrid` is a server-compatible CSS grid with 4 columns by default, 8
+from 40rem, and 12 from 64rem. It exposes `--editorial-grid-columns` and
+`--editorial-grid-gap` so descendants can align tracks. Add
+`.mivama-editorial-subgrid` to a child that should span and inherit every parent
+track:
+
+```tsx
+<EditorialGrid style={{ "--editorial-grid-gap": "2rem" } as React.CSSProperties}>
+  <article className="mivama-editorial-subgrid">...</article>
+</EditorialGrid>
+```
+
+`BentoGrid` is the smaller card-layout primitive. It has one track on mobile
+and two from 40rem. Items remain single-track by default; `span={2}` expands an
+item only after the second track is available, so no separate breakpoint API is
+needed.
+
+```tsx
+<BentoGrid>
+  <BentoGridItem span={2}><Card variant="instrument">Lead story</Card></BentoGridItem>
+  <BentoGridItem><Card variant="outline">Supporting story</Card></BentoGridItem>
+</BentoGrid>
+```
+
+## Native forms
+
+`Field`, `FieldLabel`, `FieldDescription`, `FieldError`, `Fieldset`, and
+`FieldLegend` provide semantic composition without generated IDs. Consumers
+retain control of `htmlFor`, `aria-describedby`, and `aria-invalid`. `Choice`
+renders a native checkbox or radio, `ChoiceGroup` renders a native `fieldset`,
+and `Select` renders a native `select`; all retain browser semantics, server
+rendering, dark color scheme, focus rings, invalid states, and disabled states.
+
+```tsx
+<Field>
+  <FieldLabel htmlFor="region">Region</FieldLabel>
+  <Select id="region" aria-describedby="region-help">
+    <option value="eu">Europe</option>
+  </Select>
+  <FieldDescription id="region-help">Used to route your enquiry.</FieldDescription>
+</Field>
+```
+
+## Scroll scenes
+
+`ScrollScene` and `ScrollLayer` are server-compatible wrappers with no client
+directive. Reveal is the default; `effect="parallax"` moves a layer through a
+bounded depth range. Distances are limited to 8, 16, 24, 32, or 48px. On larger
+viewports, browsers supporting CSS view timelines animate only `transform`;
+unsupported browsers, mobile viewports, and reduced-motion preferences receive
+the complete static layout.
+
+```tsx
+<ScrollScene>
+  <ScrollLayer effect="parallax" direction="up" distance={48}>Editorial content</ScrollLayer>
+</ScrollScene>
+```
 
 Normal controls use a minimum 44px interaction target. `xs` and `icon-xs` are
 reserved for dense desktop interfaces and should not be used for primary,
@@ -94,11 +201,12 @@ and next controls, `Breadcrumb`, `SidebarTrigger`, and `SidebarRail`; and
 `mobileTitle`/`mobileDescription` on `Sidebar`.
 
 Cards use comfortable spacing and `variant="surface"` by default. Use
-`variant="subtle"` for quieter grouping and `variant="interactive"` when a
-card contains a focusable action. Interactive styling uses rings and shadows,
-so hover and focus-within do not resize the card. Use `size="sm"` for dense
-surfaces and `size="lg"` for prominent content rather than overriding
-subcomponent padding at each call site.
+`variant="subtle"` for quieter grouping, `variant="outline"` for transparent
+framing, `variant="instrument"` for dark instrument surfaces, and
+`variant="interactive"` when a card contains a focusable action. Interactive
+styling uses rings and shadows, so hover and focus-within do not resize the
+card. Use `size="sm"` for dense surfaces and `size="lg"` for prominent content
+rather than overriding subcomponent padding at each call site.
 
 Right and left `SheetContent` panels support `size="sm"`, `size="md"`, and
 `size="full"`; `sm` remains the default. Pass `overlayClassName` to customize
@@ -149,21 +257,21 @@ Run `npm run verify` for type checking, declaration build, source contract
 tests, and a package smoke test. The smoke test packs the tarball and imports
 the extracted package by its `@mivama/ui` name in Node ESM. Linting is
 intentionally not exposed until the package has a project-specific ESLint
-configuration.
+configuration. Contract coverage also imports every explicit package subpath.
 
 For a consumer that commits a package archive, run this from the package root.
 Replace the consumer path once; the generated archive name is deterministic for
-version 2.1.0:
+version 2.3.0:
 
 ```bash
 consumer=/absolute/path/to/consumer
 mkdir -p "$consumer/vendor"
 npm run verify
 npm pack --ignore-scripts --pack-destination "$consumer/vendor"
-npm install --prefix "$consumer" "$consumer/vendor/mivama-ui-2.1.0.tgz"
+npm install --prefix "$consumer" "$consumer/vendor/mivama-ui-2.3.0.tgz"
 npm --prefix "$consumer" run verify
 ```
 
 Commit the consumer's new archive, `package.json`, and `package-lock.json`
 together. Remove the previous archive only after both manifests reference
-`mivama-ui-2.1.0.tgz`.
+`mivama-ui-2.3.0.tgz`.

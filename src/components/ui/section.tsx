@@ -15,6 +15,8 @@ const sectionVariants = cva("min-w-0 border-border", {
       default: null,
       muted: "bg-surface",
       accent: "bg-accent text-accent-foreground",
+      brand: "bg-brand text-brand-foreground",
+      instrument: "bg-instrument text-instrument-foreground",
     },
     bordered: {
       true: "border-b",
