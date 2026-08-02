@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { execFile } from "node:child_process"
-import { mkdtemp, mkdir, readFile, rename, rm, symlink, writeFile } from "node:fs/promises"
+import { access, mkdtemp, mkdir, readFile, rename, rm, symlink, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
 import { promisify } from "node:util"
@@ -53,6 +53,10 @@ try {
 
   const packedPackage = JSON.parse(await readFile(path.join(packageDir, "package.json"), "utf8"))
   assert.deepEqual(packedPackage.sideEffects, ["**/*.css"])
+  for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
+    assert.equal(packedPackage.exports[`./${stylesheet}`], `./dist/${stylesheet}`)
+    await access(path.join(packageDir, "dist", stylesheet))
+  }
   console.log(`Imported packed ${packedPackage.name}@${packedPackage.version} in Node ESM`)
 } finally {
   await rm(temp, { recursive: true, force: true })

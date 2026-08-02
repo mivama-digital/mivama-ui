@@ -89,18 +89,23 @@ test("sheets expose reusable overlays and typed horizontal sizes", async () => {
   assert.doesNotMatch(sheet, /navigation/i)
 })
 
-test("normal targets are 44px while xs remains explicitly dense", async () => {
-  const [button, tabs, sidebar] = await Promise.all([
+test("normal targets are 44px by default while xs remains explicitly dense", async () => {
+  const [button, tabs, sidebar, tokens] = await Promise.all([
     source("button"),
     source("tabs"),
     source("sidebar"),
+    readFile(new URL("../src/tokens.css", import.meta.url), "utf8"),
   ])
   assert.match(button, /xs: "min-h-8/)
   assert.match(button, /"icon-xs":[\s\S]*"size-8/)
-  assert.match(button, /"icon-sm":[\s\S]*"size-11/)
-  assert.match(tabs, /min-h-11/)
-  assert.match(sidebar, /default: "min-h-11/)
+  assert.match(button, /"icon-sm":[\s\S]*"size-\(--control-height\)/)
+  assert.match(button, /default:\s*"min-h-\(--control-height\)/)
+  assert.match(tabs, /min-h-\(--control-height\)/)
+  assert.match(sidebar, /default: "min-h-\(--sidebar-row-height\)/)
   assert.match(sidebar, /xs: "h-7/)
+  assert.match(tokens, /:root,\n\[data-density="comfortable"\] \{\s*--panel-padding: var\(--space-6\);\s*--control-height: 44px;/)
+  assert.match(tokens, /\[data-density="compact"\] \{\s*--panel-padding: var\(--space-4\);\s*--control-height: 32px;/)
+  assert.match(tokens, /@media \(pointer: coarse\)[\s\S]*\[data-density="compact"\] \{\s*--control-height: 44px;/)
 })
 
 test("built-in navigation labels expose localization props", async () => {
@@ -157,31 +162,34 @@ test("layout primitives centralize width and rhythm without fixing document sema
 })
 
 test("layout tokens preserve the approved responsive website rhythm", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
-  assert.match(styles, /--page-gutter: 20px;/)
-  assert.match(styles, /--container-reading: 44rem;/)
-  assert.match(styles, /--container-standard: 80rem;/)
-  assert.match(styles, /--container-wide: 90rem;/)
-  assert.match(styles, /--section-compact: 40px;/)
-  assert.match(styles, /--section-default: 56px;/)
-  assert.match(styles, /--section-hero: 72px;/)
-  assert.match(styles, /--layout-gap: 32px;/)
-  assert.match(styles, /--content-stack: 24px;/)
-  assert.match(styles, /--card-grid-gap: 20px;/)
-  assert.match(styles, /--card-grid-gap-compact: 16px;/)
+  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
+  assert.match(tokens, /--page-gutter: 20px;/)
+  assert.match(tokens, /--container-reading: 44rem;/)
+  assert.match(tokens, /--container-standard: 80rem;/)
+  assert.match(tokens, /--container-wide: 90rem;/)
+  assert.match(tokens, /--section-compact: 40px;/)
+  assert.match(tokens, /--section-default: 56px;/)
+  assert.match(tokens, /--section-hero: 72px;/)
+  assert.match(tokens, /--layout-gap: 32px;/)
+  assert.match(tokens, /--content-stack: 24px;/)
+  assert.match(tokens, /--card-grid-gap: 20px;/)
+  assert.match(tokens, /--card-grid-gap-compact: 16px;/)
   assert.match(
-    styles,
+    tokens,
     /@media \(min-width: 40rem\)[\s\S]*?--page-gutter: 24px;[\s\S]*?--section-compact: 56px;[\s\S]*?--section-default: 80px;[\s\S]*?--section-hero: 96px;[\s\S]*?--layout-gap: 48px;[\s\S]*?--content-stack: 32px;/
   )
   assert.match(
-    styles,
+    tokens,
     /@media \(min-width: 64rem\)[\s\S]*?--page-gutter: 32px;[\s\S]*?--section-default: 96px;[\s\S]*?--section-hero: 112px;[\s\S]*?--layout-gap: 64px;[\s\S]*?--content-stack: 40px;/
   )
-  assert.match(styles, /@media \(min-width: 96rem\)[\s\S]*?--page-gutter: 40px;/)
+  assert.match(tokens, /@media \(min-width: 96rem\)[\s\S]*?--page-gutter: 40px;/)
 })
 
 test("semantic surface, focus, shadow, overlay, and motion tokens are reusable", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  const [tokens, themes] = await Promise.all([
+    readFile(new URL("../src/tokens.css", import.meta.url), "utf8"),
+    readFile(new URL("../src/themes.css", import.meta.url), "utf8"),
+  ])
   for (const token of [
     "surface",
     "surface-elevated",
@@ -194,17 +202,17 @@ test("semantic surface, focus, shadow, overlay, and motion tokens are reusable",
     "motion-duration-default",
     "motion-easing-standard",
   ]) {
-    assert.match(styles, new RegExp(`--${token}:`))
+    assert.match(`${tokens}\n${themes}`, new RegExp(`--${token}:`))
   }
-  assert.match(styles, /--color-surface: var\(--surface\);/)
-  assert.match(styles, /--color-surface-elevated: var\(--surface-elevated\);/)
-  assert.match(styles, /--color-border-strong: var\(--border-strong\);/)
-  assert.match(styles, /--color-overlay: var\(--overlay\);/)
-  assert.match(styles, /--focus-ring: #0c62ed;/)
-  assert.match(styles, /--primary: #0c62ed;/)
+  assert.match(tokens, /--color-surface: var\(--surface\);/)
+  assert.match(tokens, /--color-surface-elevated: var\(--surface-elevated\);/)
+  assert.match(tokens, /--color-border-strong: var\(--border-strong\);/)
+  assert.match(tokens, /--color-overlay: var\(--overlay\);/)
+  assert.match(themes, /--focus-ring: #0c62ed;/)
+  assert.match(themes, /--primary: #0c62ed;/)
 
-  const light = styles.slice(styles.indexOf(":root {"), styles.indexOf(".dark {"))
-  const dark = styles.slice(styles.indexOf(".dark {"), styles.indexOf("@layer components"))
+  const light = themes.slice(themes.indexOf(":root,"), themes.indexOf(".dark,"))
+  const dark = themes.slice(themes.indexOf(".dark,"), themes.indexOf("@media (pointer: coarse)"))
   const value = (block, token) =>
     block.match(new RegExp(`--${token}: ([^;]+);`))?.[1]
   for (const theme of [light, dark]) {
@@ -223,7 +231,7 @@ test("shared headings reflow only when a word cannot fit", async () => {
   assert.match(headingRules, /hyphens: auto;/)
   assert.match(headingRules, /overflow-wrap: anywhere;/)
   assert.doesNotMatch(headingRules, /word-break: break-all/)
-  assert.match(styles, /font-size: clamp\(3rem, 7vw, 5rem\);/)
+  assert.match(styles, /font-size: var\(--type-display-size\);/)
   assert.match(
     styles,
     /\.mivama-text-body,\s+\.mivama-text-small \{\s+color: var\(--foreground\);/
@@ -257,7 +265,7 @@ test("reduced motion is non-important and explicit on changed motion components"
 
 test("navigation buttons retain shared targets, wrapping, focus, and state semantics", () => {
   const navigation = buttonVariants({ variant: "navigation" })
-  assert.match(navigation, /min-h-11/)
+  assert.match(navigation, /min-h-\(--control-height\)/)
   assert.match(navigation, /hover:bg-surface/)
   assert.match(navigation, /aria-expanded:bg-surface/)
   assert.match(navigation, /aria-\[current=page\]:bg-accent/)
@@ -283,13 +291,14 @@ test("wrapping variants opt into shrinking and emergency label reflow", async ()
 })
 
 test("primary hover and keyboard focus remain opaque across themes", async () => {
-  const [styles, button, badge] = await Promise.all([
-    readFile(new URL("../src/styles.css", import.meta.url), "utf8"),
+  const [tokens, themes, button, badge] = await Promise.all([
+    readFile(new URL("../src/tokens.css", import.meta.url), "utf8"),
+    readFile(new URL("../src/themes.css", import.meta.url), "utf8"),
     source("button"),
     source("badge"),
   ])
-  assert.match(styles, /--color-primary-hover: var\(--primary-hover\);/)
-  assert.equal((styles.match(/^\s+--primary-hover:/gm) ?? []).length, 4)
+  assert.match(tokens, /--color-primary-hover: var\(--primary-hover\);/)
+  assert.equal((themes.match(/^\s+--primary-hover:/gm) ?? []).length, 4)
   assert.match(button, /hover:bg-primary-hover/)
   assert.doesNotMatch(button, /hover:bg-primary\/80/)
   assert.match(button, /focus-visible:ring-3 focus-visible:ring-ring /)
@@ -299,20 +308,20 @@ test("primary hover and keyboard focus remain opaque across themes", async () =>
 })
 
 test("native controls inherit the active light or dark color scheme", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
-  assert.match(styles, /:root \{\s+color-scheme: light;/)
-  assert.match(styles, /\.dark \{\s+color-scheme: dark;/)
+  const themes = await readFile(new URL("../src/themes.css", import.meta.url), "utf8")
+  assert.match(themes, /:root,\n\[data-mivama-theme="product"\],[\s\S]*color-scheme: light;/)
+  assert.match(themes, /\.dark,\n\.dark \[data-mivama-theme="product"\],[\s\S]*color-scheme: dark;/)
 })
 
 test("editorial theme is opt-in and carries the verified light and dark palette", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
-  const editorial = styles.slice(
-    styles.indexOf(".mivama-editorial-theme {"),
-    styles.indexOf(".dark {")
+  const themes = await readFile(new URL("../src/themes.css", import.meta.url), "utf8")
+  const editorial = themes.slice(
+    themes.indexOf('[data-mivama-theme="editorial"],'),
+    themes.indexOf(".dark,")
   )
-  const editorialDark = styles.slice(
-    styles.indexOf(".dark .mivama-editorial-theme,"),
-    styles.indexOf("@layer components")
+  const editorialDark = themes.slice(
+    themes.indexOf('.dark [data-mivama-theme="editorial"],'),
+    themes.indexOf("@media (pointer: coarse)")
   )
   assert.match(editorial, /--editorial-paper: #f3f4ef;/)
   assert.match(editorial, /--editorial-cobalt: #1649ff;/)
@@ -320,11 +329,14 @@ test("editorial theme is opt-in and carries the verified light and dark palette"
   assert.match(editorial, /--editorial-instrument: #0b1018;/)
   assert.match(editorialDark, /--editorial-paper: #080b10;/)
   assert.match(editorialDark, /--editorial-cobalt: #7792ff;/)
-  assert.doesNotMatch(styles.slice(styles.indexOf(":root {"), styles.indexOf(".mivama-editorial-theme {")), /--editorial-paper:/)
+  assert.doesNotMatch(
+    themes.slice(themes.indexOf(":root,"), themes.indexOf('[data-mivama-theme="editorial"],')),
+    /--editorial-paper:/
+  )
 })
 
 test("editorial motion and typography contracts are reusable and inheritable", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
   for (const token of [
     "motion-duration-slow",
     "motion-easing-emphasized",
@@ -332,7 +344,7 @@ test("editorial motion and typography contracts are reusable and inheritable", a
     "motion-distance-16",
     "motion-distance-24",
   ]) {
-    assert.match(styles, new RegExp(`--${token}:`))
+    assert.match(tokens, new RegExp(`--${token}:`))
   }
   assert.match(headingVariants({ variant: "hero" }), /mivama-heading-hero/)
   assert.match(headingVariants({ variant: "statement" }), /mivama-heading-statement/)
@@ -460,19 +472,50 @@ test("disabled inputs keep their cursor feedback and remain inspectable", async 
   assert.doesNotMatch(input, /disabled:pointer-events-none/)
 })
 
-test("package metadata, subpaths, and consumer archive instructions target 2.3.0", async () => {
+test("v3 themes and density expose explicit selectors and compatibility aliases", async () => {
+  const [tokens, themes, styles] = await Promise.all([
+    readFile(new URL("../src/tokens.css", import.meta.url), "utf8"),
+    readFile(new URL("../src/themes.css", import.meta.url), "utf8"),
+    readFile(new URL("../src/styles.css", import.meta.url), "utf8"),
+  ])
+  assert.match(styles, /@import "\.\/tokens\.css";/)
+  assert.match(styles, /@import "\.\/themes\.css";/)
+  for (const theme of ["product", "editorial", "portal"]) {
+    assert.match(themes, new RegExp(`\\[data-mivama-theme="${theme}"\\]`))
+  }
+  for (const density of ["comfortable", "compact"]) {
+    assert.match(tokens, new RegExp(`\\[data-density="${density}"\\]`))
+  }
+  for (const token of ["shape-panel", "space-4", "surface-elevated", "type-body-size", "motion-duration-default"]) {
+    assert.match(`${tokens}\n${themes}`, new RegExp(`--${token}:`))
+  }
+  assert.match(themes, /\.mivama-editorial-theme/)
+  assert.match(themes, /\[data-mivama-theme="portal"\]\[data-density="compact"\][\s\S]*--panel-padding: 16px;[\s\S]*--sidebar-row-height: 32px;/)
+  assert.match(themes, /@media \(pointer: coarse\)[\s\S]*--sidebar-row-height: 44px;/)
+  for (const token of ["panel-padding", "control-height", "sidebar-row-height"]) {
+    assert.match(tokens, new RegExp(`--${token}:`))
+  }
+  for (const theme of ["product", "editorial", "portal"]) {
+    assert.doesNotMatch(styles, new RegExp(`\\[data-mivama-theme="${theme}"\\]`))
+  }
+})
+
+test("package metadata, stylesheet exports, and consumer archive instructions target 3.0.0", async () => {
   const [packageJson, lockfile, readme] = await Promise.all([
     readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
     readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(JSON.parse),
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ])
-  assert.equal(packageJson.version, "2.3.0")
-  assert.equal(lockfile.version, "2.3.0")
-  assert.equal(lockfile.packages[""].version, "2.3.0")
+  assert.equal(packageJson.version, "3.0.0")
+  assert.equal(lockfile.version, "3.0.0")
+  assert.equal(lockfile.packages[""].version, "3.0.0")
   for (const subpath of ["button", "sheet", "card", "scroll-scene", "bento-grid", "forms"]) {
     assert.ok(packageJson.exports[`./${subpath}`])
   }
+  for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
+    assert.equal(packageJson.exports[`./${stylesheet}`], `./dist/${stylesheet}`)
+  }
   assert.match(readme, /npm run verify/)
   assert.match(readme, /npm pack --ignore-scripts --pack-destination/)
-  assert.match(readme, /mivama-ui-2\.3\.0\.tgz/)
+  assert.match(readme, /mivama-ui-3\.0\.0\.tgz/)
 })

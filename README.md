@@ -50,12 +50,25 @@ import { Field, Input } from "@mivama/ui/forms";
 Explicit subpaths are available for `button`, `sheet`, `card`, `scroll-scene`,
 `bento-grid`, and `forms`.
 
-## Theme contract
+## Design-system contract
 
-Import `@mivama/ui/styles.css` once. The stylesheet contains the self-hosted
-Onest variable font, Mivama brand tokens, Tailwind utilities, accessible light
-defaults on `:root`, and dark defaults below `.dark`. Add `.dark` to a common
-ancestor to switch themes.
+Import `@mivama/ui/styles.css` once. It remains the compatibility aggregate and
+contains the self-hosted Onest variable font, Tailwind utilities, tokens,
+themes, and component styles. Advanced builds may import
+`@mivama/ui/tokens.css` and `@mivama/ui/themes.css` explicitly; import both in
+that order before component styles.
+
+Set `data-mivama-theme="product"`, `data-mivama-theme="editorial"`, or
+`data-mivama-theme="portal"` on an application shell. Set
+`data-density="comfortable"` or `data-density="compact"` independently. The
+`:root` defaults remain product/comfortable for compatibility, and `.dark` on
+the shell or an ancestor selects each theme's dark contract.
+
+```tsx
+<main data-mivama-theme="portal" data-density="compact" className="dark">
+  ...
+</main>
+```
 
 - Layout: `--page-gutter`, `--container-reading`, `--container-standard`,
   `--container-wide`, `--section-compact`, `--section-default`,
@@ -78,7 +91,12 @@ ancestor to switch themes.
   `--instrument-foreground`, `--instrument-muted`, `--instrument-border`
 - Sidebar: `--sidebar`, `--sidebar-foreground`, `--sidebar-primary`,
   `--sidebar-accent`, `--sidebar-border`, `--sidebar-ring`
-- Shape and typography: `--radius`, `--font-heading`, `--font-sans`
+- Shape: `--shape-control-sm`, `--shape-control`, `--shape-surface`,
+  `--shape-panel`
+- Spacing and density: `--space-1` through `--space-12`, `--panel-padding`,
+  `--control-height`, `--sidebar-row-height`
+- Typography roles: `--type-display-*`, `--type-title-*`, `--type-body-*`,
+  `--type-meta-*`, `--font-heading`, `--font-sans`
 
 Use `Heading`, `Text`, and `Eyebrow` for shared type roles. The visual variant
 is independent from the rendered element:
@@ -97,10 +115,10 @@ colors.
 
 ### Editorial theme
 
-Add `.mivama-editorial-theme` to an application shell to opt into the verified
-warm-paper/cobalt/lime/instrument palette without changing the package's root
-theme. A surrounding `.dark` class, or `.dark` on the shell itself, selects its
-dark contract.
+Use `data-mivama-theme="editorial"` for the verified
+warm-paper/cobalt/lime/instrument palette. `.mivama-editorial-theme` remains a
+supported compatibility selector. A surrounding `.dark` class, or `.dark` on
+the shell itself, selects its dark contract.
 
 ```tsx
 <main className="mivama-editorial-theme">
@@ -239,6 +257,24 @@ interactive Card, Sheet overlay, and Sheet panel transitions also opt out
 explicitly with `motion-reduce` utilities. Consumer-owned animation should do
 the same rather than relying only on the global fallback.
 
+## Migrating to v3
+
+Version 3 formalizes theme and density selection without removing the v2
+stylesheet entrypoint. Existing consumers can upgrade and continue importing
+`@mivama/ui/styles.css`; `:root`, `.dark`, and `.mivama-editorial-theme` retain
+their previous behavior.
+
+New and migrated shells should add an explicit `data-mivama-theme` and
+`data-density`. Portal applications should use `data-density="compact"` to
+retain approximately the previous portal rhythm: cards use 16px padding,
+desktop controls and sidebar rows use 32px, and `--control-height` drives the
+default Button, Input, Select, and Tabs heights. Coarse-pointer/touch contexts
+retain 44px control and sidebar targets. Component-level size props still
+override density where intentional.
+
+No font was added in v3. The existing vendored Onest files remain the only
+packaged typeface.
+
 ## Registry sync
 
 `components.json` pins the official `base-nova` preset with the neutral theme.
@@ -261,17 +297,17 @@ configuration. Contract coverage also imports every explicit package subpath.
 
 For a consumer that commits a package archive, run this from the package root.
 Replace the consumer path once; the generated archive name is deterministic for
-version 2.3.0:
+version 3.0.0:
 
 ```bash
 consumer=/absolute/path/to/consumer
 mkdir -p "$consumer/vendor"
 npm run verify
 npm pack --ignore-scripts --pack-destination "$consumer/vendor"
-npm install --prefix "$consumer" "$consumer/vendor/mivama-ui-2.3.0.tgz"
+npm install --prefix "$consumer" "$consumer/vendor/mivama-ui-3.0.0.tgz"
 npm --prefix "$consumer" run verify
 ```
 
 Commit the consumer's new archive, `package.json`, and `package-lock.json`
 together. Remove the previous archive only after both manifests reference
-`mivama-ui-2.3.0.tgz`.
+`mivama-ui-3.0.0.tgz`.
