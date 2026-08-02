@@ -3,3 +3,4 @@ dist/
 *.tsbuildinfo
 npm-debug.log*
 .DS_Store
+mivama-ui-*.tgz

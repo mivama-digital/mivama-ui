@@ -311,3 +311,9 @@ npm --prefix "$consumer" run verify
 Commit the consumer's new archive, `package.json`, and `package-lock.json`
 together. Remove the previous archive only after both manifests reference
 `mivama-ui-3.0.0.tgz`.
+
+During active development, a consumer may instead reference the packed
+archive directly from this repository root via a `file:` dependency (the
+ui-showcase does this). The root archive is intentionally unversioned and
+gitignored; such consumers need this checkout present and re-run
+`npm install` after the archive is re-packed.
