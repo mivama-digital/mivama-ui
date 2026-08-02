@@ -39,6 +39,7 @@ type SidebarContextProps = {
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
+  sidebarId: string
   toggleSidebar: () => void
 }
 
@@ -68,6 +69,7 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  const sidebarId = React.useId()
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -94,12 +96,21 @@ function SidebarProvider({
   }, [isMobile, setOpen, setOpenMobile])
 
   // Adds a keyboard shortcut to toggle the sidebar.
+  // The shortcut must not fire while the user is typing or editing.
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
         (event.metaKey || event.ctrlKey)
       ) {
+        const target = event.target as HTMLElement | null
+        if (
+          target &&
+          (target.isContentEditable ||
+            target.matches("input, textarea, select"))
+        ) {
+          return
+        }
         event.preventDefault()
         toggleSidebar()
       }
@@ -121,9 +132,10 @@ function SidebarProvider({
       isMobile,
       openMobile,
       setOpenMobile,
+      sidebarId,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [state, open, setOpen, isMobile, openMobile, setOpenMobile, sidebarId, toggleSidebar]
   )
 
   return (
@@ -166,7 +178,7 @@ function Sidebar({
   mobileTitle?: string
   mobileDescription?: string
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, state, openMobile, setOpenMobile, sidebarId } = useSidebar()
 
   if (collapsible === "none") {
     return (
@@ -233,6 +245,7 @@ function Sidebar({
       <div
         data-slot="sidebar-container"
         data-side={side}
+        id={sidebarId}
         className={cn(
           "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear data-[side=left]:left-0 data-[side=left]:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)] data-[side=right]:right-0 data-[side=right]:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)] md:flex",
           // Adjust the padding for floating and inset variants.
@@ -261,7 +274,7 @@ function SidebarTrigger({
   label = "Toggle sidebar",
   ...props
 }: React.ComponentProps<typeof Button> & { label?: string }) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state, openMobile, isMobile, sidebarId } = useSidebar()
 
   return (
     <Button
@@ -269,6 +282,8 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon-sm"
+      aria-expanded={isMobile ? openMobile : state === "expanded"}
+      aria-controls={sidebarId}
       className={cn(className)}
       onClick={(event) => {
         onClick?.(event)
@@ -287,13 +302,16 @@ function SidebarRail({
   label = "Toggle sidebar",
   ...props
 }: React.ComponentProps<"button"> & { label?: string }) {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state, sidebarId } = useSidebar()
 
   return (
     <button
+      type="button"
       data-sidebar="rail"
       data-slot="sidebar-rail"
       aria-label={label}
+      aria-expanded={state === "expanded"}
+      aria-controls={sidebarId}
       tabIndex={-1}
       onClick={toggleSidebar}
       title={label}
@@ -332,7 +350,7 @@ function SidebarInput({
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn("min-h-11 w-full bg-background shadow-none", className)}
+      className={cn("min-h-(--control-height) w-full bg-background shadow-none", className)}
       {...props}
     />
   )
@@ -432,6 +450,7 @@ function SidebarGroupAction({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
+        type: "button",
         className: cn(
           "absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden after:absolute after:-inset-3 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
           className
@@ -524,6 +543,7 @@ function SidebarMenuButton({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
+        type: "button",
         className: cn(sidebarMenuButtonVariants({ variant, size }), className),
       },
       props
@@ -573,6 +593,7 @@ function SidebarMenuAction({
     defaultTagName: "button",
     props: mergeProps<"button">(
       {
+        type: "button",
         className: cn(
           "absolute top-3 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform group-data-[collapsible=icon]:hidden peer-hover/menu-button:text-sidebar-accent-foreground peer-data-active/menu-button:text-sidebar-accent-foreground after:absolute after:-inset-3 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
           showOnHover &&

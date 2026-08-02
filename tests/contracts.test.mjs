@@ -50,6 +50,55 @@ test("loading state cannot be overridden by spread props", async () => {
   assert.ok(button.indexOf("{...props}") < button.indexOf("disabled={disabled || loading}"))
 })
 
+test("shared buttons default to type button unless overridden", async () => {
+  const button = await source("button")
+  assert.ok(button.indexOf('type="button"') < button.indexOf("{...props}"))
+  assert.ok(button.indexOf("{...props}") < button.indexOf("aria-busy={loading || undefined}"))
+})
+
+test("sidebar internal buttons never submit ancestor forms and expose disclosure state", async () => {
+  const sidebar = await source("sidebar")
+  assert.match(sidebar, /function SidebarTrigger[\s\S]*aria-expanded=\{isMobile \? openMobile : state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/)
+  assert.match(sidebar, /function SidebarRail[\s\S]*type="button"[\s\S]*aria-expanded=\{state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/)
+  assert.match(sidebar, /function SidebarGroupAction[\s\S]*type: "button"/)
+  assert.match(sidebar, /function SidebarMenuButton[\s\S]*type: "button"/)
+  assert.match(sidebar, /function SidebarMenuAction[\s\S]*type: "button"/)
+  assert.match(sidebar, /sidebarId: string/)
+})
+
+test("sidebar keyboard shortcut ignores editable targets", async () => {
+  const sidebar = await source("sidebar")
+  assert.match(sidebar, /target\.matches\("input, textarea, select"\)/)
+  assert.match(sidebar, /target\.isContentEditable/)
+})
+
+test("portaled content inherits the application shell theme and density", async () => {
+  const [dialog, sheet, tooltip, attributes] = await Promise.all([
+    source("dialog"),
+    source("sheet"),
+    source("tooltip"),
+    readFile(new URL("../src/lib/shell-attributes.ts", import.meta.url), "utf8"),
+  ])
+  assert.match(attributes, /useShellAttributes/)
+  assert.match(attributes, /document\.querySelector\("\[data-mivama-theme\]"\)/)
+  assert.match(dialog, /useShellAttributes\("\[data-slot=dialog-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-overlay\]"\)/)
+  assert.match(tooltip, /useShellAttributes\("\[data-slot=tooltip-content\]"\)/)
+})
+
+test("compact density controls fit their documented 32px height", async () => {
+  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
+  const compact = tokens.slice(
+    tokens.indexOf('[data-density="compact"] {'),
+    tokens.indexOf("@media (min-width: 40rem)")
+  )
+  assert.match(compact, /--control-height: 32px;/)
+  assert.match(compact, /\[data-density="compact"\] \[data-slot="button"\][\s\S]*padding-block: 0\.25rem;/)
+  assert.match(compact, /\[data-density="compact"\] \[data-slot="tabs-trigger"\][\s\S]*padding-block: 0\.25rem;/)
+  assert.match(compact, /\[data-density="compact"\] \[data-slot="sidebar-menu-button"\][\s\S]*padding-block: 0\.25rem;/)
+})
+
 test("skeleton output and hidden ellipses are deterministic", async () => {
   const [sidebar, pagination, breadcrumb] = await Promise.all([
     source("sidebar"),

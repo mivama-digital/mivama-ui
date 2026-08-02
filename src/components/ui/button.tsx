@@ -62,6 +62,7 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
+      type="button"
       {...props}
       aria-busy={loading || undefined}
       disabled={disabled || loading}

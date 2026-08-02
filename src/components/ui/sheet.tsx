@@ -4,6 +4,7 @@ import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "../../lib/utils.js"
+import { useShellAttributes } from "../../lib/shell-attributes.js"
 import { Button } from "./button.js"
 import { XIcon } from "lucide-react"
 
@@ -40,6 +41,8 @@ function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
+  useShellAttributes("[data-slot=sheet-overlay]")
+
   return (
     <SheetPrimitive.Backdrop
       data-slot="sheet-overlay"
@@ -62,6 +65,8 @@ function SheetContent({
   closeLabel = "Close",
   ...props
 }: SheetContentProps) {
+  useShellAttributes("[data-slot=sheet-content]")
+
   return (
     <SheetPortal>
       <SheetOverlay className={overlayClassName} />

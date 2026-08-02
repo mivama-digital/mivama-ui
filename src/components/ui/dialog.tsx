@@ -4,6 +4,7 @@ import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "../../lib/utils.js"
+import { useShellAttributes } from "../../lib/shell-attributes.js"
 import { Button } from "./button.js"
 import { XIcon } from "lucide-react"
 
@@ -49,6 +50,8 @@ function DialogContent({
   showCloseButton?: boolean
   closeLabel?: string
 }) {
+  useShellAttributes("[data-slot=dialog-content]")
+
   return (
     <DialogPortal>
       <DialogOverlay />

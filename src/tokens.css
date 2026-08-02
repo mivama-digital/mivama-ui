@@ -126,6 +126,19 @@
   --sidebar-row-height: 32px;
 }
 
+/* Compact controls must actually fit 32px: text (20px) plus vertical padding
+   must stay below --control-height so min-height governs the final size. */
+[data-density="compact"] [data-slot="button"],
+[data-density="compact"] [data-slot="input"],
+[data-density="compact"] [data-slot="select"] {
+  padding-block: 0.25rem;
+}
+
+[data-density="compact"] [data-slot="tabs-trigger"],
+[data-density="compact"] [data-slot="sidebar-menu-button"] {
+  padding-block: 0.25rem;
+}
+
 @media (pointer: coarse) {
   [data-density="compact"] {
     --control-height: 44px;

@@ -1,8 +1,10 @@
 "use client"
 
+import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "../../lib/utils.js"
+import { useShellAttributes } from "../../lib/shell-attributes.js"
 
 function TooltipProvider({
   delay = 0,
@@ -38,6 +40,8 @@ function TooltipContent({
     TooltipPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
+  useShellAttributes("[data-slot=tooltip-content]")
+
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Positioner
