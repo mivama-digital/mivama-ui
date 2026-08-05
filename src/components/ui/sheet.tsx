@@ -50,11 +50,7 @@ function SheetPortal({ container, ...props }: SheetPrimitive.Portal.Props) {
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
-  const providerContainer = useMivamaPortalContainer()
-  useShellAttributes(
-    "[data-slot=sheet-overlay]",
-    providerContainer === undefined
-  )
+  useShellAttributes("[data-slot=sheet-overlay]")
 
   return (
     <SheetPrimitive.Backdrop
@@ -78,11 +74,7 @@ function SheetContent({
   closeLabel = "Close",
   ...props
 }: SheetContentProps) {
-  const providerContainer = useMivamaPortalContainer()
-  useShellAttributes(
-    "[data-slot=sheet-content]",
-    providerContainer === undefined
-  )
+  useShellAttributes("[data-slot=sheet-content]")
 
   return (
     <SheetPortal>
