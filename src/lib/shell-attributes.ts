@@ -2,6 +2,8 @@
 
 import * as React from "react"
 
+import { useMivamaPortalContainer } from "../components/mivama-provider.js"
+
 const SHELL_ATTRIBUTES = ["data-mivama-theme", "data-density"] as const
 
 function syncShellAttributes(shell: Element, portalSelector: string) {
@@ -22,7 +24,10 @@ function syncShellAttributes(shell: Element, portalSelector: string) {
  * Copies theme and density attributes from the active application shell onto
  * every matching portaled element and reacts to shell or portal changes.
  */
-export function useShellAttributes(portalSelector: string, enabled = true) {
+export function useShellAttributes(portalSelector: string) {
+  const providerContainer = useMivamaPortalContainer()
+  const enabled = providerContainer === undefined
+
   React.useEffect(() => {
     if (!enabled) return
 
