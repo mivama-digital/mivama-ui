@@ -37,30 +37,46 @@ try {
     await symlink(path.join(root, "node_modules", dependency), target, "junction")
   }
 
+  const packedPackage = JSON.parse(
+    await readFile(path.join(packageDir, "package.json"), "utf8")
+  )
+  const moduleSubpaths = Object.keys(packedPackage.exports).filter(
+    (subpath) => !subpath.endsWith(".css")
+  )
+  const importSpecifiers = moduleSubpaths.map((subpath) =>
+    subpath === "." ? packedPackage.name : `${packedPackage.name}/${subpath.slice(2)}`
+  )
+
   const checkFile = path.join(temp, "check.mjs")
   await writeFile(
     checkFile,
-    'import * as ui from "@mivama/ui";\n' +
-      'import { BentoGrid } from "@mivama/ui/bento-grid";\n' +
-      'import { Button } from "@mivama/ui/button";\n' +
-      'import { Card } from "@mivama/ui/card";\n' +
-      'import { Dialog } from "@mivama/ui/dialog";\n' +
-      'import { Input } from "@mivama/ui/forms";\n' +
-      'import { MivamaProvider } from "@mivama/ui/provider";\n' +
-      'import { ScrollScene } from "@mivama/ui/scroll-scene";\n' +
-      'import { SheetPortal } from "@mivama/ui/sheet";\n' +
-      'import { Tooltip } from "@mivama/ui/tooltip";\n' +
-      'if ([ui.Button, BentoGrid, Button, Card, Dialog, Input, MivamaProvider, ScrollScene, SheetPortal, Tooltip].some((value) => typeof value !== "function")) process.exit(1);\n'
+    `const specifiers = ${JSON.stringify(importSpecifiers)};\n` +
+      "for (const specifier of specifiers) {\n" +
+      "  const namespace = await import(specifier);\n" +
+      "  if (Object.keys(namespace).length === 0) throw new Error(`Empty module: ${specifier}`);\n" +
+      "}\n" +
+      "console.log(`Imported ${specifiers.length} public module entry points`);\n"
   )
   await execFileAsync(process.execPath, [checkFile], { cwd: temp })
 
-  const packedPackage = JSON.parse(await readFile(path.join(packageDir, "package.json"), "utf8"))
   assert.deepEqual(packedPackage.sideEffects, ["**/*.css"])
   for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
     assert.equal(packedPackage.exports[`./${stylesheet}`], `./dist/${stylesheet}`)
     await access(path.join(packageDir, "dist", stylesheet))
   }
-  console.log(`Imported packed ${packedPackage.name}@${packedPackage.version} in Node ESM`)
+
+  for (const [subpath, target] of Object.entries(packedPackage.exports)) {
+    if (typeof target === "string") continue
+    assert.equal(typeof target.types, "string", `${subpath} is missing types`)
+    assert.equal(typeof target.import, "string", `${subpath} is missing import`)
+    assert.equal(target.default, target.import, `${subpath} default/import mismatch`)
+    await access(path.join(packageDir, target.import))
+    await access(path.join(packageDir, target.types))
+  }
+
+  console.log(
+    `Validated packed ${packedPackage.name}@${packedPackage.version} with ${moduleSubpaths.length} module exports`
+  )
 } finally {
   await rm(temp, { recursive: true, force: true })
 }
