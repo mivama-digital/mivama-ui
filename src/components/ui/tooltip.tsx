@@ -7,6 +7,12 @@ import { useMivamaPortalContainer } from "../mivama-provider.js"
 import { useShellAttributes } from "../../lib/shell-attributes.js"
 import { cn } from "../../lib/utils.js"
 
+const TooltipIdContext = React.createContext<string | null>(null)
+
+function useTooltipId() {
+  return React.useContext(TooltipIdContext)
+}
+
 function TooltipProvider({
   delay = 0,
   ...props
@@ -20,12 +26,32 @@ function TooltipProvider({
   )
 }
 
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+function Tooltip({ children, ...props }: TooltipPrimitive.Root.Props) {
+  const contentId = React.useId()
+
+  return (
+    <TooltipIdContext.Provider value={contentId}>
+      <TooltipPrimitive.Root data-slot="tooltip" {...props}>
+        {children}
+      </TooltipPrimitive.Root>
+    </TooltipIdContext.Provider>
+  )
 }
 
-function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+function TooltipTrigger({
+  "aria-describedby": ariaDescribedBy,
+  ...props
+}: TooltipPrimitive.Trigger.Props) {
+  const contentId = useTooltipId()
+  const describedBy = [ariaDescribedBy, contentId].filter(Boolean).join(" ")
+
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      aria-describedby={describedBy || undefined}
+      {...props}
+    />
+  )
 }
 
 function TooltipContent({
@@ -35,6 +61,7 @@ function TooltipContent({
   align = "center",
   alignOffset = 0,
   children,
+  id,
   ...props
 }: TooltipPrimitive.Popup.Props &
   Pick<
@@ -42,6 +69,7 @@ function TooltipContent({
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
   const portalContainer = useMivamaPortalContainer()
+  const contentId = useTooltipId()
   useShellAttributes("[data-slot=tooltip-content]")
 
   return (
@@ -54,6 +82,7 @@ function TooltipContent({
         className="isolate z-50"
       >
         <TooltipPrimitive.Popup
+          id={id ?? contentId ?? undefined}
           role="tooltip"
           data-slot="tooltip-content"
           className={cn(
