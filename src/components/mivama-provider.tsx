@@ -19,7 +19,10 @@ type MivamaContextValue = {
 
 const MivamaContext = React.createContext<MivamaContextValue | null>(null)
 
-type MivamaProviderProps = Omit<React.ComponentProps<"div">, "children"> & {
+type MivamaProviderProps = Omit<
+  React.ComponentPropsWithoutRef<"div">,
+  "children"
+> & {
   children?: React.ReactNode
   theme?: string
   density?: string
@@ -48,11 +51,11 @@ function MivamaProvider({
   return (
     <MivamaContext.Provider value={contextValue}>
       <div
+        {...props}
         ref={shellRef}
         data-mivama-theme={theme}
         data-density={density}
         className={cn("isolate", className)}
-        {...props}
       >
         {children}
       </div>
