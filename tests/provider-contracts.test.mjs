@@ -7,10 +7,11 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8")
 test("MivamaProvider scopes theme, density, and portal container", async () => {
   const provider = await read("src/components/mivama-provider.tsx")
 
-  assert.match(provider, /data-mivama-theme=\{theme\}/)
-  assert.match(provider, /data-density=\{density\}/)
   assert.match(provider, /portalContainer: portalContainer === undefined \? shellRef : portalContainer/)
   assert.match(provider, /useMivamaPortalContainer/)
+  assert.ok(provider.indexOf("{...props}") < provider.indexOf("data-mivama-theme={theme}"))
+  assert.ok(provider.indexOf("{...props}") < provider.indexOf("data-density={density}"))
+  assert.ok(provider.indexOf("{...props}") < provider.indexOf('className={cn("isolate", className)}'))
 })
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
@@ -23,6 +24,18 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
   assert.match(dialog, /container=\{container \?\? providerContainer\}/)
   assert.match(sheet, /container=\{container \?\? providerContainer\}/)
   assert.match(tooltip, /<TooltipPrimitive\.Portal container=\{portalContainer\}>/)
+
+  for (const source of [dialog, sheet, tooltip]) {
+    assert.match(source, /=== undefined/)
+  }
+})
+
+test("legacy portal synchronization is disabled inside a provider", async () => {
+  const shellAttributes = await read("src/lib/shell-attributes.ts")
+
+  assert.match(shellAttributes, /useShellAttributes\(portalSelector: string, enabled = true\)/)
+  assert.match(shellAttributes, /if \(!enabled\) return/)
+  assert.match(shellAttributes, /\[enabled, portalSelector\]/)
 })
 
 test("provider and scoped overlays have public package exports", async () => {
