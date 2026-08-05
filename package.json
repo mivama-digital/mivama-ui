@@ -21,40 +21,150 @@
       "import": "./dist/components/mivama-provider.js",
       "default": "./dist/components/mivama-provider.js"
     },
+    "./alert": {
+      "types": "./dist/components/ui/alert.d.ts",
+      "import": "./dist/components/ui/alert.js",
+      "default": "./dist/components/ui/alert.js"
+    },
+    "./attachment": {
+      "types": "./dist/components/ui/attachment.d.ts",
+      "import": "./dist/components/ui/attachment.js",
+      "default": "./dist/components/ui/attachment.js"
+    },
+    "./badge": {
+      "types": "./dist/components/ui/badge.d.ts",
+      "import": "./dist/components/ui/badge.js",
+      "default": "./dist/components/ui/badge.js"
+    },
+    "./bento-grid": {
+      "types": "./dist/components/ui/bento-grid.d.ts",
+      "import": "./dist/components/ui/bento-grid.js",
+      "default": "./dist/components/ui/bento-grid.js"
+    },
+    "./breadcrumb": {
+      "types": "./dist/components/ui/breadcrumb.d.ts",
+      "import": "./dist/components/ui/breadcrumb.js",
+      "default": "./dist/components/ui/breadcrumb.js"
+    },
     "./button": {
       "types": "./dist/components/ui/button.d.ts",
       "import": "./dist/components/ui/button.js",
       "default": "./dist/components/ui/button.js"
-    },
-    "./dialog": {
-      "types": "./dist/components/ui/dialog.d.ts",
-      "import": "./dist/components/ui/dialog.js",
-      "default": "./dist/components/ui/dialog.js"
-    },
-    "./sheet": {
-      "types": "./dist/components/ui/sheet.d.ts",
-      "import": "./dist/components/ui/sheet.js",
-      "default": "./dist/components/ui/sheet.js"
-    },
-    "./tooltip": {
-      "types": "./dist/components/ui/tooltip.d.ts",
-      "import": "./dist/components/ui/tooltip.js",
-      "default": "./dist/components/ui/tooltip.js"
     },
     "./card": {
       "types": "./dist/components/ui/card.d.ts",
       "import": "./dist/components/ui/card.js",
       "default": "./dist/components/ui/card.js"
     },
+    "./choice": {
+      "types": "./dist/components/ui/choice.d.ts",
+      "import": "./dist/components/ui/choice.js",
+      "default": "./dist/components/ui/choice.js"
+    },
+    "./container": {
+      "types": "./dist/components/ui/container.d.ts",
+      "import": "./dist/components/ui/container.js",
+      "default": "./dist/components/ui/container.js"
+    },
+    "./dialog": {
+      "types": "./dist/components/ui/dialog.d.ts",
+      "import": "./dist/components/ui/dialog.js",
+      "default": "./dist/components/ui/dialog.js"
+    },
+    "./editorial-grid": {
+      "types": "./dist/components/ui/editorial-grid.d.ts",
+      "import": "./dist/components/ui/editorial-grid.js",
+      "default": "./dist/components/ui/editorial-grid.js"
+    },
+    "./empty": {
+      "types": "./dist/components/ui/empty.d.ts",
+      "import": "./dist/components/ui/empty.js",
+      "default": "./dist/components/ui/empty.js"
+    },
+    "./field": {
+      "types": "./dist/components/ui/field.d.ts",
+      "import": "./dist/components/ui/field.js",
+      "default": "./dist/components/ui/field.js"
+    },
+    "./input": {
+      "types": "./dist/components/ui/input.d.ts",
+      "import": "./dist/components/ui/input.js",
+      "default": "./dist/components/ui/input.js"
+    },
+    "./message": {
+      "types": "./dist/components/ui/message.d.ts",
+      "import": "./dist/components/ui/message.js",
+      "default": "./dist/components/ui/message.js"
+    },
+    "./pagination": {
+      "types": "./dist/components/ui/pagination.d.ts",
+      "import": "./dist/components/ui/pagination.js",
+      "default": "./dist/components/ui/pagination.js"
+    },
+    "./progress": {
+      "types": "./dist/components/ui/progress.d.ts",
+      "import": "./dist/components/ui/progress.js",
+      "default": "./dist/components/ui/progress.js"
+    },
     "./scroll-scene": {
       "types": "./dist/components/ui/scroll-scene.d.ts",
       "import": "./dist/components/ui/scroll-scene.js",
       "default": "./dist/components/ui/scroll-scene.js"
     },
-    "./bento-grid": {
-      "types": "./dist/components/ui/bento-grid.d.ts",
-      "import": "./dist/components/ui/bento-grid.js",
-      "default": "./dist/components/ui/bento-grid.js"
+    "./section": {
+      "types": "./dist/components/ui/section.d.ts",
+      "import": "./dist/components/ui/section.js",
+      "default": "./dist/components/ui/section.js"
+    },
+    "./select": {
+      "types": "./dist/components/ui/select.d.ts",
+      "import": "./dist/components/ui/select.js",
+      "default": "./dist/components/ui/select.js"
+    },
+    "./separator": {
+      "types": "./dist/components/ui/separator.d.ts",
+      "import": "./dist/components/ui/separator.js",
+      "default": "./dist/components/ui/separator.js"
+    },
+    "./sheet": {
+      "types": "./dist/components/ui/sheet.d.ts",
+      "import": "./dist/components/ui/sheet.js",
+      "default": "./dist/components/ui/sheet.js"
+    },
+    "./sidebar": {
+      "types": "./dist/components/ui/sidebar.d.ts",
+      "import": "./dist/components/ui/sidebar.js",
+      "default": "./dist/components/ui/sidebar.js"
+    },
+    "./skeleton": {
+      "types": "./dist/components/ui/skeleton.d.ts",
+      "import": "./dist/components/ui/skeleton.js",
+      "default": "./dist/components/ui/skeleton.js"
+    },
+    "./switch": {
+      "types": "./dist/components/ui/switch.d.ts",
+      "import": "./dist/components/ui/switch.js",
+      "default": "./dist/components/ui/switch.js"
+    },
+    "./tabs": {
+      "types": "./dist/components/ui/tabs.d.ts",
+      "import": "./dist/components/ui/tabs.js",
+      "default": "./dist/components/ui/tabs.js"
+    },
+    "./textarea": {
+      "types": "./dist/components/ui/textarea.d.ts",
+      "import": "./dist/components/ui/textarea.js",
+      "default": "./dist/components/ui/textarea.js"
+    },
+    "./tooltip": {
+      "types": "./dist/components/ui/tooltip.d.ts",
+      "import": "./dist/components/ui/tooltip.js",
+      "default": "./dist/components/ui/tooltip.js"
+    },
+    "./typography": {
+      "types": "./dist/components/ui/typography.d.ts",
+      "import": "./dist/components/ui/typography.js",
+      "default": "./dist/components/ui/typography.js"
     },
     "./forms": {
       "types": "./dist/forms.d.ts",
@@ -75,8 +185,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "node --test tests/*.test.mjs",
     "audit:source": "node scripts/audit-source.mjs",
+    "bundle:check": "node scripts/check-bundle-budgets.mjs",
     "pack:check": "node scripts/check-packed-package.mjs",
-    "verify": "npm run audit:source && npm run typecheck && npm run build && npm test && npm run pack:check",
+    "verify": "npm run audit:source && npm run typecheck && npm run build && npm run bundle:check && npm test && npm run pack:check",
     "prepublishOnly": "npm run verify",
     "prepare": "npm run build"
   },

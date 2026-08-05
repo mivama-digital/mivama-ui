@@ -4,6 +4,9 @@ import * as React from "react"
 
 import { cn } from "../lib/utils.js"
 
+type MivamaTheme = "product" | "marketing" | "dashboard" | (string & {})
+type MivamaDensity = "compact" | "comfortable" | "spacious" | (string & {})
+
 type MivamaPortalContainer =
   | HTMLElement
   | ShadowRoot
@@ -11,8 +14,8 @@ type MivamaPortalContainer =
   | null
 
 type MivamaContextValue = {
-  theme: string
-  density: string
+  theme: MivamaTheme
+  density: MivamaDensity
   portalContainer: MivamaPortalContainer
   shellRef: React.RefObject<HTMLDivElement | null>
 }
@@ -24,52 +27,83 @@ type MivamaProviderProps = Omit<
   "children"
 > & {
   children?: React.ReactNode
-  theme?: string
-  density?: string
+  theme?: MivamaTheme
+  density?: MivamaDensity
   portalContainer?: MivamaPortalContainer
 }
 
-function MivamaProvider({
-  theme = "product",
-  density = "comfortable",
-  portalContainer,
-  className,
-  children,
-  ...props
-}: MivamaProviderProps) {
-  const shellRef = React.useRef<HTMLDivElement>(null)
-  const contextValue = React.useMemo<MivamaContextValue>(
-    () => ({
-      theme,
-      density,
-      portalContainer: portalContainer === undefined ? shellRef : portalContainer,
-      shellRef,
-    }),
-    [theme, density, portalContainer]
-  )
+const MivamaProvider = React.forwardRef<HTMLDivElement, MivamaProviderProps>(
+  function MivamaProvider(
+    {
+      theme = "product",
+      density = "comfortable",
+      portalContainer,
+      className,
+      children,
+      ...props
+    },
+    forwardedRef
+  ) {
+    const shellRef = React.useRef<HTMLDivElement>(null)
+    const setShellRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        shellRef.current = node
+        if (typeof forwardedRef === "function") {
+          forwardedRef(node)
+        } else if (forwardedRef) {
+          forwardedRef.current = node
+        }
+      },
+      [forwardedRef]
+    )
+    const contextValue = React.useMemo<MivamaContextValue>(
+      () => ({
+        theme,
+        density,
+        portalContainer: portalContainer === undefined ? shellRef : portalContainer,
+        shellRef,
+      }),
+      [theme, density, portalContainer]
+    )
 
-  return (
-    <MivamaContext.Provider value={contextValue}>
-      <div
-        {...props}
-        ref={shellRef}
-        data-mivama-theme={theme}
-        data-density={density}
-        className={cn("isolate", className)}
-      >
-        {children}
-      </div>
-    </MivamaContext.Provider>
-  )
-}
+    return (
+      <MivamaContext.Provider value={contextValue}>
+        <div
+          {...props}
+          ref={setShellRef}
+          data-mivama-theme={theme}
+          data-density={density}
+          className={cn("isolate", className)}
+        >
+          {children}
+        </div>
+      </MivamaContext.Provider>
+    )
+  }
+)
 
-function useMivamaContext() {
+function useOptionalMivamaContext() {
   return React.useContext(MivamaContext)
 }
 
-function useMivamaPortalContainer() {
-  return useMivamaContext()?.portalContainer
+function useMivamaContext() {
+  return useOptionalMivamaContext()
 }
 
-export { MivamaProvider, useMivamaContext, useMivamaPortalContainer }
-export type { MivamaPortalContainer, MivamaProviderProps }
+function useMivamaPortalContainer() {
+  return useOptionalMivamaContext()?.portalContainer
+}
+
+export {
+  MivamaProvider,
+  useMivamaContext,
+  useMivamaPortalContainer,
+  useOptionalMivamaContext,
+}
+export type {
+  MivamaContextValue,
+  MivamaDensity,
+  MivamaPortalContainer,
+  MivamaProviderProps,
+  MivamaTheme,
+}
