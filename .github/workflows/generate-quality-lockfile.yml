@@ -1,4 +1,4 @@
-name: Generate quality lockfile
+name: Bootstrap quality foundation
 
 on:
   push:
@@ -6,19 +6,21 @@ on:
       - agent/test-quality-foundation
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  generate:
+  bootstrap:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
-      - run: >-
+      - name: Install quality tools
+        run: >-
           npm install --save-dev
           @eslint/js
           eslint-plugin-import-x
@@ -34,10 +36,242 @@ jobs:
           @vitest/coverage-v8
           axe-core
           vitest-axe
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: quality-lockfile
-          path: |
-            package.json
-            package-lock.json
-          if-no-files-found: error
+      - name: Configure scripts
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, writeFile } from 'node:fs/promises'
+          const packageJson = JSON.parse(await readFile('package.json', 'utf8'))
+          Object.assign(packageJson.scripts, {
+            lint: 'eslint "scripts/**/*.mjs" "tests/**/*.mjs"',
+            format: 'prettier --write .',
+            'format:check': 'prettier --check package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts "tests/runtime/**/*.{ts,tsx}"',
+            'test:runtime': 'vitest run',
+            'test:runtime:watch': 'vitest',
+            'test:coverage': 'vitest run --coverage',
+            'test:contracts': 'node --test tests/*.test.mjs',
+            test: 'npm run test:runtime && npm run test:contracts',
+            verify: 'npm run lint && npm run format:check && npm run audit:source && npm run typecheck && npm run build && npm run bundle:check && npm test && npm run pack:check'
+          })
+          await writeFile('package.json', `${JSON.stringify(packageJson, null, 2)}\n`)
+          NODE
+      - name: Add lint and format configuration
+        run: |
+          cat > eslint.config.mjs <<'EOF'
+          import js from "@eslint/js"
+          import importX from "eslint-plugin-import-x"
+          import unusedImports from "eslint-plugin-unused-imports"
+          import globals from "globals"
+
+          export default [
+            {
+              ignores: ["dist/**", "node_modules/**", "coverage/**"],
+            },
+            {
+              files: ["scripts/**/*.mjs", "tests/**/*.mjs"],
+              ...js.configs.recommended,
+              languageOptions: {
+                ecmaVersion: "latest",
+                sourceType: "module",
+                globals: globals.node,
+              },
+              plugins: {
+                "import-x": importX,
+                "unused-imports": unusedImports,
+              },
+              rules: {
+                "no-console": "off",
+                "no-unused-vars": "off",
+                "unused-imports/no-unused-imports": "error",
+                "unused-imports/no-unused-vars": [
+                  "error",
+                  { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+                ],
+                "import-x/first": "error",
+                "import-x/newline-after-import": "error",
+                "import-x/no-duplicates": "error",
+              },
+            },
+          ]
+          EOF
+          cat > .prettierrc.json <<'EOF'
+          {
+            "semi": false,
+            "singleQuote": false,
+            "trailingComma": "es5"
+          }
+          EOF
+          cat > .prettierignore <<'EOF'
+          dist
+          node_modules
+          coverage
+          src/fonts
+          EOF
+          cat > .editorconfig <<'EOF'
+          root = true
+
+          [*]
+          charset = utf-8
+          end_of_line = lf
+          insert_final_newline = true
+          indent_style = space
+          indent_size = 2
+          trim_trailing_whitespace = true
+
+          [*.md]
+          trim_trailing_whitespace = false
+          EOF
+      - name: Add runtime and accessibility tests
+        run: |
+          mkdir -p tests/runtime
+          cat > vitest.config.ts <<'EOF'
+          import { defineConfig } from "vitest/config"
+
+          export default defineConfig({
+            test: {
+              environment: "jsdom",
+              setupFiles: ["./tests/setup.ts"],
+              include: ["tests/runtime/**/*.test.{ts,tsx}"],
+              coverage: {
+                provider: "v8",
+                reporter: ["text", "json-summary", "html"],
+                include: ["src/components/**/*.{ts,tsx}", "src/hooks/**/*.{ts,tsx}"],
+              },
+            },
+          })
+          EOF
+          cat > tests/setup.ts <<'EOF'
+          import "@testing-library/jest-dom/vitest"
+          import { cleanup } from "@testing-library/react"
+          import { afterEach, vi } from "vitest"
+
+          afterEach(() => cleanup())
+
+          Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: vi.fn().mockImplementation((query: string) => ({
+              matches: false,
+              media: query,
+              onchange: null,
+              addListener: vi.fn(),
+              removeListener: vi.fn(),
+              addEventListener: vi.fn(),
+              removeEventListener: vi.fn(),
+              dispatchEvent: vi.fn(),
+            })),
+          })
+
+          class ResizeObserverMock {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+          }
+
+          globalThis.ResizeObserver = ResizeObserverMock
+          EOF
+          cat > tests/runtime/provider.test.tsx <<'EOF'
+          import * as React from "react"
+          import { render, screen } from "@testing-library/react"
+          import { describe, expect, it } from "vitest"
+
+          import {
+            MivamaProvider,
+            useMivamaPortalContainer,
+          } from "../../src/components/mivama-provider.js"
+
+          function PortalProbe() {
+            const portalContainer = useMivamaPortalContainer()
+            const resolved =
+              portalContainer && "current" in portalContainer
+                ? portalContainer.current
+                : portalContainer
+
+            return <output data-testid="portal-probe">{resolved instanceof HTMLElement ? resolved.dataset.mivamaTheme : "none"}</output>
+          }
+
+          describe("MivamaProvider", () => {
+            it("applies defaults and exposes its shell as portal container", () => {
+              render(
+                <MivamaProvider data-testid="shell">
+                  <PortalProbe />
+                </MivamaProvider>
+              )
+
+              const shell = screen.getByTestId("shell")
+              expect(shell).toHaveAttribute("data-mivama-theme", "product")
+              expect(shell).toHaveAttribute("data-density", "comfortable")
+              expect(screen.getByTestId("portal-probe")).toHaveTextContent("product")
+            })
+
+            it("supports custom theme, density, className, and forwarded refs", () => {
+              const ref = React.createRef<HTMLDivElement>()
+              render(
+                <MivamaProvider
+                  ref={ref}
+                  theme="dashboard"
+                  density="compact"
+                  className="custom-shell"
+                />
+              )
+
+              expect(ref.current).toHaveAttribute("data-mivama-theme", "dashboard")
+              expect(ref.current).toHaveAttribute("data-density", "compact")
+              expect(ref.current).toHaveClass("isolate", "custom-shell")
+            })
+
+            it("uses an explicit portal container", () => {
+              const portal = document.createElement("div")
+              portal.dataset.mivamaTheme = "external"
+              render(
+                <MivamaProvider portalContainer={portal}>
+                  <PortalProbe />
+                </MivamaProvider>
+              )
+
+              expect(screen.getByTestId("portal-probe")).toHaveTextContent("external")
+            })
+          })
+          EOF
+          cat > tests/runtime/button-accessibility.test.tsx <<'EOF'
+          import { render, screen } from "@testing-library/react"
+          import userEvent from "@testing-library/user-event"
+          import axe from "axe-core"
+          import { describe, expect, it } from "vitest"
+
+          import { Button } from "../../src/components/ui/button.js"
+
+          describe("Button", () => {
+            it("supports activation and loading semantics", async () => {
+              const user = userEvent.setup()
+              let activations = 0
+              const { rerender } = render(
+                <Button onClick={() => activations++}>Save</Button>
+              )
+
+              await user.click(screen.getByRole("button", { name: "Save" }))
+              expect(activations).toBe(1)
+
+              rerender(<Button loading>Save</Button>)
+              const button = screen.getByRole("button")
+              expect(button).toBeDisabled()
+              expect(button).toHaveAttribute("aria-busy", "true")
+            })
+
+            it("has no automated accessibility violations", async () => {
+              const { container } = render(<Button>Continue</Button>)
+              const results = await axe.run(container)
+              expect(results.violations).toEqual([])
+            })
+          })
+          EOF
+      - name: Format and verify
+        run: |
+          npx prettier --write package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts tests/runtime/provider.test.tsx tests/runtime/button-accessibility.test.tsx .prettierrc.json .prettierignore .editorconfig
+          npm run verify
+      - name: Commit generated foundation
+        run: |
+          rm .github/workflows/generate-quality-lockfile.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts tests/runtime .prettierrc.json .prettierignore .editorconfig .github/workflows/generate-quality-lockfile.yml
+          git commit -m "test: add quality foundation"
+          git push
