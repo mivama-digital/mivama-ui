@@ -24,16 +24,13 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
   assert.match(dialog, /container=\{container \?\? providerContainer\}/)
   assert.match(sheet, /container=\{container \?\? providerContainer\}/)
   assert.match(tooltip, /<TooltipPrimitive\.Portal container=\{portalContainer\}>/)
-
-  for (const source of [dialog, sheet, tooltip]) {
-    assert.match(source, /=== undefined/)
-  }
 })
 
 test("legacy portal synchronization is disabled inside a provider", async () => {
   const shellAttributes = await read("src/lib/shell-attributes.ts")
 
-  assert.match(shellAttributes, /useShellAttributes\(portalSelector: string, enabled = true\)/)
+  assert.match(shellAttributes, /const providerContainer = useMivamaPortalContainer\(\)/)
+  assert.match(shellAttributes, /const enabled = providerContainer === undefined/)
   assert.match(shellAttributes, /if \(!enabled\) return/)
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
 })
