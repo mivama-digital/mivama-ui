@@ -44,10 +44,13 @@ try {
       'import { BentoGrid } from "@mivama/ui/bento-grid";\n' +
       'import { Button } from "@mivama/ui/button";\n' +
       'import { Card } from "@mivama/ui/card";\n' +
+      'import { Dialog } from "@mivama/ui/dialog";\n' +
       'import { Input } from "@mivama/ui/forms";\n' +
+      'import { MivamaProvider } from "@mivama/ui/provider";\n' +
       'import { ScrollScene } from "@mivama/ui/scroll-scene";\n' +
       'import { SheetPortal } from "@mivama/ui/sheet";\n' +
-      'if ([ui.Button, BentoGrid, Button, Card, Input, ScrollScene, SheetPortal].some((value) => typeof value !== "function")) process.exit(1);\n'
+      'import { Tooltip } from "@mivama/ui/tooltip";\n' +
+      'if ([ui.Button, BentoGrid, Button, Card, Dialog, Input, MivamaProvider, ScrollScene, SheetPortal, Tooltip].some((value) => typeof value !== "function")) process.exit(1);\n'
   )
   await execFileAsync(process.execPath, [checkFile], { cwd: temp })
 

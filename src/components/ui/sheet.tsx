@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
-
-import { cn } from "../../lib/utils.js"
-import { useShellAttributes } from "../../lib/shell-attributes.js"
-import { Button } from "./button.js"
 import { XIcon } from "lucide-react"
+
+import { useMivamaPortalContainer } from "../mivama-provider.js"
+import { useShellAttributes } from "../../lib/shell-attributes.js"
+import { cn } from "../../lib/utils.js"
+import { Button } from "./button.js"
 
 type SheetSize = "sm" | "md" | "full"
 
@@ -36,12 +37,24 @@ function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
   return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
 }
 
-function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
-  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
+function SheetPortal({ container, ...props }: SheetPrimitive.Portal.Props) {
+  const providerContainer = useMivamaPortalContainer()
+
+  return (
+    <SheetPrimitive.Portal
+      data-slot="sheet-portal"
+      container={container ?? providerContainer}
+      {...props}
+    />
+  )
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
-  useShellAttributes("[data-slot=sheet-overlay]")
+  const providerContainer = useMivamaPortalContainer()
+  useShellAttributes(
+    "[data-slot=sheet-overlay]",
+    providerContainer === undefined
+  )
 
   return (
     <SheetPrimitive.Backdrop
@@ -65,7 +78,11 @@ function SheetContent({
   closeLabel = "Close",
   ...props
 }: SheetContentProps) {
-  useShellAttributes("[data-slot=sheet-content]")
+  const providerContainer = useMivamaPortalContainer()
+  useShellAttributes(
+    "[data-slot=sheet-content]",
+    providerContainer === undefined
+  )
 
   return (
     <SheetPortal>
@@ -128,19 +145,13 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn(
-        "font-heading text-base font-medium text-foreground",
-        className
-      )}
+      className={cn("font-heading text-base font-medium text-foreground", className)}
       {...props}
     />
   )
 }
 
-function SheetDescription({
-  className,
-  ...props
-}: SheetPrimitive.Description.Props) {
+function SheetDescription({ className, ...props }: SheetPrimitive.Description.Props) {
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"

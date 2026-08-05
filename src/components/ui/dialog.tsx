@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
-
-import { cn } from "../../lib/utils.js"
-import { useShellAttributes } from "../../lib/shell-attributes.js"
-import { Button } from "./button.js"
 import { XIcon } from "lucide-react"
+
+import { useMivamaPortalContainer } from "../mivama-provider.js"
+import { useShellAttributes } from "../../lib/shell-attributes.js"
+import { cn } from "../../lib/utils.js"
+import { Button } from "./button.js"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -16,18 +17,23 @@ function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
-function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+function DialogPortal({ container, ...props }: DialogPrimitive.Portal.Props) {
+  const providerContainer = useMivamaPortalContainer()
+
+  return (
+    <DialogPrimitive.Portal
+      data-slot="dialog-portal"
+      container={container ?? providerContainer}
+      {...props}
+    />
+  )
 }
 
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
-function DialogOverlay({
-  className,
-  ...props
-}: DialogPrimitive.Backdrop.Props) {
+function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
@@ -50,7 +56,11 @@ function DialogContent({
   showCloseButton?: boolean
   closeLabel?: string
 }) {
-  useShellAttributes("[data-slot=dialog-content]")
+  const providerContainer = useMivamaPortalContainer()
+  useShellAttributes(
+    "[data-slot=dialog-content]",
+    providerContainer === undefined
+  )
 
   return (
     <DialogPortal>
@@ -129,19 +139,13 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn(
-        "font-heading text-base leading-none font-medium",
-        className
-      )}
+      className={cn("font-heading text-base leading-none font-medium", className)}
       {...props}
     />
   )
 }
 
-function DialogDescription({
-  className,
-  ...props
-}: DialogPrimitive.Description.Props) {
+function DialogDescription({ className, ...props }: DialogPrimitive.Description.Props) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
