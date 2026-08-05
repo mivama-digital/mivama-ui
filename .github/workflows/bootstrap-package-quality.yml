@@ -28,7 +28,7 @@ jobs:
           const packageJson = JSON.parse(await readFile('package.json', 'utf8'))
           Object.assign(packageJson.scripts, {
             'package:publint': 'publint',
-            'package:types': 'attw --pack . --ignore-rules=cjs-resolves-to-esm',
+            'package:types': 'attw --pack . --profile node16 --exclude-entrypoints styles.css tokens.css themes.css --ignore-rules cjs-resolves-to-esm',
             'package:lint': 'npm run package:publint && npm run package:types'
           })
           packageJson.scripts.verify = `${packageJson.scripts.verify} && npm run package:lint`
