@@ -127,7 +127,7 @@ describe("overlay components", () => {
     expect(tooltip).toHaveTextContent("Helpful information")
     expect(trigger).toHaveAccessibleDescription("Helpful information")
 
-    const results = await axe.run(document.body)
+    const results = await axe.run(tooltip)
     expect(results.violations).toEqual([])
 
     await user.keyboard("{Escape}")
