@@ -18,12 +18,14 @@ function syncShellAttributes(shell: Element, portalSelector: string) {
 }
 
 /**
+ * Legacy fallback for applications that do not use MivamaProvider.
  * Copies theme and density attributes from the active application shell onto
- * every matching portaled element. The observer also reacts when the shell's
- * attributes change or when the overlay library remounts portal nodes.
+ * every matching portaled element and reacts to shell or portal changes.
  */
-export function useShellAttributes(portalSelector: string) {
+export function useShellAttributes(portalSelector: string, enabled = true) {
   React.useEffect(() => {
+    if (!enabled) return
+
     const shell = document.querySelector("[data-mivama-theme]")
     if (!shell) return
 
@@ -44,5 +46,5 @@ export function useShellAttributes(portalSelector: string) {
       portalObserver.disconnect()
       shellObserver.disconnect()
     }
-  }, [portalSelector])
+  }, [enabled, portalSelector])
 }
