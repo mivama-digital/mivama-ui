@@ -42,7 +42,10 @@ function TooltipContent({
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
   const portalContainer = useMivamaPortalContainer()
-  useShellAttributes("[data-slot=tooltip-content]")
+  useShellAttributes(
+    "[data-slot=tooltip-content]",
+    portalContainer === undefined
+  )
 
   return (
     <TooltipPrimitive.Portal container={portalContainer}>
