@@ -48,7 +48,9 @@ for (const component of components) {
     continue
   }
   if (typeof packageExport !== "object") {
-    errors.push(`Component export must define types/import/default: ${exportKey}`)
+    errors.push(
+      `Component export must define types/import/default: ${exportKey}`
+    )
     continue
   }
   if (!packageExport.types || !packageExport.import || !packageExport.default) {
@@ -100,7 +102,14 @@ for (const slug of registeredSlugs) {
 
 const sorted = [...components].sort((a, b) => a.slug.localeCompare(b.slug))
 const sections = sorted.map(
-  ({ name, slug, category, status, client, interactive }) => `## \`@mivama/ui/${slug}\`
+  ({
+    name,
+    slug,
+    category,
+    status,
+    client,
+    interactive,
+  }) => `## \`@mivama/ui/${slug}\`
 
 - Primary component: ${name}
 - Category: ${category}
