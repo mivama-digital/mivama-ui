@@ -37,7 +37,9 @@ jobs:
           axe-core
           vitest-axe
       - name: Generate quality foundation
-        run: node scripts/bootstrap-quality.mjs
+        run: |
+          mkdir -p tests/runtime
+          node scripts/bootstrap-quality.mjs
       - name: Format and verify
         run: |
           npx prettier --write package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts tests/runtime/provider.test.tsx tests/runtime/button-accessibility.test.tsx .prettierrc.json
