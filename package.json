@@ -16,15 +16,30 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./provider": {
+      "types": "./dist/components/mivama-provider.d.ts",
+      "import": "./dist/components/mivama-provider.js",
+      "default": "./dist/components/mivama-provider.js"
+    },
     "./button": {
       "types": "./dist/components/ui/button.d.ts",
       "import": "./dist/components/ui/button.js",
       "default": "./dist/components/ui/button.js"
     },
+    "./dialog": {
+      "types": "./dist/components/ui/dialog.d.ts",
+      "import": "./dist/components/ui/dialog.js",
+      "default": "./dist/components/ui/dialog.js"
+    },
     "./sheet": {
       "types": "./dist/components/ui/sheet.d.ts",
       "import": "./dist/components/ui/sheet.js",
       "default": "./dist/components/ui/sheet.js"
+    },
+    "./tooltip": {
+      "types": "./dist/components/ui/tooltip.d.ts",
+      "import": "./dist/components/ui/tooltip.js",
+      "default": "./dist/components/ui/tooltip.js"
     },
     "./card": {
       "types": "./dist/components/ui/card.d.ts",
@@ -59,9 +74,10 @@
     "sync:imports": "node scripts/fix-shadcn-imports.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "test": "node --test tests/*.test.mjs",
+    "audit:source": "node scripts/audit-source.mjs",
     "pack:check": "node scripts/check-packed-package.mjs",
-    "verify": "npm run typecheck && npm run build && npm test && npm run pack:check",
-    "prepublishOnly": "npm run build",
+    "verify": "npm run audit:source && npm run typecheck && npm run build && npm test && npm run pack:check",
+    "prepublishOnly": "npm run verify",
     "prepare": "npm run build"
   },
   "peerDependencies": {
