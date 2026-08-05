@@ -1,5 +1,16 @@
-export { MivamaProvider, useMivamaContext, useMivamaPortalContainer } from "./components/mivama-provider.js";
-export type { MivamaPortalContainer, MivamaProviderProps } from "./components/mivama-provider.js";
+export {
+  MivamaProvider,
+  useMivamaContext,
+  useMivamaPortalContainer,
+  useOptionalMivamaContext,
+} from "./components/mivama-provider.js";
+export type {
+  MivamaContextValue,
+  MivamaDensity,
+  MivamaPortalContainer,
+  MivamaProviderProps,
+  MivamaTheme,
+} from "./components/mivama-provider.js";
 export { Badge, badgeVariants } from "./components/ui/badge.js";
 export { Button, buttonVariants } from "./components/ui/button.js";
 export { BentoGrid, BentoGridItem } from "./components/ui/bento-grid.js";
