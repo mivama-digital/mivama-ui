@@ -56,7 +56,11 @@ function DialogContent({
   showCloseButton?: boolean
   closeLabel?: string
 }) {
-  useShellAttributes("[data-slot=dialog-content]")
+  const providerContainer = useMivamaPortalContainer()
+  useShellAttributes(
+    "[data-slot=dialog-content]",
+    providerContainer === undefined
+  )
 
   return (
     <DialogPortal>
