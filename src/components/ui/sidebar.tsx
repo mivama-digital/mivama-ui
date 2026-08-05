@@ -8,6 +8,12 @@ import { PanelLeftIcon } from "lucide-react"
 
 import { useIsMobile } from "../../hooks/use-mobile.js"
 import { cn } from "../../lib/utils.js"
+import {
+  persistSidebarState,
+  readSidebarState,
+  type SidebarCookieOptions,
+  type SidebarPersistence,
+} from "./sidebar-persistence.js"
 import { Button } from "./button.js"
 import { Input } from "./input.js"
 import { Separator } from "./separator.js"
@@ -19,14 +25,8 @@ import {
   SheetTitle,
 } from "./sheet.js"
 import { Skeleton } from "./skeleton.js"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "./tooltip.js"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.js"
 
-const SIDEBAR_COOKIE_NAME = "sidebar_state"
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
@@ -58,6 +58,9 @@ function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  persistence = "none",
+  storageKey = "mivama-sidebar",
+  cookieOptions,
   className,
   style,
   children,
@@ -66,6 +69,9 @@ function SidebarProvider({
   defaultOpen?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  persistence?: SidebarPersistence
+  storageKey?: string
+  cookieOptions?: SidebarCookieOptions
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
@@ -74,7 +80,21 @@ function SidebarProvider({
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen)
+  const hasRestoredPersistence = React.useRef(false)
   const open = openProp ?? _open
+
+  React.useEffect(() => {
+    if (hasRestoredPersistence.current) return
+    hasRestoredPersistence.current = true
+    if (openProp !== undefined) return
+
+    const persistedOpen = readSidebarState({
+      persistence,
+      storageKey,
+      cookieOptions,
+    })
+    if (persistedOpen !== null) _setOpen(persistedOpen)
+  }, [openProp, persistence, storageKey, cookieOptions])
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
       const openState = typeof value === "function" ? value(open) : value
@@ -84,10 +104,13 @@ function SidebarProvider({
         _setOpen(openState)
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      persistSidebarState(openState, {
+        persistence,
+        storageKey,
+        cookieOptions,
+      })
     },
-    [setOpenProp, open]
+    [setOpenProp, open, persistence, storageKey, cookieOptions]
   )
 
   // Helper to toggle the sidebar.
@@ -135,7 +158,16 @@ function SidebarProvider({
       sidebarId,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, sidebarId, toggleSidebar]
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      sidebarId,
+      toggleSidebar,
+    ]
   )
 
   return (
@@ -350,7 +382,10 @@ function SidebarInput({
     <Input
       data-slot="sidebar-input"
       data-sidebar="input"
-      className={cn("min-h-(--control-height) w-full bg-background shadow-none", className)}
+      className={cn(
+        "min-h-(--control-height) w-full bg-background shadow-none",
+        className
+      )}
       {...props}
     />
   )
@@ -749,3 +784,8 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+export type {
+  SidebarCookieOptions,
+  SidebarPersistence,
+} from "./sidebar-persistence.js"
