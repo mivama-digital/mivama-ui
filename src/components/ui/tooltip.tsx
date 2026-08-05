@@ -3,8 +3,9 @@
 import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
-import { cn } from "../../lib/utils.js"
+import { useMivamaPortalContainer } from "../mivama-provider.js"
 import { useShellAttributes } from "../../lib/shell-attributes.js"
+import { cn } from "../../lib/utils.js"
 
 function TooltipProvider({
   delay = 0,
@@ -40,10 +41,11 @@ function TooltipContent({
     TooltipPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
+  const portalContainer = useMivamaPortalContainer()
   useShellAttributes("[data-slot=tooltip-content]")
 
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal container={portalContainer}>
       <TooltipPrimitive.Positioner
         align={align}
         alignOffset={alignOffset}
