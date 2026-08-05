@@ -183,13 +183,20 @@
     "build": "tsc -p tsconfig.build.json && cp src/*.css dist/ && cp -R src/fonts dist/",
     "sync:imports": "node scripts/fix-shadcn-imports.mjs",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node --test tests/*.test.mjs",
+    "test": "npm run test:runtime && npm run test:contracts",
     "audit:source": "node scripts/audit-source.mjs",
     "bundle:check": "node scripts/check-bundle-budgets.mjs",
     "pack:check": "node scripts/check-packed-package.mjs",
-    "verify": "npm run audit:source && npm run typecheck && npm run build && npm run bundle:check && npm test && npm run pack:check",
+    "verify": "npm run lint && npm run format:check && npm run audit:source && npm run typecheck && npm run build && npm run bundle:check && npm test && npm run pack:check",
     "prepublishOnly": "npm run verify",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "lint": "eslint \"scripts/**/*.mjs\" \"tests/**/*.mjs\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts \"tests/runtime/**/*.{ts,tsx}\"",
+    "test:runtime": "vitest run",
+    "test:runtime:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:contracts": "node --test tests/*.test.mjs"
   },
   "peerDependencies": {
     "react": ">=18 <20",
@@ -205,12 +212,26 @@
     "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.10",
+    "axe-core": "^4.12.1",
     "eslint": "^10.8.0",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "globals": "^17.9.0",
+    "jsdom": "^30.0.1",
+    "prettier": "^3.9.6",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7"
+    "typescript": "^7",
+    "vitest": "^4.1.10",
+    "vitest-axe": "^0.1.0"
   }
 }
