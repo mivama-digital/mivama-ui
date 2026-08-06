@@ -40,18 +40,16 @@ describe("tabs, switch, and form primitives", () => {
     const securityTab = screen.getByRole("tab", { name: "Security" })
 
     expect(accountTab).toHaveAttribute("aria-selected", "true")
-    expect(screen.getByRole("tabpanel")).toHaveTextContent(
-      "Account settings"
-    )
+    expect(screen.getByRole("tabpanel")).toHaveTextContent("Account settings")
 
     accountTab.focus()
     await user.keyboard("{ArrowRight}")
-
     expect(securityTab).toHaveFocus()
+    expect(securityTab).toHaveAttribute("aria-selected", "false")
+
+    await user.keyboard("{Enter}")
     expect(securityTab).toHaveAttribute("aria-selected", "true")
-    expect(screen.getByRole("tabpanel")).toHaveTextContent(
-      "Security settings"
-    )
+    expect(screen.getByRole("tabpanel")).toHaveTextContent("Security settings")
 
     const results = await axe.run(screen.getByRole("tablist").parentElement!)
     expect(results.violations).toEqual([])
@@ -70,7 +68,7 @@ describe("tabs, switch, and form primitives", () => {
 
     await user.click(toggle)
     expect(toggle).toBeChecked()
-    expect(onCheckedChange).toHaveBeenCalledWith(true)
+    expect(onCheckedChange).toHaveBeenCalledWith(true, expect.anything())
 
     rerender(<Switch aria-label="Enable alerts" disabled defaultChecked />)
     expect(toggle).toBeDisabled()
@@ -93,9 +91,7 @@ describe("tabs, switch, and form primitives", () => {
           <FieldDescription id="display-name-description">
             Shown to other team members.
           </FieldDescription>
-          <FieldError id="display-name-error">
-            A display name is required.
-          </FieldError>
+          <FieldError id="display-name-error">A display name is required.</FieldError>
         </Field>
       </Fieldset>
     )
@@ -108,9 +104,7 @@ describe("tabs, switch, and form primitives", () => {
     expect(input).toHaveAttribute("aria-invalid", "true")
     expect(screen.getByRole("group", { name: "Profile" })).toBeDisabled()
 
-    const results = await axe.run(
-      screen.getByRole("group", { name: "Profile" })
-    )
+    const results = await axe.run(screen.getByRole("group", { name: "Profile" }))
     expect(results.violations).toEqual([])
   })
 })
