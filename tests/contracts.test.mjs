@@ -36,30 +36,53 @@ const source = async (name) =>
   readFile(new URL(`../src/components/ui/${name}.tsx`, import.meta.url), "utf8")
 
 test("EmptyDescription renders paragraph semantics", () => {
-  assert.equal(renderToStaticMarkup(React.createElement(EmptyDescription, null, "Nothing here")), '<p data-slot="empty-description" class="text-sm/relaxed text-muted-foreground [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 [&amp;&gt;a:hover]:text-primary">Nothing here</p>')
+  assert.equal(
+    renderToStaticMarkup(
+      React.createElement(EmptyDescription, null, "Nothing here")
+    ),
+    '<p data-slot="empty-description" class="text-sm/relaxed text-muted-foreground [&amp;&gt;a]:underline [&amp;&gt;a]:underline-offset-4 [&amp;&gt;a:hover]:text-primary">Nothing here</p>'
+  )
 })
 
 test("Alert remains urgent by default and permits non-assertive semantics", () => {
   assert.match(renderToStaticMarkup(React.createElement(Alert)), /role="alert"/)
-  assert.match(renderToStaticMarkup(React.createElement(Alert, { role: "status" })), /role="status"/)
+  assert.match(
+    renderToStaticMarkup(React.createElement(Alert, { role: "status" })),
+    /role="status"/
+  )
 })
 
 test("loading state cannot be overridden by spread props", async () => {
   const button = await source("button")
-  assert.ok(button.indexOf("{...props}") < button.indexOf("aria-busy={loading || undefined}"))
-  assert.ok(button.indexOf("{...props}") < button.indexOf("disabled={disabled || loading}"))
+  assert.ok(
+    button.indexOf("{...props}") <
+      button.indexOf("aria-busy={loading || undefined}")
+  )
+  assert.ok(
+    button.indexOf("{...props}") <
+      button.indexOf("disabled={disabled || loading}")
+  )
 })
 
 test("shared buttons default to type button unless overridden", async () => {
   const button = await source("button")
   assert.ok(button.indexOf('type="button"') < button.indexOf("{...props}"))
-  assert.ok(button.indexOf("{...props}") < button.indexOf("aria-busy={loading || undefined}"))
+  assert.ok(
+    button.indexOf("{...props}") <
+      button.indexOf("aria-busy={loading || undefined}")
+  )
 })
 
 test("sidebar internal buttons never submit ancestor forms and expose disclosure state", async () => {
   const sidebar = await source("sidebar")
-  assert.match(sidebar, /function SidebarTrigger[\s\S]*aria-expanded=\{isMobile \? openMobile : state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/)
-  assert.match(sidebar, /function SidebarRail[\s\S]*type="button"[\s\S]*aria-expanded=\{state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/)
+  assert.match(
+    sidebar,
+    /function SidebarTrigger[\s\S]*aria-expanded=\{isMobile \? openMobile : state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/
+  )
+  assert.match(
+    sidebar,
+    /function SidebarRail[\s\S]*type="button"[\s\S]*aria-expanded=\{state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/
+  )
   assert.match(sidebar, /function SidebarGroupAction[\s\S]*type: "button"/)
   assert.match(sidebar, /function SidebarMenuButton[\s\S]*type: "button"/)
   assert.match(sidebar, /function SidebarMenuAction[\s\S]*type: "button"/)
@@ -68,8 +91,10 @@ test("sidebar internal buttons never submit ancestor forms and expose disclosure
 
 test("sidebar keyboard shortcut ignores editable targets", async () => {
   const sidebar = await source("sidebar")
+  assert.match(sidebar, /target instanceof Element/)
   assert.match(sidebar, /target\.matches\("input, textarea, select"\)/)
-  assert.match(sidebar, /target\.isContentEditable/)
+  assert.match(sidebar, /target\.closest\(/)
+  assert.match(sidebar, /contenteditable/)
 })
 
 test("portaled content inherits the application shell theme and density", async () => {
@@ -77,7 +102,10 @@ test("portaled content inherits the application shell theme and density", async 
     source("dialog"),
     source("sheet"),
     source("tooltip"),
-    readFile(new URL("../src/lib/shell-attributes.ts", import.meta.url), "utf8"),
+    readFile(
+      new URL("../src/lib/shell-attributes.ts", import.meta.url),
+      "utf8"
+    ),
   ])
   assert.match(attributes, /useShellAttributes/)
   assert.match(attributes, /document\.querySelector\("\[data-mivama-theme\]"\)/)
@@ -88,15 +116,27 @@ test("portaled content inherits the application shell theme and density", async 
 })
 
 test("compact density controls fit their documented 32px height", async () => {
-  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
+  const tokens = await readFile(
+    new URL("../src/tokens.css", import.meta.url),
+    "utf8"
+  )
   const compact = tokens.slice(
     tokens.indexOf('[data-density="compact"] {'),
     tokens.indexOf("@media (min-width: 40rem)")
   )
   assert.match(compact, /--control-height: 32px;/)
-  assert.match(compact, /\[data-density="compact"\] \[data-slot="button"\][\s\S]*padding-block: 0\.25rem;/)
-  assert.match(compact, /\[data-density="compact"\] \[data-slot="tabs-trigger"\][\s\S]*padding-block: 0\.25rem;/)
-  assert.match(compact, /\[data-density="compact"\] \[data-slot="sidebar-menu-button"\][\s\S]*padding-block: 0\.25rem;/)
+  assert.match(
+    compact,
+    /\[data-density="compact"\] \[data-slot="button"\][\s\S]*padding-block: 0\.25rem;/
+  )
+  assert.match(
+    compact,
+    /\[data-density="compact"\] \[data-slot="tabs-trigger"\][\s\S]*padding-block: 0\.25rem;/
+  )
+  assert.match(
+    compact,
+    /\[data-density="compact"\] \[data-slot="sidebar-menu-button"\][\s\S]*padding-block: 0\.25rem;/
+  )
 })
 
 test("skeleton output and hidden ellipses are deterministic", async () => {
@@ -152,9 +192,18 @@ test("normal targets are 44px by default while xs remains explicitly dense", asy
   assert.match(tabs, /min-h-\(--control-height\)/)
   assert.match(sidebar, /default: "min-h-\(--sidebar-row-height\)/)
   assert.match(sidebar, /xs: "h-7/)
-  assert.match(tokens, /:root,\n\[data-density="comfortable"\] \{\s*--panel-padding: var\(--space-6\);\s*--control-height: 44px;/)
-  assert.match(tokens, /\[data-density="compact"\] \{\s*--panel-padding: var\(--space-4\);\s*--control-height: 32px;/)
-  assert.match(tokens, /@media \(pointer: coarse\)[\s\S]*\[data-density="compact"\] \{\s*--control-height: 44px;/)
+  assert.match(
+    tokens,
+    /:root,\n\[data-density="comfortable"\] \{\s*--panel-padding: var\(--space-6\);\s*--control-height: 44px;/
+  )
+  assert.match(
+    tokens,
+    /\[data-density="compact"\] \{\s*--panel-padding: var\(--space-4\);\s*--control-height: 32px;/
+  )
+  assert.match(
+    tokens,
+    /@media \(pointer: coarse\)[\s\S]*\[data-density="compact"\] \{\s*--control-height: 44px;/
+  )
 })
 
 test("built-in navigation labels expose localization props", async () => {
@@ -171,13 +220,19 @@ test("built-in navigation labels expose localization props", async () => {
 })
 
 test("the stable scrollbar gutter does not offset both viewport edges", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  const styles = await readFile(
+    new URL("../src/styles.css", import.meta.url),
+    "utf8"
+  )
   assert.match(styles, /scrollbar-gutter: stable;/)
   assert.doesNotMatch(styles, /scrollbar-gutter: stable both-edges/)
 })
 
 test("layout primitives centralize width and rhythm without fixing document semantics", async () => {
-  const index = await readFile(new URL("../src/index.ts", import.meta.url), "utf8")
+  const index = await readFile(
+    new URL("../src/index.ts", import.meta.url),
+    "utf8"
+  )
   assert.match(containerVariants(), /max-w-\(--container-standard\)/)
   assert.match(containerVariants(), /px-\(--page-gutter\)/)
   assert.match(sectionVariants(), /py-\(--section-default\)/)
@@ -199,7 +254,11 @@ test("layout primitives centralize width and rhythm without fixing document sema
     renderToStaticMarkup(
       React.createElement(
         Section,
-        { render: React.createElement("article"), density: "hero", bordered: false },
+        {
+          render: React.createElement("article"),
+          density: "hero",
+          bordered: false,
+        },
         "Content"
       )
     ),
@@ -211,7 +270,10 @@ test("layout primitives centralize width and rhythm without fixing document sema
 })
 
 test("layout tokens preserve the approved responsive website rhythm", async () => {
-  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
+  const tokens = await readFile(
+    new URL("../src/tokens.css", import.meta.url),
+    "utf8"
+  )
   assert.match(tokens, /--page-gutter: 20px;/)
   assert.match(tokens, /--container-reading: 44rem;/)
   assert.match(tokens, /--container-standard: 80rem;/)
@@ -231,7 +293,10 @@ test("layout tokens preserve the approved responsive website rhythm", async () =
     tokens,
     /@media \(min-width: 64rem\)[\s\S]*?--page-gutter: 32px;[\s\S]*?--section-default: 96px;[\s\S]*?--section-hero: 112px;[\s\S]*?--layout-gap: 64px;[\s\S]*?--content-stack: 40px;/
   )
-  assert.match(tokens, /@media \(min-width: 96rem\)[\s\S]*?--page-gutter: 40px;/)
+  assert.match(
+    tokens,
+    /@media \(min-width: 96rem\)[\s\S]*?--page-gutter: 40px;/
+  )
 })
 
 test("semantic surface, focus, shadow, overlay, and motion tokens are reusable", async () => {
@@ -261,7 +326,10 @@ test("semantic surface, focus, shadow, overlay, and motion tokens are reusable",
   assert.match(themes, /--primary: #0c62ed;/)
 
   const light = themes.slice(themes.indexOf(":root,"), themes.indexOf(".dark,"))
-  const dark = themes.slice(themes.indexOf(".dark,"), themes.indexOf("@media (pointer: coarse)"))
+  const dark = themes.slice(
+    themes.indexOf(".dark,"),
+    themes.indexOf("@media (pointer: coarse)")
+  )
   const value = (block, token) =>
     block.match(new RegExp(`--${token}: ([^;]+);`))?.[1]
   for (const theme of [light, dark]) {
@@ -271,7 +339,10 @@ test("semantic surface, focus, shadow, overlay, and motion tokens are reusable",
 })
 
 test("shared headings reflow only when a word cannot fit", async () => {
-  const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8")
+  const styles = await readFile(
+    new URL("../src/styles.css", import.meta.url),
+    "utf8"
+  )
   const headingRules = styles.slice(
     styles.indexOf(".mivama-heading-display,"),
     styles.indexOf(".mivama-heading-display {")
@@ -357,13 +428,25 @@ test("primary hover and keyboard focus remain opaque across themes", async () =>
 })
 
 test("native controls inherit the active light or dark color scheme", async () => {
-  const themes = await readFile(new URL("../src/themes.css", import.meta.url), "utf8")
-  assert.match(themes, /:root,\n\[data-mivama-theme="product"\],[\s\S]*color-scheme: light;/)
-  assert.match(themes, /\.dark,\n\.dark \[data-mivama-theme="product"\],[\s\S]*color-scheme: dark;/)
+  const themes = await readFile(
+    new URL("../src/themes.css", import.meta.url),
+    "utf8"
+  )
+  assert.match(
+    themes,
+    /:root,\n\[data-mivama-theme="product"\],[\s\S]*color-scheme: light;/
+  )
+  assert.match(
+    themes,
+    /\.dark,\n\.dark \[data-mivama-theme="product"\],[\s\S]*color-scheme: dark;/
+  )
 })
 
 test("editorial theme is opt-in and carries the verified light and dark palette", async () => {
-  const themes = await readFile(new URL("../src/themes.css", import.meta.url), "utf8")
+  const themes = await readFile(
+    new URL("../src/themes.css", import.meta.url),
+    "utf8"
+  )
   const editorial = themes.slice(
     themes.indexOf('[data-mivama-theme="editorial"],'),
     themes.indexOf(".dark,")
@@ -379,13 +462,19 @@ test("editorial theme is opt-in and carries the verified light and dark palette"
   assert.match(editorialDark, /--editorial-paper: #080b10;/)
   assert.match(editorialDark, /--editorial-cobalt: #7792ff;/)
   assert.doesNotMatch(
-    themes.slice(themes.indexOf(":root,"), themes.indexOf('[data-mivama-theme="editorial"],')),
+    themes.slice(
+      themes.indexOf(":root,"),
+      themes.indexOf('[data-mivama-theme="editorial"],')
+    ),
     /--editorial-paper:/
   )
 })
 
 test("editorial motion and typography contracts are reusable and inheritable", async () => {
-  const tokens = await readFile(new URL("../src/tokens.css", import.meta.url), "utf8")
+  const tokens = await readFile(
+    new URL("../src/tokens.css", import.meta.url),
+    "utf8"
+  )
   for (const token of [
     "motion-duration-slow",
     "motion-easing-emphasized",
@@ -396,7 +485,10 @@ test("editorial motion and typography contracts are reusable and inheritable", a
     assert.match(tokens, new RegExp(`--${token}:`))
   }
   assert.match(headingVariants({ variant: "hero" }), /mivama-heading-hero/)
-  assert.match(headingVariants({ variant: "statement" }), /mivama-heading-statement/)
+  assert.match(
+    headingVariants({ variant: "statement" }),
+    /mivama-heading-statement/
+  )
   assert.match(textVariants({ variant: "signal" }), /mivama-text-signal/)
   assert.match(textVariants({ tone: "inherit" }), /mivama-tone-inherit/)
 })
@@ -417,21 +509,65 @@ test("bento grids stay server-compatible and expand spans only after mobile", as
     source("bento-grid"),
   ])
   assert.doesNotMatch(bento, /["']use client["']/)
-  assert.match(styles, /\.mivama-bento-grid \{[\s\S]*grid-template-columns: minmax\(0, 1fr\);/)
-  assert.match(styles, /@media \(min-width: 40rem\)[\s\S]*\.mivama-bento-grid-item\[data-span="2"\] \{[\s\S]*grid-column: span 2;/)
-  assert.match(renderToStaticMarkup(React.createElement(BentoGrid)), /data-slot="bento-grid"/)
-  assert.match(renderToStaticMarkup(React.createElement(BentoGridItem, { span: 2 })), /data-span="2"/)
+  assert.match(
+    styles,
+    /\.mivama-bento-grid \{[\s\S]*grid-template-columns: minmax\(0, 1fr\);/
+  )
+  assert.match(
+    styles,
+    /@media \(min-width: 40rem\)[\s\S]*\.mivama-bento-grid-item\[data-span="2"\] \{[\s\S]*grid-column: span 2;/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(BentoGrid)),
+    /data-slot="bento-grid"/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(BentoGridItem, { span: 2 })),
+    /data-span="2"/
+  )
 })
 
 test("field, choice, and select primitives retain native server-rendered semantics", () => {
-  assert.match(renderToStaticMarkup(React.createElement(FieldLabel, { htmlFor: "email" }, "Email")), /^<label/)
-  assert.match(renderToStaticMarkup(React.createElement(FieldDescription, { id: "hint" }, "Hint")), /^<p/)
-  assert.match(renderToStaticMarkup(React.createElement(FieldError, { id: "error" }, "Error")), /^<p/)
-  assert.match(renderToStaticMarkup(React.createElement(Fieldset)), /^<fieldset/)
-  assert.match(renderToStaticMarkup(React.createElement(FieldLegend, null, "Options")), /^<legend/)
-  assert.match(renderToStaticMarkup(React.createElement(Choice, { type: "radio", name: "plan" })), /<input type="radio"/)
-  assert.match(renderToStaticMarkup(React.createElement(ChoiceGroup)), /^<fieldset/)
-  assert.match(renderToStaticMarkup(React.createElement(Select, { "aria-invalid": true })), /^<select/)
+  assert.match(
+    renderToStaticMarkup(
+      React.createElement(FieldLabel, { htmlFor: "email" }, "Email")
+    ),
+    /^<label/
+  )
+  assert.match(
+    renderToStaticMarkup(
+      React.createElement(FieldDescription, { id: "hint" }, "Hint")
+    ),
+    /^<p/
+  )
+  assert.match(
+    renderToStaticMarkup(
+      React.createElement(FieldError, { id: "error" }, "Error")
+    ),
+    /^<p/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(Fieldset)),
+    /^<fieldset/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(FieldLegend, null, "Options")),
+    /^<legend/
+  )
+  assert.match(
+    renderToStaticMarkup(
+      React.createElement(Choice, { type: "radio", name: "plan" })
+    ),
+    /<input type="radio"/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(ChoiceGroup)),
+    /^<fieldset/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(Select, { "aria-invalid": true })),
+    /^<select/
+  )
 })
 
 test("scroll scenes are server components with progressive transform-only motion", async () => {
@@ -450,9 +586,20 @@ test("scroll scenes are server components with progressive transform-only motion
   )
   assert.match(keyframes, /transform:/)
   assert.doesNotMatch(keyframes, /opacity|filter|top:|left:/)
-  assert.match(renderToStaticMarkup(React.createElement(ScrollScene)), /data-slot="scroll-scene"/)
-  assert.match(renderToStaticMarkup(React.createElement(ScrollLayer, { distance: 24 })), /data-distance="24"/)
-  assert.match(renderToStaticMarkup(React.createElement(ScrollLayer, { effect: "parallax", distance: 48 })), /data-effect="parallax"[^>]*data-distance="48"|data-distance="48"[^>]*data-effect="parallax"/)
+  assert.match(
+    renderToStaticMarkup(React.createElement(ScrollScene)),
+    /data-slot="scroll-scene"/
+  )
+  assert.match(
+    renderToStaticMarkup(React.createElement(ScrollLayer, { distance: 24 })),
+    /data-distance="24"/
+  )
+  assert.match(
+    renderToStaticMarkup(
+      React.createElement(ScrollLayer, { effect: "parallax", distance: 48 })
+    ),
+    /data-effect="parallax"[^>]*data-distance="48"|data-distance="48"[^>]*data-effect="parallax"/
+  )
 })
 
 test("large cards stay compact on phones and expand from sm upward", async () => {
@@ -469,8 +616,14 @@ test("card variants preserve the surface default and pair hover with focus-withi
   assert.match(cardVariants({ variant: "outline" }), /bg-transparent/)
   assert.match(cardVariants({ variant: "outline" }), /ring-border-strong/)
   assert.match(cardVariants({ variant: "instrument" }), /bg-instrument/)
-  assert.match(cardVariants({ variant: "instrument" }), /text-instrument-foreground/)
-  assert.match(cardVariants({ variant: "instrument" }), /ring-instrument-border/)
+  assert.match(
+    cardVariants({ variant: "instrument" }),
+    /text-instrument-foreground/
+  )
+  assert.match(
+    cardVariants({ variant: "instrument" }),
+    /ring-instrument-border/
+  )
 
   const interactive = cardVariants({ variant: "interactive" })
   for (const state of [
@@ -535,30 +688,60 @@ test("v3 themes and density expose explicit selectors and compatibility aliases"
   for (const density of ["comfortable", "compact"]) {
     assert.match(tokens, new RegExp(`\\[data-density="${density}"\\]`))
   }
-  for (const token of ["shape-panel", "space-4", "surface-elevated", "type-body-size", "motion-duration-default"]) {
+  for (const token of [
+    "shape-panel",
+    "space-4",
+    "surface-elevated",
+    "type-body-size",
+    "motion-duration-default",
+  ]) {
     assert.match(`${tokens}\n${themes}`, new RegExp(`--${token}:`))
   }
   assert.match(themes, /\.mivama-editorial-theme/)
-  assert.match(themes, /\[data-mivama-theme="portal"\]\[data-density="compact"\][\s\S]*--panel-padding: 16px;[\s\S]*--sidebar-row-height: 32px;/)
-  assert.match(themes, /@media \(pointer: coarse\)[\s\S]*--sidebar-row-height: 44px;/)
-  for (const token of ["panel-padding", "control-height", "sidebar-row-height"]) {
+  assert.match(
+    themes,
+    /\[data-mivama-theme="portal"\]\[data-density="compact"\][\s\S]*--panel-padding: 16px;[\s\S]*--sidebar-row-height: 32px;/
+  )
+  assert.match(
+    themes,
+    /@media \(pointer: coarse\)[\s\S]*--sidebar-row-height: 44px;/
+  )
+  for (const token of [
+    "panel-padding",
+    "control-height",
+    "sidebar-row-height",
+  ]) {
     assert.match(tokens, new RegExp(`--${token}:`))
   }
   for (const theme of ["product", "editorial", "portal"]) {
-    assert.doesNotMatch(styles, new RegExp(`\\[data-mivama-theme="${theme}"\\]`))
+    assert.doesNotMatch(
+      styles,
+      new RegExp(`\\[data-mivama-theme="${theme}"\\]`)
+    )
   }
 })
 
 test("package metadata, stylesheet exports, and consumer archive instructions target 3.0.0", async () => {
   const [packageJson, lockfile, readme] = await Promise.all([
-    readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
-    readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../package.json", import.meta.url), "utf8").then(
+      JSON.parse
+    ),
+    readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(
+      JSON.parse
+    ),
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ])
   assert.equal(packageJson.version, "3.0.0")
   assert.equal(lockfile.version, "3.0.0")
   assert.equal(lockfile.packages[""].version, "3.0.0")
-  for (const subpath of ["button", "sheet", "card", "scroll-scene", "bento-grid", "forms"]) {
+  for (const subpath of [
+    "button",
+    "sheet",
+    "card",
+    "scroll-scene",
+    "bento-grid",
+    "forms",
+  ]) {
     assert.ok(packageJson.exports[`./${subpath}`])
   }
   for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
