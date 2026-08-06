@@ -97,7 +97,9 @@ describe("tabs, switch, and form primitives", () => {
           <FieldDescription id="display-name-description">
             Shown to other team members.
           </FieldDescription>
-          <FieldError id="display-name-error">A display name is required.</FieldError>
+          <FieldError id="display-name-error">
+            A display name is required.
+          </FieldError>
         </Field>
       </Fieldset>
     )
@@ -110,7 +112,9 @@ describe("tabs, switch, and form primitives", () => {
     expect(input).toHaveAttribute("aria-invalid", "true")
     expect(screen.getByRole("group", { name: "Profile" })).toBeDisabled()
 
-    const results = await axe.run(screen.getByRole("group", { name: "Profile" }))
+    const results = await axe.run(
+      screen.getByRole("group", { name: "Profile" })
+    )
     expect(results.violations).toEqual([])
   })
 })
