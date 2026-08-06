@@ -1,5 +1,5 @@
 import * as React from "react"
-import { render, screen } from "@testing-library/react"
+import { act, render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { describe, expect, it, vi } from "vitest"
 
@@ -41,10 +41,14 @@ describe("sidebar interactions", () => {
       cancelable: true,
     })
 
-    window.dispatchEvent(event)
+    act(() => {
+      document.body.dispatchEvent(event)
+    })
 
     expect(event.defaultPrevented).toBe(true)
-    expect(trigger).toHaveAttribute("aria-expanded", "false")
+    await waitFor(() =>
+      expect(trigger).toHaveAttribute("aria-expanded", "false")
+    )
   })
 
   it("does not toggle while typing in editable elements", async () => {
@@ -54,13 +58,15 @@ describe("sidebar interactions", () => {
       <SidebarProvider defaultOpen>
         <SidebarTrigger label="Toggle navigation" />
         <input aria-label="Search" />
-        <div contentEditable role="textbox" aria-label="Notes" />
+        <div contentEditable role="textbox" aria-label="Notes">
+          <span>Editable text</span>
+        </div>
       </SidebarProvider>
     )
 
     const trigger = screen.getByRole("button", { name: "Toggle navigation" })
     const search = screen.getByRole("textbox", { name: "Search" })
-    const notes = screen.getByRole("textbox", { name: "Notes" })
+    const notes = screen.getByText("Editable text")
 
     await user.click(search)
     await user.keyboard("{Control>}b{/Control}")
