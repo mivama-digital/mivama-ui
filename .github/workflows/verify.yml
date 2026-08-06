@@ -14,13 +14,22 @@ concurrency:
 
 jobs:
   verify:
-    name: Node ${{ matrix.node-version }}
+    name: Node ${{ matrix.node-version }} (${{ matrix.scope }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        include:
+          - node-version: 20
+            scope: package
+            runtime-tests: false
+          - node-version: 22
+            scope: full
+            runtime-tests: true
+          - node-version: 24
+            scope: full
+            runtime-tests: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -31,4 +40,9 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm audit --omit=dev
-      - run: npm run verify
+      - name: Run full verification
+        if: matrix.runtime-tests
+        run: npm run verify
+      - name: Run Node 20 package compatibility
+        if: ${{ !matrix.runtime-tests }}
+        run: npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm run test:contracts && npm run pack:check && npm run package:lint
