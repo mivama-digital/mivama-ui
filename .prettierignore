@@ -2,3 +2,8 @@ dist
 node_modules
 coverage
 src/fonts
+*.tgz
+.artifacts
+playwright-report
+test-results
+storybook-static
