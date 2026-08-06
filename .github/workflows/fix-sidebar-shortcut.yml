@@ -20,7 +20,7 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: node scripts/patch-sidebar-shortcut.mjs
-      - run: npx prettier --write src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx
+      - run: npx prettier --write src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx tests/contracts.test.mjs
       - run: npm run verify
       - name: Commit shortcut hardening
         run: |
@@ -28,6 +28,6 @@ jobs:
           rm scripts/patch-sidebar-shortcut.mjs
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx .github/workflows/fix-sidebar-shortcut.yml scripts/patch-sidebar-shortcut.mjs
+          git add src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx tests/contracts.test.mjs .github/workflows/fix-sidebar-shortcut.yml scripts/patch-sidebar-shortcut.mjs
           git commit -m "fix: harden sidebar keyboard shortcut targets"
           git push
