@@ -9,7 +9,7 @@ import {
 } from "../../src/components/ui/sidebar.js"
 
 describe("sidebar interactions", () => {
-  it("toggles through the trigger and exposes expanded state", async () => {
+  it("toggles through the accessible trigger and exposes expanded state", async () => {
     const user = userEvent.setup()
 
     render(
