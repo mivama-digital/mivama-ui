@@ -126,11 +126,11 @@ function SidebarProvider({
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
         (event.metaKey || event.ctrlKey)
       ) {
-        const target = event.target as HTMLElement | null
+        const target = event.target
         if (
-          target &&
-          (target.isContentEditable ||
-            target.matches("input, textarea, select"))
+          target instanceof Element &&
+          (target.matches("input, textarea, select") ||
+            target.closest('[contenteditable]:not([contenteditable="false"])'))
         ) {
           return
         }
