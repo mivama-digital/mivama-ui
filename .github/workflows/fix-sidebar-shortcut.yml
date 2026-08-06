@@ -19,33 +19,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Harden editable-target detection
-        run: |
-          node --input-type=module <<'NODE'
-          import { readFile, writeFile } from 'node:fs/promises'
-          const path = 'src/components/ui/sidebar.tsx'
-          const source = await readFile(path, 'utf8')
-          const pattern = /        const target = event\.target as HTMLElement \| null\n        if \(\n          target &&\n          \(target\.isContentEditable \|\|\n            target\.matches\("input, textarea, select"\)\)\n        \) \{\n          return\n        \}/
-          const replacement = `        const target = event.target
-        if (
-          target instanceof Element &&
-          (target.matches("input, textarea, select") ||
-            target.closest(
-              '[contenteditable]:not([contenteditable="false"])'
-            ))
-        ) {
-          return
-        }`
-          if (!pattern.test(source)) throw new Error('Sidebar shortcut block not found')
-          await writeFile(path, source.replace(pattern, replacement))
-          NODE
+      - run: node scripts/patch-sidebar-shortcut.mjs
       - run: npx prettier --write src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx
       - run: npm run verify
       - name: Commit shortcut hardening
         run: |
           rm .github/workflows/fix-sidebar-shortcut.yml
+          rm scripts/patch-sidebar-shortcut.mjs
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx .github/workflows/fix-sidebar-shortcut.yml
+          git add src/components/ui/sidebar.tsx tests/runtime/sidebar-interactions.test.tsx .github/workflows/fix-sidebar-shortcut.yml scripts/patch-sidebar-shortcut.mjs
           git commit -m "fix: harden sidebar keyboard shortcut targets"
           git push
