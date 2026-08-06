@@ -22,7 +22,7 @@ import {
 } from "../../src/components/ui/tabs.js"
 
 describe("tabs, switch, and form primitives", () => {
-  it("supports keyboard tab selection and exposes the active panel", async () => {
+  it("supports manual keyboard tab activation and exposes the active panel", async () => {
     const user = userEvent.setup()
 
     render(
