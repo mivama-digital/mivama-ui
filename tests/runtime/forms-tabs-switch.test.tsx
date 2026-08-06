@@ -59,7 +59,7 @@ describe("tabs, switch, and form primitives", () => {
     const user = userEvent.setup()
     const onCheckedChange = vi.fn()
 
-    const { rerender } = render(
+    const { unmount } = render(
       <Switch aria-label="Enable alerts" onCheckedChange={onCheckedChange} />
     )
 
@@ -70,10 +70,16 @@ describe("tabs, switch, and form primitives", () => {
     expect(toggle).toBeChecked()
     expect(onCheckedChange).toHaveBeenCalledWith(true, expect.anything())
 
-    rerender(<Switch aria-label="Enable alerts" disabled defaultChecked />)
-    expect(toggle).toBeDisabled()
+    unmount()
+    render(<Switch aria-label="Disabled alerts" disabled defaultChecked />)
 
-    const results = await axe.run(toggle)
+    const disabledToggle = screen.getByRole("switch", {
+      name: "Disabled alerts",
+    })
+    expect(disabledToggle).toHaveAttribute("aria-disabled", "true")
+    expect(disabledToggle).toHaveAttribute("tabindex", "-1")
+
+    const results = await axe.run(disabledToggle)
     expect(results.violations).toEqual([])
   })
 
