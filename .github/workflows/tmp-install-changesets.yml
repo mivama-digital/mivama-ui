@@ -1,0 +1,49 @@
+name: Temporary changesets install
+
+on:
+  push:
+    branches: [release/changesets]
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: release/changesets
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --save-dev --ignore-scripts @changesets/cli@2.31.0
+      - name: Add release scripts
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs"
+
+          const path = "package.json"
+          const pkg = JSON.parse(fs.readFileSync(path, "utf8"))
+          pkg.scripts.changeset = "changeset"
+          pkg.scripts["release:status"] = "changeset status"
+          pkg.scripts["release:version"] = "changeset version"
+          pkg.scripts["release:publish"] = "changeset publish"
+          pkg.publishConfig = { ...pkg.publishConfig, access: "public" }
+          fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`)
+          NODE
+      - run: npx prettier --write package.json .changeset/config.json .changeset/README.md
+      - run: npm run release:status
+      - run: npm run package:lint
+      - name: Commit npm-generated dependency state
+        run: |
+          if [ -z "$(git status --porcelain -- package.json package-lock.json .changeset)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json .changeset
+          git commit -m "release: add changesets workflow primitives"
+          git push origin HEAD:release/changesets
