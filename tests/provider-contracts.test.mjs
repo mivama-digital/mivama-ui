@@ -7,15 +7,29 @@ const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8")
 test("MivamaProvider scopes theme, density, portal container, and refs", async () => {
   const provider = await read("src/components/mivama-provider.tsx")
 
-  assert.match(provider, /portalContainer: portalContainer === undefined \? shellRef : portalContainer/)
+  assert.match(
+    provider,
+    /portalContainer:\s*portalContainer === undefined \? shellRef : portalContainer/
+  )
   assert.match(provider, /useMivamaPortalContainer/)
   assert.match(provider, /useOptionalMivamaContext/)
-  assert.match(provider, /React\.forwardRef<HTMLDivElement, MivamaProviderProps>/)
+  assert.match(
+    provider,
+    /React\.forwardRef<HTMLDivElement, MivamaProviderProps>/
+  )
   assert.match(provider, /type MivamaTheme =/)
   assert.match(provider, /type MivamaDensity =/)
-  assert.ok(provider.indexOf("{...props}") < provider.indexOf("data-mivama-theme={theme}"))
-  assert.ok(provider.indexOf("{...props}") < provider.indexOf("data-density={density}"))
-  assert.ok(provider.indexOf("{...props}") < provider.indexOf('className={cn("isolate", className)}'))
+  assert.ok(
+    provider.indexOf("{...props}") <
+      provider.indexOf("data-mivama-theme={theme}")
+  )
+  assert.ok(
+    provider.indexOf("{...props}") < provider.indexOf("data-density={density}")
+  )
+  assert.ok(
+    provider.indexOf("{...props}") <
+      provider.indexOf('className={cn("isolate", className)}')
+  )
 })
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
@@ -27,14 +41,23 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
 
   assert.match(dialog, /container=\{container \?\? providerContainer\}/)
   assert.match(sheet, /container=\{container \?\? providerContainer\}/)
-  assert.match(tooltip, /<TooltipPrimitive\.Portal container=\{portalContainer\}>/)
+  assert.match(
+    tooltip,
+    /<TooltipPrimitive\.Portal container=\{portalContainer\}>/
+  )
 })
 
 test("legacy portal synchronization is disabled inside a provider", async () => {
   const shellAttributes = await read("src/lib/shell-attributes.ts")
 
-  assert.match(shellAttributes, /const providerContainer = useMivamaPortalContainer\(\)/)
-  assert.match(shellAttributes, /const enabled = providerContainer === undefined/)
+  assert.match(
+    shellAttributes,
+    /const providerContainer = useMivamaPortalContainer\(\)/
+  )
+  assert.match(
+    shellAttributes,
+    /const enabled = providerContainer === undefined/
+  )
   assert.match(shellAttributes, /if \(!enabled\) return/)
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
 })
@@ -95,6 +118,9 @@ test("provider public API includes typed theme, density, and optional context", 
 test("verify includes bundle budgets before package validation", async () => {
   const packageJson = JSON.parse(await read("package.json"))
 
-  assert.match(packageJson.scripts.verify, /npm run build && npm run bundle:check/)
+  assert.match(
+    packageJson.scripts.verify,
+    /npm run build && npm run bundle:check/
+  )
   assert.match(packageJson.scripts.verify, /npm run pack:check/)
 })

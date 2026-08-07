@@ -58,7 +58,8 @@ function Button({
   disabled,
   children,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { loading?: boolean }) {
+}: ButtonPrimitive.Props &
+  VariantProps<typeof buttonVariants> & { loading?: boolean }) {
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -70,13 +71,17 @@ function Button({
     >
       {loading ? (
         <>
-          <span className="inline-flex items-center gap-2 opacity-0">{children}</span>
+          <span className="inline-flex items-center gap-2 opacity-0">
+            {children}
+          </span>
           <span
             aria-hidden="true"
             className="absolute size-4 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none"
           />
         </>
-      ) : children}
+      ) : (
+        children
+      )}
     </ButtonPrimitive>
   )
 }

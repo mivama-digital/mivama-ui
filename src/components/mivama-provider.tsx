@@ -60,7 +60,8 @@ const MivamaProvider = React.forwardRef<HTMLDivElement, MivamaProviderProps>(
       () => ({
         theme,
         density,
-        portalContainer: portalContainer === undefined ? shellRef : portalContainer,
+        portalContainer:
+          portalContainer === undefined ? shellRef : portalContainer,
         shellRef,
       }),
       [theme, density, portalContainer]

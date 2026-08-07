@@ -20,7 +20,10 @@ test("mobile detection uses the same media-query snapshot for subscription and r
   const source = await readSource("src/hooks/use-mobile.ts")
 
   assert.match(source, /const MOBILE_QUERY =/)
-  assert.match(source, /useSyncExternalStore\(subscribe, getSnapshot, getServerSnapshot\)/)
+  assert.match(
+    source,
+    /useSyncExternalStore\(subscribe, getSnapshot, getServerSnapshot\)/
+  )
   assert.match(source, /window\.matchMedia\(MOBILE_QUERY\)\.matches/)
   assert.doesNotMatch(source, /window\.innerWidth/)
 })

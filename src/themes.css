@@ -6,8 +6,11 @@
   --surface-elevated: oklch(1 0 0);
   --border-strong: oklch(0.82 0.008 257);
   --overlay: oklch(0.12 0.01 257 / 32%);
-  --shadow-subtle: 0 1px 2px oklch(0.145 0 0 / 8%), 0 6px 18px -12px oklch(0.145 0 0 / 20%);
-  --shadow-elevated: 0 18px 48px -20px oklch(0.145 0 0 / 30%), 0 6px 16px -10px oklch(0.145 0 0 / 18%);
+  --shadow-subtle:
+    0 1px 2px oklch(0.145 0 0 / 8%), 0 6px 18px -12px oklch(0.145 0 0 / 20%);
+  --shadow-elevated:
+    0 18px 48px -20px oklch(0.145 0 0 / 30%),
+    0 6px 16px -10px oklch(0.145 0 0 / 18%);
   --focus-ring: #0c62ed;
   --signal: #c9ff45;
   --instrument: #0b1018;
@@ -112,8 +115,10 @@
   --surface-elevated: oklch(0.205 0.006 257);
   --border-strong: oklch(1 0 0 / 28%);
   --overlay: oklch(0.05 0 0 / 62%);
-  --shadow-subtle: 0 1px 2px oklch(0 0 0 / 30%), 0 8px 20px -12px oklch(0 0 0 / 48%);
-  --shadow-elevated: 0 20px 52px -18px oklch(0 0 0 / 62%), 0 8px 20px -12px oklch(0 0 0 / 46%);
+  --shadow-subtle:
+    0 1px 2px oklch(0 0 0 / 30%), 0 8px 20px -12px oklch(0 0 0 / 48%);
+  --shadow-elevated:
+    0 20px 52px -18px oklch(0 0 0 / 62%), 0 8px 20px -12px oklch(0 0 0 / 46%);
   --focus-ring: #4f8fff;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
