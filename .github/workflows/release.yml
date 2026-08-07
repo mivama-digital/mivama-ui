@@ -88,10 +88,20 @@ jobs:
         env:
           VERSION: ${{ inputs.version }}
         run: |
-          if npm view "@mivama/ui@${VERSION}" version >/dev/null 2>&1; then
-            echo "@mivama/ui@${VERSION} is already published" >&2
-            exit 1
-          fi
+          node --input-type=module <<'NODE'
+          import { execFileSync } from "node:child_process"
+
+          const output = execFileSync(
+            "npm",
+            ["view", "@mivama/ui", "versions", "--json"],
+            { encoding: "utf8", stdio: ["ignore", "pipe", "inherit"] }
+          )
+          const parsed = JSON.parse(output)
+          const versions = Array.isArray(parsed) ? parsed : [parsed]
+          if (versions.includes(process.env.VERSION)) {
+            throw new Error(`@mivama/ui@${process.env.VERSION} is already published`)
+          }
+          NODE
       - run: npm audit --omit=dev
       - run: npm run verify
       - name: Publish with npm Trusted Publishing
