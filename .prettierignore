@@ -7,3 +7,6 @@ src/fonts
 playwright-report
 test-results
 storybook-static
+.next
+out
+.vite
