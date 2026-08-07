@@ -187,7 +187,7 @@
     "audit:source": "node scripts/audit-source.mjs",
     "bundle:check": "node scripts/check-bundle-budgets.mjs",
     "pack:check": "node scripts/check-packed-package.mjs",
-    "verify": "npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm test && npm run pack:check && npm run package:lint",
+    "verify": "npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm run test:coverage && npm run test:contracts && npm run pack:check && npm run package:lint",
     "verify:package": "npm run lint:node && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm run test:contracts && npm run pack:check && npm run package:lint",
     "prepublishOnly": "npm run verify",
     "prepare": "npm run build",
