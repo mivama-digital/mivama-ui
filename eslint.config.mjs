@@ -53,8 +53,10 @@ export default [
     files: [
       "src/**/*.{ts,tsx}",
       "tests/runtime/**/*.{ts,tsx}",
+      "tests/e2e/**/*.{ts,tsx}",
       "tests/setup.ts",
       "vitest.config.ts",
+      "playwright.config.ts",
     ],
     ...js.configs.recommended,
     languageOptions: {
