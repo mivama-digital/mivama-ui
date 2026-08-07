@@ -125,7 +125,9 @@ test("RTL inherits through mobile navigation without horizontal overflow", async
 
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl")
   expect(
-    await page.locator("html").evaluate((node) => getComputedStyle(node).direction)
+    await page
+      .locator("html")
+      .evaluate((node) => getComputedStyle(node).direction)
   ).toBe("rtl")
 
   const trigger = page.locator('[data-slot="sidebar-trigger"]')
