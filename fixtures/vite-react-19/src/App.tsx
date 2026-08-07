@@ -14,7 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@mivama/ui/dialog"
-import { Field, FieldDescription, FieldLabel, Input } from "@mivama/ui/forms"
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  Input,
+} from "@mivama/ui/forms"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@mivama/ui/tabs"
 
 export function App() {
@@ -51,8 +56,12 @@ export function App() {
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="details">Details</TabsTrigger>
               </TabsList>
-              <TabsContent value="overview">Root and subpath imports compile.</TabsContent>
-              <TabsContent value="details">Tailwind package styles compile.</TabsContent>
+              <TabsContent value="overview">
+                Root and subpath imports compile.
+              </TabsContent>
+              <TabsContent value="details">
+                Tailwind package styles compile.
+              </TabsContent>
             </Tabs>
 
             <Dialog>
