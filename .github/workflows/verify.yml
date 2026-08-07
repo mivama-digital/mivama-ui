@@ -15,7 +15,7 @@ concurrency:
 jobs:
   verify:
     name: Node ${{ matrix.node-version }} (${{ matrix.scope }})
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, mivama-org]
     timeout-minutes: 15
     strategy:
       fail-fast: false
