@@ -117,11 +117,11 @@ test("RTL inherits through mobile navigation without horizontal overflow", async
   page,
 }) => {
   const browserErrors = collectBrowserErrors(page)
-  await page.addInitScript(() => {
-    document.documentElement.dir = "rtl"
-  })
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto("/")
+  await page.locator("html").evaluate((node) => {
+    node.setAttribute("dir", "rtl")
+  })
 
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl")
   expect(
