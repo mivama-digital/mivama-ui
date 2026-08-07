@@ -10,3 +10,4 @@ storybook-static
 .next
 out
 .vite
+etc/api/*.api.md
