@@ -9,7 +9,7 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
 
   assert.match(
     provider,
-    /portalContainer: portalContainer === undefined \? shellRef : portalContainer/
+    /portalContainer:\s*portalContainer === undefined \? shellRef : portalContainer/
   )
   assert.match(provider, /useMivamaPortalContainer/)
   assert.match(provider, /useOptionalMivamaContext/)
