@@ -1,0 +1,39 @@
+name: Temporary performance finalizer
+
+on:
+  push:
+    branches: [perf/compressed-bundles]
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: perf/compressed-bundles
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            fixtures/vite-react-19/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write scripts/check-bundle-budgets.mjs scripts/check-packed-tree-shaking.mjs .github/workflows/consumer.yml
+      - run: npm run build
+      - run: npm run bundle:check
+      - run: node scripts/check-packed-tree-shaking.mjs
+      - name: Commit formatter output
+        run: |
+          if [ -z "$(git status --porcelain -- scripts/check-bundle-budgets.mjs scripts/check-packed-tree-shaking.mjs .github/workflows/consumer.yml)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/check-bundle-budgets.mjs scripts/check-packed-tree-shaking.mjs .github/workflows/consumer.yml
+          git commit -m "style: finalize performance gates"
+          git push origin HEAD:perf/compressed-bundles
