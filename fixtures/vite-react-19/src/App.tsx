@@ -27,7 +27,7 @@ export function App() {
       <main className="mx-auto grid max-w-3xl gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Vite React 19 consumer</CardTitle>
+            <CardTitle render={<h1 />}>Vite React 19 consumer</CardTitle>
             <CardDescription>
               This page compiles against the packed @mivama/ui distribution.
             </CardDescription>
