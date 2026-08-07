@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import { cn } from "../../lib/utils.js"
-import { Button } from "./button.js"
+import { buttonVariants } from "./button.js"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -43,8 +43,17 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 export type PaginationLinkProps = {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  size?:
+    | "default"
+    | "icon"
+    | "icon-lg"
+    | "icon-sm"
+    | "icon-xs"
+    | "lg"
+    | "sm"
+    | "xs"
+    | null
+} & React.ComponentProps<"a">
 
 function PaginationLink({
   className,
@@ -53,19 +62,18 @@ function PaginationLink({
   ...props
 }: PaginationLinkProps) {
   return (
-    <Button
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
+    <a
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? "outline" : "ghost",
+          size,
+          className,
+        })
+      )}
+      {...props}
     />
   )
 }
