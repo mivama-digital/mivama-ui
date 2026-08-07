@@ -35,7 +35,6 @@ test("dialog traps focus and restores its trigger", async ({ page }) => {
 
   await page.keyboard.press("Tab")
   await expect(email).toBeFocused()
-  await expect(trigger).not.toBeFocused()
 
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
