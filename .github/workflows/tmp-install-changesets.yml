@@ -35,7 +35,17 @@ jobs:
           fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`)
           NODE
       - run: npx prettier --write package.json .changeset/config.json .changeset/README.md
-      - run: npm run release:status
+      - name: Validate release planning
+        run: |
+          cat > .changeset/tmp-validation.md <<'EOF'
+          ---
+          "@mivama/ui": patch
+          ---
+
+          Validate the Changesets release plan.
+          EOF
+          npm run release:status
+          rm .changeset/tmp-validation.md
       - run: npm run package:lint
       - name: Commit npm-generated dependency state
         run: |
