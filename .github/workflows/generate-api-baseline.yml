@@ -20,8 +20,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm install --save-dev @microsoft/api-extractor@7.58.10 --ignore-scripts
+      - name: Configure API verification scripts
+        run: |
+          npm pkg set 'scripts.api:check=api-extractor run'
+          npm pkg set 'scripts.api:report=api-extractor run --local'
+          npm pkg set 'scripts.verify=npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run api:check && npm run bundle:check && npm run test:coverage && npm run test:contracts && npm run pack:check && npm run package:lint'
       - run: npm run build
-      - run: npx api-extractor run --local
+      - run: npm run api:report
       - name: Commit API tooling and baseline
         shell: bash
         run: |
