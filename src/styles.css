@@ -291,6 +291,36 @@
   }
 }
 
+@media (prefers-contrast: more) {
+  :root,
+  [data-mivama-theme],
+  .mivama-editorial-theme {
+    --border: var(--foreground);
+    --border-strong: var(--foreground);
+    --input: var(--foreground);
+    --ring: var(--foreground);
+    --focus-ring: var(--foreground);
+    --sidebar-border: var(--sidebar-foreground);
+    --sidebar-ring: var(--sidebar-foreground);
+  }
+}
+
+@media (forced-colors: active) {
+  :where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    [role="button"],
+    [role="switch"],
+    [role="tab"]
+  ):focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
