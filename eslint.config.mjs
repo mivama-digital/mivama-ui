@@ -69,10 +69,7 @@ export default [
         requireConfigFile: false,
         babelOptions: {
           presets: [
-            [
-              "@babel/preset-typescript",
-              { allExtensions: true, isTSX: true },
-            ],
+            ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
           ],
         },
       },
