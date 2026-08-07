@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test"
+import { expect, test, type Locator, type Page } from "@playwright/test"
 
 function collectBrowserErrors(page: Page) {
   const errors: string[] = []
@@ -11,9 +11,11 @@ function collectBrowserErrors(page: Page) {
   return errors
 }
 
-test("dialog traps focus, closes with Escape, and restores focus", async ({
-  page,
-}) => {
+function containsActiveElement(locator: Locator) {
+  return locator.evaluate((node) => node.contains(document.activeElement))
+}
+
+test("dialog traps focus and restores its trigger", async ({ page }) => {
   const browserErrors = collectBrowserErrors(page)
   await page.goto("/")
 
@@ -22,15 +24,11 @@ test("dialog traps focus, closes with Escape, and restores focus", async ({
 
   const dialog = page.getByRole("dialog", { name: "Consumer dialog" })
   await expect(dialog).toBeVisible()
-  await expect
-    .poll(() => dialog.evaluate((node) => node.contains(document.activeElement)))
-    .toBe(true)
+  await expect.poll(() => containsActiveElement(dialog)).toBe(true)
 
   for (let index = 0; index < 4; index += 1) {
     await page.keyboard.press("Tab")
-    expect(
-      await dialog.evaluate((node) => node.contains(document.activeElement))
-    ).toBe(true)
+    expect(await containsActiveElement(dialog)).toBe(true)
   }
 
   await page.keyboard.press("Escape")
@@ -39,9 +37,7 @@ test("dialog traps focus, closes with Escape, and restores focus", async ({
   expect(browserErrors).toEqual([])
 })
 
-test("sheet preserves modal focus behavior on a mobile viewport", async ({
-  page,
-}) => {
+test("sheet keeps modal focus on mobile", async ({ page }) => {
   const browserErrors = collectBrowserErrors(page)
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto("/")
@@ -53,14 +49,10 @@ test("sheet preserves modal focus behavior on a mobile viewport", async ({
   await expect(sheet).toBeVisible()
   await expect(sheet).toHaveAttribute("data-side", "right")
   await expect(sheet).toHaveAttribute("data-size", "sm")
-  await expect
-    .poll(() => sheet.evaluate((node) => node.contains(document.activeElement)))
-    .toBe(true)
+  await expect.poll(() => containsActiveElement(sheet)).toBe(true)
 
   await page.keyboard.press("Tab")
-  expect(
-    await sheet.evaluate((node) => node.contains(document.activeElement))
-  ).toBe(true)
+  expect(await containsActiveElement(sheet)).toBe(true)
 
   await page.keyboard.press("Escape")
   await expect(sheet).toBeHidden()
@@ -68,7 +60,7 @@ test("sheet preserves modal focus behavior on a mobile viewport", async ({
   expect(browserErrors).toEqual([])
 })
 
-test("tooltip exposes its description relationship and dismisses with Escape", async ({
+test("tooltip links its description and dismisses with Escape", async ({
   page,
 }) => {
   const browserErrors = collectBrowserErrors(page)
