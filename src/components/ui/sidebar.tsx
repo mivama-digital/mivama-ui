@@ -231,6 +231,7 @@ function Sidebar({
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
+          id={sidebarId}
           dir={dir}
           data-sidebar="sidebar"
           data-slot="sidebar"

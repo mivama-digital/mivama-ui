@@ -36,7 +36,9 @@ test("desktop sidebar toggles, persists, and ignores shortcuts while editing", a
   await expect(trigger).toHaveAttribute("aria-expanded", "false")
   await expect(sidebar).toHaveAttribute("data-state", "collapsed")
   await expect
-    .poll(() => page.evaluate(() => localStorage.getItem("consumer-sidebar-e2e")))
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem("consumer-sidebar-e2e"))
+    )
     .toBe("false")
 
   await page.reload()
@@ -47,7 +49,9 @@ test("desktop sidebar toggles, persists, and ignores shortcuts while editing", a
   await expect(trigger).toHaveAttribute("aria-expanded", "true")
   await expect(sidebar).toHaveAttribute("data-state", "expanded")
   await expect
-    .poll(() => page.evaluate(() => localStorage.getItem("consumer-sidebar-e2e")))
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem("consumer-sidebar-e2e"))
+    )
     .toBe("true")
 
   const email = page.getByLabel("Email")
