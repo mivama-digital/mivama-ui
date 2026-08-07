@@ -37,10 +37,17 @@ for (const file of await walk(sourceRoot)) {
   }
 }
 
-const workflow = await readFile(path.join(root, ".github/workflows/verify.yml"), "utf8")
+const workflow = await readFile(
+  path.join(root, ".github/workflows/verify.yml"),
+  "utf8"
+)
 assert.doesNotMatch(workflow, /uses:\s+[^\s]+@(?:main|master|v\d+)\b/)
 assert.match(workflow, /persist-credentials:\s*false/)
 assert.match(workflow, /npm ci --ignore-scripts/)
 
-assert.deepEqual(violations, [], `Source audit violations:\n${violations.join("\n")}`)
+assert.deepEqual(
+  violations,
+  [],
+  `Source audit violations:\n${violations.join("\n")}`
+)
 console.log("Source security audit passed")

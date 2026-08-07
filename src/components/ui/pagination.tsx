@@ -2,7 +2,11 @@ import * as React from "react"
 
 import { cn } from "../../lib/utils.js"
 import { Button } from "./button.js"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react"
 
 function Pagination({
   className,
@@ -71,7 +75,10 @@ function PaginationPrevious({
   text = "Previous",
   label = "Go to previous page",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string; label?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string
+  label?: string
+}) {
   return (
     <PaginationLink
       aria-label={label}
@@ -90,7 +97,10 @@ function PaginationNext({
   text = "Next",
   label = "Go to next page",
   ...props
-}: React.ComponentProps<typeof PaginationLink> & { text?: string; label?: string }) {
+}: React.ComponentProps<typeof PaginationLink> & {
+  text?: string
+  label?: string
+}) {
   return (
     <PaginationLink
       aria-label={label}

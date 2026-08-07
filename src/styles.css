@@ -9,21 +9,28 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
-    font-family: "Onest Variable";
-    font-style: normal;
-    font-display: swap;
-    font-weight: 100 900;
-    src: url("./fonts/onest-latin-ext-wght-normal.woff2") format("woff2-variations");
-    unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+  font-family: "Onest Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("./fonts/onest-latin-ext-wght-normal.woff2")
+    format("woff2-variations");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
-    font-family: "Onest Variable";
-    font-style: normal;
-    font-display: swap;
-    font-weight: 100 900;
-    src: url("./fonts/onest-latin-wght-normal.woff2") format("woff2-variations");
-    unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+  font-family: "Onest Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("./fonts/onest-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 @layer components {
@@ -151,7 +158,10 @@
   .mivama-editorial-grid {
     --editorial-grid-columns: 4;
     display: grid;
-    grid-template-columns: repeat(var(--editorial-grid-columns), minmax(0, 1fr));
+    grid-template-columns: repeat(
+      var(--editorial-grid-columns),
+      minmax(0, 1fr)
+    );
     gap: var(--editorial-grid-gap, var(--card-grid-gap));
     min-width: 0;
   }
@@ -227,7 +237,9 @@
 
 @keyframes mivama-scroll-layer-reveal {
   from {
-    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1)));
+    transform: translateY(
+      calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1))
+    );
   }
   to {
     transform: translateY(0);
@@ -236,17 +248,24 @@
 
 @keyframes mivama-scroll-layer-parallax {
   from {
-    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1)));
+    transform: translateY(
+      calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1))
+    );
   }
   to {
-    transform: translateY(calc(var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1) * -1));
+    transform: translateY(
+      calc(
+        var(--mivama-scroll-distance) * var(--mivama-scroll-direction, 1) * -1
+      )
+    );
   }
 }
 
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
     .mivama-scroll-layer[data-effect="reveal"] {
-      animation: mivama-scroll-layer-reveal var(--motion-duration-slow) var(--motion-easing-emphasized) both;
+      animation: mivama-scroll-layer-reveal var(--motion-duration-slow)
+        var(--motion-easing-emphasized) both;
       animation-timeline: --mivama-scroll-scene;
       animation-range: entry 10% cover 45%;
     }
@@ -262,14 +281,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background font-sans text-foreground antialiased;
-    }
+  }
   html {
     @apply font-sans;
     scrollbar-gutter: stable;
-    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

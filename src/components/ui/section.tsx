@@ -44,7 +44,9 @@ function Section({
   return useRender({
     defaultTagName: "section",
     props: mergeProps<"section">(
-      { className: cn(sectionVariants({ density, tone, bordered }), className) },
+      {
+        className: cn(sectionVariants({ density, tone, bordered }), className),
+      },
       props
     ),
     render,

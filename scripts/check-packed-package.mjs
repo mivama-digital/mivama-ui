@@ -1,6 +1,15 @@
 import assert from "node:assert/strict"
 import { execFile } from "node:child_process"
-import { access, mkdtemp, mkdir, readFile, rename, rm, symlink, writeFile } from "node:fs/promises"
+import {
+  access,
+  mkdtemp,
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
 import { promisify } from "node:util"
@@ -34,7 +43,11 @@ try {
   ]) {
     const target = path.join(temp, "node_modules", dependency)
     await mkdir(path.dirname(target), { recursive: true })
-    await symlink(path.join(root, "node_modules", dependency), target, "junction")
+    await symlink(
+      path.join(root, "node_modules", dependency),
+      target,
+      "junction"
+    )
   }
 
   const packedPackage = JSON.parse(
@@ -44,7 +57,9 @@ try {
     (subpath) => !subpath.endsWith(".css")
   )
   const importSpecifiers = moduleSubpaths.map((subpath) =>
-    subpath === "." ? packedPackage.name : `${packedPackage.name}/${subpath.slice(2)}`
+    subpath === "."
+      ? packedPackage.name
+      : `${packedPackage.name}/${subpath.slice(2)}`
   )
 
   const checkFile = path.join(temp, "check.mjs")
@@ -61,7 +76,10 @@ try {
 
   assert.deepEqual(packedPackage.sideEffects, ["**/*.css"])
   for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
-    assert.equal(packedPackage.exports[`./${stylesheet}`], `./dist/${stylesheet}`)
+    assert.equal(
+      packedPackage.exports[`./${stylesheet}`],
+      `./dist/${stylesheet}`
+    )
     await access(path.join(packageDir, "dist", stylesheet))
   }
 
@@ -69,7 +87,11 @@ try {
     if (typeof target === "string") continue
     assert.equal(typeof target.types, "string", `${subpath} is missing types`)
     assert.equal(typeof target.import, "string", `${subpath} is missing import`)
-    assert.equal(target.default, target.import, `${subpath} default/import mismatch`)
+    assert.equal(
+      target.default,
+      target.import,
+      `${subpath} default/import mismatch`
+    )
     await access(path.join(packageDir, target.import))
     await access(path.join(packageDir, target.types))
   }

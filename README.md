@@ -35,16 +35,16 @@ owns the Mivama color, typography, shape, focus, and shared component contracts.
 Its base components retain the official `base-nova` shadcn/ui composition APIs.
 
 ```tsx
-import { Button, Card } from "@mivama/ui";
-import "@mivama/ui/styles.css";
+import { Button, Card } from "@mivama/ui"
+import "@mivama/ui/styles.css"
 ```
 
 Frequently used client-facing modules can bypass the root barrel:
 
 ```tsx
-import { Button } from "@mivama/ui/button";
-import { Card } from "@mivama/ui/card";
-import { Field, Input } from "@mivama/ui/forms";
+import { Button } from "@mivama/ui/button"
+import { Card } from "@mivama/ui/card"
+import { Field, Input } from "@mivama/ui/forms"
 ```
 
 Explicit subpaths are available for `button`, `sheet`, `card`, `scroll-scene`,
@@ -123,7 +123,9 @@ the shell itself, selects its dark contract.
 ```tsx
 <main className="mivama-editorial-theme">
   <Section tone="brand">
-    <Heading variant="statement" tone="inherit">Clear systems. Useful outcomes.</Heading>
+    <Heading variant="statement" tone="inherit">
+      Clear systems. Useful outcomes.
+    </Heading>
     <Button variant="inverse">Start a project</Button>
   </Section>
 </main>
@@ -155,7 +157,9 @@ from 40rem, and 12 from 64rem. It exposes `--editorial-grid-columns` and
 track:
 
 ```tsx
-<EditorialGrid style={{ "--editorial-grid-gap": "2rem" } as React.CSSProperties}>
+<EditorialGrid
+  style={{ "--editorial-grid-gap": "2rem" } as React.CSSProperties}
+>
   <article className="mivama-editorial-subgrid">...</article>
 </EditorialGrid>
 ```
@@ -167,8 +171,12 @@ needed.
 
 ```tsx
 <BentoGrid>
-  <BentoGridItem span={2}><Card variant="instrument">Lead story</Card></BentoGridItem>
-  <BentoGridItem><Card variant="outline">Supporting story</Card></BentoGridItem>
+  <BentoGridItem span={2}>
+    <Card variant="instrument">Lead story</Card>
+  </BentoGridItem>
+  <BentoGridItem>
+    <Card variant="outline">Supporting story</Card>
+  </BentoGridItem>
 </BentoGrid>
 ```
 
@@ -187,7 +195,9 @@ rendering, dark color scheme, focus rings, invalid states, and disabled states.
   <Select id="region" aria-describedby="region-help">
     <option value="eu">Europe</option>
   </Select>
-  <FieldDescription id="region-help">Used to route your enquiry.</FieldDescription>
+  <FieldDescription id="region-help">
+    Used to route your enquiry.
+  </FieldDescription>
 </Field>
 ```
 
@@ -202,7 +212,9 @@ the complete static layout.
 
 ```tsx
 <ScrollScene>
-  <ScrollLayer effect="parallax" direction="up" distance={48}>Editorial content</ScrollLayer>
+  <ScrollLayer effect="parallax" direction="up" distance={48}>
+    Editorial content
+  </ScrollLayer>
 </ScrollScene>
 ```
 

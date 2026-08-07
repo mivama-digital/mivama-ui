@@ -52,7 +52,10 @@ function BreadcrumbLink({
     defaultTagName: "a",
     props: mergeProps<"a">(
       {
-        className: cn("inline-flex min-h-11 items-center transition-colors hover:text-foreground", className),
+        className: cn(
+          "inline-flex min-h-11 items-center transition-colors hover:text-foreground",
+          className
+        ),
       },
       props
     ),
@@ -89,9 +92,7 @@ function BreadcrumbSeparator({
       className={cn("[&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? (
-        <ChevronRightIcon />
-      )}
+      {children ?? <ChevronRightIcon />}
     </li>
   )
 }

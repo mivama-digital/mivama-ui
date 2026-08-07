@@ -10,7 +10,9 @@ type FieldsetProps = ComponentProps<"fieldset">
 type FieldLegendProps = ComponentProps<"legend">
 
 function Field({ className, ...props }: FieldProps) {
-  return <div data-slot="field" className={cn("grid gap-2", className)} {...props} />
+  return (
+    <div data-slot="field" className={cn("grid gap-2", className)} {...props} />
+  )
 }
 
 function FieldLabel({ className, ...props }: FieldLabelProps) {
@@ -63,7 +65,14 @@ function FieldLegend({ className, ...props }: FieldLegendProps) {
   )
 }
 
-export { Field, FieldDescription, FieldError, FieldLabel, FieldLegend, Fieldset }
+export {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  Fieldset,
+}
 export type {
   FieldDescriptionProps,
   FieldErrorProps,
