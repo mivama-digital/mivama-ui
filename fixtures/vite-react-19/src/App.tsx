@@ -14,12 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@mivama/ui/dialog"
-import {
-  Field,
-  FieldDescription,
-  FieldLabel,
-  Input,
-} from "@mivama/ui/forms"
+import { Field, FieldDescription, FieldLabel, Input } from "@mivama/ui/forms"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@mivama/ui/tabs"
 
 export function App() {
