@@ -29,7 +29,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../src/components/ui/pagination.js"
-import { ScrollLayer, ScrollScene } from "../../src/components/ui/scroll-scene.js"
+import {
+  ScrollLayer,
+  ScrollScene,
+} from "../../src/components/ui/scroll-scene.js"
 import { Section } from "../../src/components/ui/section.js"
 import { Eyebrow, Heading, Text } from "../../src/components/ui/typography.js"
 
@@ -56,9 +59,10 @@ describe("navigation and layout components", () => {
       "href",
       "/projects"
     )
-    expect(
-      screen.getByRole("link", { name: "Design system" })
-    ).toHaveAttribute("aria-current", "page")
+    expect(screen.getByRole("link", { name: "Design system" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    )
 
     const results = await axe.run(container)
     expect(results.violations).toEqual([])
@@ -95,9 +99,10 @@ describe("navigation and layout components", () => {
     const active = screen.getByRole("link", { name: "2" })
     expect(active).toHaveAttribute("aria-current", "page")
     expect(active).toHaveAttribute("data-active", "true")
-    expect(
-      screen.getByRole("link", { name: "Next results" })
-    ).toHaveAttribute("href", "/results?page=3")
+    expect(screen.getByRole("link", { name: "Next results" })).toHaveAttribute(
+      "href",
+      "/results?page=3"
+    )
 
     const results = await axe.run(container)
     expect(results.violations).toEqual([])
@@ -181,9 +186,9 @@ describe("navigation and layout components", () => {
     expect(
       container.querySelector('[data-slot="bento-grid-item"]')
     ).toHaveAttribute("data-span", "2")
-    expect(
-      container.querySelector('[data-slot="editorial-grid"]')
-    ).toHaveClass("mivama-editorial-grid")
+    expect(container.querySelector('[data-slot="editorial-grid"]')).toHaveClass(
+      "mivama-editorial-grid"
+    )
 
     const layers = container.querySelectorAll('[data-slot="scroll-layer"]')
     expect(layers[0]).toHaveAttribute("data-effect", "parallax")
