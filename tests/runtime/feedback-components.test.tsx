@@ -125,7 +125,9 @@ describe("feedback components", () => {
               ?
             </EmptyMedia>
             <EmptyTitle>No messages</EmptyTitle>
-            <EmptyDescription>New conversations will appear here.</EmptyDescription>
+            <EmptyDescription>
+              New conversations will appear here.
+            </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>Start a new conversation.</EmptyContent>
         </Empty>
@@ -159,7 +161,9 @@ describe("feedback components", () => {
       </Progress>
     )
 
-    const progress = screen.getByRole("progressbar", { name: "Upload progress" })
+    const progress = screen.getByRole("progressbar", {
+      name: "Upload progress",
+    })
     expect(progress).toHaveAttribute("aria-valuenow", "64")
     expect(screen.getByText("Uploading")).toBeVisible()
 
