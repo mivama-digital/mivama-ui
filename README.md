@@ -47,8 +47,9 @@ import { Card } from "@mivama/ui/card"
 import { Field, Input } from "@mivama/ui/forms"
 ```
 
-Explicit subpaths are available for `button`, `sheet`, `card`, `scroll-scene`,
-`bento-grid`, and `forms`.
+The complete public module and stylesheet subpath catalog is generated from the
+component registry and package export map in [`docs/generated/exports.md`](docs/generated/exports.md).
+Use that catalog as the authoritative list instead of maintaining subpaths manually here.
 
 ## Design-system contract
 
