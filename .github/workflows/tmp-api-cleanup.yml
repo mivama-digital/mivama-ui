@@ -1,0 +1,179 @@
+name: Temporary API cleanup
+
+on:
+  push:
+    branches: [quality/public-api-cleanup]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: quality/public-api-cleanup
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Apply deterministic API cleanup
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs"
+
+          function replace(path, search, replacement) {
+            const source = fs.readFileSync(path, "utf8")
+            const next = source.replace(search, replacement)
+            if (next === source) throw new Error(`Pattern not found in ${path}`)
+            fs.writeFileSync(path, next)
+          }
+
+          replace(
+            "src/components/ui/alert.tsx",
+            'import { cva, type VariantProps } from "class-variance-authority"',
+            'import { cva } from "class-variance-authority"'
+          )
+          replace(
+            "src/components/ui/alert.tsx",
+            ')\n\nfunction Alert({',
+            ')\n\ntype AlertProps = React.ComponentProps<"div"> & {\n  variant?: "default" | "destructive" | "success" | "warning" | null\n}\n\nfunction Alert({'
+          )
+          replace(
+            "src/components/ui/alert.tsx",
+            '}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {',
+            '}: AlertProps) {'
+          )
+          replace(
+            "src/components/ui/alert.tsx",
+            'export { Alert, AlertTitle, AlertDescription, AlertAction }',
+            'export { Alert, AlertTitle, AlertDescription, AlertAction }\nexport type { AlertProps }'
+          )
+
+          replace(
+            "src/components/ui/attachment.tsx",
+            'import { cva, type VariantProps } from "class-variance-authority"',
+            'import { cva } from "class-variance-authority"'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            ')\n\nfunction Attachment({',
+            ')\n\ntype AttachmentProps = React.ComponentProps<"div"> & {\n  state?: "idle" | "uploading" | "processing" | "error" | "done"\n  size?: "default" | "sm" | "xs" | null\n  orientation?: "horizontal" | "vertical" | null\n}\n\nfunction Attachment({'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            '}: React.ComponentProps<"div"> &\n  VariantProps<typeof attachmentVariants> & {\n    state?: "idle" | "uploading" | "processing" | "error" | "done"\n  }) {',
+            '}: AttachmentProps) {'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            ')\n\nfunction AttachmentMedia({',
+            ')\n\ntype AttachmentMediaProps = React.ComponentProps<"div"> & {\n  variant?: "icon" | "image" | null\n}\n\nfunction AttachmentMedia({'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            '}: React.ComponentProps<"div"> & VariantProps<typeof attachmentMediaVariants>) {',
+            '}: AttachmentMediaProps) {'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            '}\n',
+            '}\n'
+          )
+          replace(
+            "src/components/ui/attachment.tsx",
+            '  AttachmentTrigger,\n}\n',
+            '  AttachmentTrigger,\n}\nexport type { AttachmentMediaProps, AttachmentProps }\n'
+          )
+
+          replace(
+            "src/components/ui/empty.tsx",
+            'import { cva, type VariantProps } from "class-variance-authority"',
+            'import { cva } from "class-variance-authority"'
+          )
+          replace(
+            "src/components/ui/empty.tsx",
+            ')\n\nfunction EmptyMedia({',
+            ')\n\ntype EmptyMediaProps = React.ComponentProps<"div"> & {\n  variant?: "default" | "icon" | null\n}\n\nfunction EmptyMedia({'
+          )
+          replace(
+            "src/components/ui/empty.tsx",
+            '}: React.ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>) {',
+            '}: EmptyMediaProps) {'
+          )
+          replace(
+            "src/components/ui/empty.tsx",
+            '  EmptyMedia,\n}\n',
+            '  EmptyMedia,\n}\nexport type { EmptyMediaProps }\n'
+          )
+
+          replace(
+            "src/components/ui/pagination.tsx",
+            'type PaginationLinkProps = {',
+            'export type PaginationLinkProps = {'
+          )
+
+          replace(
+            "src/components/ui/sidebar.tsx",
+            'type SidebarContextProps = {',
+            'export type SidebarContextProps = {'
+          )
+          replace(
+            "src/components/ui/sidebar.tsx",
+            'const sidebarMenuButtonVariants = cva(',
+            'export const sidebarMenuButtonVariants = cva('
+          )
+          replace(
+            "src/components/ui/sidebar.tsx",
+            '  SidebarTrigger,\n  useSidebar,',
+            '  SidebarTrigger,\n  sidebarMenuButtonVariants,\n  useSidebar,'
+          )
+
+          replace(
+            "src/index.ts",
+            '} from "./components/ui/alert.js"\n',
+            '} from "./components/ui/alert.js"\nexport type { AlertProps } from "./components/ui/alert.js"\n'
+          )
+          replace(
+            "src/index.ts",
+            '} from "./components/ui/attachment.js"\n',
+            '} from "./components/ui/attachment.js"\nexport type {\n  AttachmentMediaProps,\n  AttachmentProps,\n} from "./components/ui/attachment.js"\n'
+          )
+          replace(
+            "src/index.ts",
+            '} from "./components/ui/empty.js"\n',
+            '} from "./components/ui/empty.js"\nexport type { EmptyMediaProps } from "./components/ui/empty.js"\n'
+          )
+          replace(
+            "src/index.ts",
+            '  PaginationPrevious,\n} from "./components/ui/pagination.js"\n',
+            '  PaginationPrevious,\n} from "./components/ui/pagination.js"\nexport type { PaginationLinkProps } from "./components/ui/pagination.js"\n'
+          )
+          replace(
+            "src/index.ts",
+            '  SidebarTrigger,\n  useSidebar,\n} from "./components/ui/sidebar.js"\n',
+            '  SidebarTrigger,\n  sidebarMenuButtonVariants,\n  useSidebar,\n} from "./components/ui/sidebar.js"\nexport type {\n  SidebarContextProps,\n  SidebarCookieOptions,\n  SidebarPersistence,\n} from "./components/ui/sidebar.js"\n'
+          )
+
+          const apiPath = "api-extractor.json"
+          const apiConfig = JSON.parse(fs.readFileSync(apiPath, "utf8"))
+          apiConfig.messages.extractorMessageReporting["ae-forgotten-export"] = {
+            logLevel: "error",
+          }
+          fs.writeFileSync(apiPath, `${JSON.stringify(apiConfig, null, 2)}\n`)
+          NODE
+      - run: npx prettier --write src/components/ui/alert.tsx src/components/ui/attachment.tsx src/components/ui/empty.tsx src/components/ui/pagination.tsx src/components/ui/sidebar.tsx src/index.ts api-extractor.json
+      - run: npm run build
+      - run: npm run api:report
+      - name: Assert forgotten exports are eliminated
+        run: '! grep -q "ae-forgotten-export" etc/api/mivama-ui.api.md'
+      - name: Commit generated cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/ui/alert.tsx src/components/ui/attachment.tsx src/components/ui/empty.tsx src/components/ui/pagination.tsx src/components/ui/sidebar.tsx src/index.ts api-extractor.json etc/api/mivama-ui.api.md
+          git commit -m "refactor: clean public API signatures"
+          git push origin HEAD:quality/public-api-cleanup
