@@ -155,16 +155,15 @@ describe("feedback components", () => {
 
   it("exposes progress value and label through native progressbar semantics", async () => {
     const { container } = render(
-      <Progress value={64} aria-label="Upload progress">
+      <Progress value={64}>
         <ProgressLabel>Uploading</ProgressLabel>
         <ProgressValue />
       </Progress>
     )
 
-    const progress = screen.getByRole("progressbar", {
-      name: "Upload progress",
-    })
+    const progress = screen.getByRole("progressbar", { name: "Uploading" })
     expect(progress).toHaveAttribute("aria-valuenow", "64")
+    expect(progress).toHaveAttribute("aria-valuetext", "64%")
     expect(screen.getByText("Uploading")).toBeVisible()
 
     const results = await axe.run(container)
