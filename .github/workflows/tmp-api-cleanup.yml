@@ -121,11 +121,6 @@ jobs:
             'const sidebarMenuButtonVariants = cva(',
             'export const sidebarMenuButtonVariants = cva('
           )
-          replace(
-            "src/components/ui/sidebar.tsx",
-            '  SidebarTrigger,\n  useSidebar,',
-            '  SidebarTrigger,\n  sidebarMenuButtonVariants,\n  useSidebar,'
-          )
 
           replace(
             "src/index.ts",
