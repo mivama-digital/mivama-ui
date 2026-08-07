@@ -85,7 +85,7 @@ jobs:
 
           run("npm", ["ci", "--ignore-scripts"], fixture)
           run(
-            ["npm"][0],
+            "npm",
             [
               "install",
               "--ignore-scripts",
@@ -106,14 +106,21 @@ jobs:
           )
           writeFileSync(
             path.join(workspace, "vite.config.mjs"),
-            `import { defineConfig } from "vite"\nimport path from "node:path"\n\nexport default defineConfig({\n  build: {\n    lib: { entry: path.resolve(process.env.TREE_ENTRY), formats: ["es"], fileName: "bundle" },\n    outDir: path.resolve(process.env.TREE_OUT),\n    emptyOutDir: true,\n    minify: "esbuild",\n    rollupOptions: { external: ["react", "react-dom", "react/jsx-runtime"] },\n  },\n})\n`
+            `import { defineConfig } from "vite"\nimport path from "node:path"\n\nexport default defineConfig({\n  build: {\n    lib: { entry: path.resolve(process.env.TREE_ENTRY), formats: ["es"], fileName: "bundle" },\n    outDir: path.resolve(process.env.TREE_OUT),\n    emptyOutDir: true,\n    minify: "oxc",\n    rollupOptions: { external: ["react", "react-dom", "react/jsx-runtime"] },\n  },\n})\n`
           )
 
           for (const name of ["direct", "root"]) {
             const out = path.join(workspace, `dist-${name}`)
             run(
               "npm",
-              ["exec", "--", "vite", "build", "--config", path.join(workspace, "vite.config.mjs")],
+              [
+                "exec",
+                "--",
+                "vite",
+                "build",
+                "--config",
+                path.join(workspace, "vite.config.mjs"),
+              ],
               fixture,
               {
                 TREE_ENTRY: path.join(workspace, `${name}.js`),
