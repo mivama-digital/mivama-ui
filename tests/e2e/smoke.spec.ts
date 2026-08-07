@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test"
 
-test("packed UI testbed supports core browser interactions", async ({ page }) => {
+test("packed UI testbed supports core browser interactions", async ({
+  page,
+}) => {
   const browserErrors: string[] = []
 
   page.on("console", (message) => {
