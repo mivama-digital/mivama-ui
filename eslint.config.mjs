@@ -68,9 +68,7 @@ export default [
       parserOptions: {
         requireConfigFile: false,
         babelOptions: {
-          presets: [
-            ["@babel/preset-typescript", { allExtensions: true, isTSX: true }],
-          ],
+          presets: ["@babel/preset-typescript"],
         },
       },
     },
