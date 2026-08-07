@@ -80,11 +80,6 @@ jobs:
           )
           replace(
             "src/components/ui/attachment.tsx",
-            '}\n',
-            '}\n'
-          )
-          replace(
-            "src/components/ui/attachment.tsx",
             '  AttachmentTrigger,\n}\n',
             '  AttachmentTrigger,\n}\nexport type { AttachmentMediaProps, AttachmentProps }\n'
           )
@@ -166,6 +161,7 @@ jobs:
           fs.writeFileSync(apiPath, `${JSON.stringify(apiConfig, null, 2)}\n`)
           NODE
       - run: npx prettier --write src/components/ui/alert.tsx src/components/ui/attachment.tsx src/components/ui/empty.tsx src/components/ui/pagination.tsx src/components/ui/sidebar.tsx src/index.ts api-extractor.json
+      - run: git diff --check
       - run: npm run build
       - run: npm run api:report
       - name: Assert forgotten exports are eliminated
