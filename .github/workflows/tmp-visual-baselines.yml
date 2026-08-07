@@ -28,7 +28,7 @@ jobs:
       - run: npm run test:e2e -- --project=chromium tests/e2e/visual.spec.ts --update-snapshots
       - name: Commit visual baselines
         run: |
-          if git diff --quiet; then
+          if [ -z "$(git status --porcelain -- tests/e2e/visual.spec.ts tests/e2e/visual.spec.ts-snapshots)" ]; then
             exit 0
           fi
           git config user.name "github-actions[bot]"
