@@ -28,7 +28,7 @@ jobs:
         shell: bash
         working-directory: .
         run: |
-          if git diff --quiet -- fixtures/vite-react-19/package-lock.json; then
+          if [ -z "$(git status --porcelain -- fixtures/vite-react-19/package-lock.json)" ]; then
             echo "Fixture lockfile is already current."
             exit 0
           fi
