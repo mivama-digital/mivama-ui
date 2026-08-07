@@ -38,6 +38,7 @@ jobs:
       - run: npx prettier --write package.json .changeset/config.json .changeset/README.md
       - name: Validate release planning
         run: |
+          git branch -f main origin/main
           cat > .changeset/tmp-validation.md <<'EOF'
           ---
           "@mivama/ui": patch
