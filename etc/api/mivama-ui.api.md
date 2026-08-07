@@ -387,7 +387,8 @@ export function PaginationLink(input: PaginationLinkProps): React_2.JSX.Element;
 // @public (undocumented)
 export type PaginationLinkProps = {
     isActive?: boolean;
-} & Pick<React_2.ComponentProps<typeof Button>, "size"> & React_2.ComponentProps<"a">;
+    size?: "default" | "icon" | "icon-lg" | "icon-sm" | "icon-xs" | "lg" | "sm" | "xs" | null;
+} & React_2.ComponentProps<"a">;
 
 // @public (undocumented)
 export function PaginationNext(input: React_2.ComponentProps<typeof PaginationLink> & {

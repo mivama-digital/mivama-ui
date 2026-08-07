@@ -43,7 +43,16 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 export type PaginationLinkProps = {
   isActive?: boolean
-  size?: "default" | "icon" | "icon-lg" | "icon-sm" | "icon-xs" | "lg" | "sm" | "xs" | null
+  size?:
+    | "default"
+    | "icon"
+    | "icon-lg"
+    | "icon-sm"
+    | "icon-xs"
+    | "lg"
+    | "sm"
+    | "xs"
+    | null
 } & React.ComponentProps<"a">
 
 function PaginationLink({
