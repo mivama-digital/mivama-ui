@@ -1,0 +1,39 @@
+name: Temporary accessibility modes validation
+
+on:
+  push:
+    branches: [a11y/accessibility-modes]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: a11y/accessibility-modes
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            fixtures/vite-react-19/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write src/styles.css tests/e2e/accessibility-modes.spec.ts
+      - run: npm run verify:package
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --project=chromium tests/e2e/accessibility-modes.spec.ts
+      - name: Commit formatter output
+        run: |
+          if [ -z "$(git status --porcelain -- src/styles.css tests/e2e/accessibility-modes.spec.ts)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/styles.css tests/e2e/accessibility-modes.spec.ts
+          git commit -m "style: finalize accessibility mode coverage"
+          git push origin HEAD:a11y/accessibility-modes
