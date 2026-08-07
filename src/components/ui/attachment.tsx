@@ -1,7 +1,7 @@
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 
 import { cn } from "../../lib/utils.js"
 import { Button } from "./button.js"
@@ -24,16 +24,19 @@ const attachmentVariants = cva(
   }
 )
 
+type AttachmentProps = React.ComponentProps<"div"> & {
+  state?: "idle" | "uploading" | "processing" | "error" | "done"
+  size?: "default" | "sm" | "xs" | null
+  orientation?: "horizontal" | "vertical" | null
+}
+
 function Attachment({
   className,
   state = "done",
   size = "default",
   orientation = "horizontal",
   ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof attachmentVariants> & {
-    state?: "idle" | "uploading" | "processing" | "error" | "done"
-  }) {
+}: AttachmentProps) {
   return (
     <div
       data-slot="attachment"
@@ -62,11 +65,15 @@ const attachmentMediaVariants = cva(
   }
 )
 
+type AttachmentMediaProps = React.ComponentProps<"div"> & {
+  variant?: "icon" | "image" | null
+}
+
 function AttachmentMedia({
   className,
   variant = "icon",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof attachmentMediaVariants>) {
+}: AttachmentMediaProps) {
   return (
     <div
       data-slot="attachment-media"
@@ -205,3 +212,4 @@ export {
   AttachmentAction,
   AttachmentTrigger,
 }
+export type { AttachmentMediaProps, AttachmentProps }

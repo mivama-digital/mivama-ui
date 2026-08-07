@@ -37,6 +37,7 @@ export {
   AlertDescription,
   AlertTitle,
 } from "./components/ui/alert.js"
+export type { AlertProps } from "./components/ui/alert.js"
 export {
   Attachment,
   AttachmentAction,
@@ -47,6 +48,10 @@ export {
   AttachmentMedia,
   AttachmentTitle,
   AttachmentTrigger,
+} from "./components/ui/attachment.js"
+export type {
+  AttachmentMediaProps,
+  AttachmentProps,
 } from "./components/ui/attachment.js"
 export {
   Breadcrumb,
@@ -77,6 +82,7 @@ export {
   EmptyMedia,
   EmptyTitle,
 } from "./components/ui/empty.js"
+export type { EmptyMediaProps } from "./components/ui/empty.js"
 export { EditorialGrid } from "./components/ui/editorial-grid.js"
 export type { EditorialGridProps } from "./components/ui/editorial-grid.js"
 export {
@@ -115,6 +121,7 @@ export {
   PaginationNext,
   PaginationPrevious,
 } from "./components/ui/pagination.js"
+export type { PaginationLinkProps } from "./components/ui/pagination.js"
 export {
   Progress,
   ProgressIndicator,
@@ -164,7 +171,13 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  sidebarMenuButtonVariants,
   useSidebar,
+} from "./components/ui/sidebar.js"
+export type {
+  SidebarContextProps,
+  SidebarCookieOptions,
+  SidebarPersistence,
 } from "./components/ui/sidebar.js"
 export { Skeleton } from "./components/ui/skeleton.js"
 export { ScrollLayer, ScrollScene } from "./components/ui/scroll-scene.js"

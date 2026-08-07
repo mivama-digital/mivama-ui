@@ -21,10 +21,8 @@ import { Tooltip as Tooltip_2 } from '@base-ui/react/tooltip';
 import { useRender } from '@base-ui/react/use-render';
 import { VariantProps } from 'class-variance-authority';
 
-// Warning: (ae-forgotten-export) The symbol "alertVariants" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function Alert(input: React_2.ComponentProps<"div"> & VariantProps<typeof alertVariants>): React_2.JSX.Element;
+export function Alert(input: AlertProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function AlertAction(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
@@ -33,14 +31,15 @@ export function AlertAction(input: React_2.ComponentProps<"div">): React_2.JSX.E
 export function AlertDescription(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
+export type AlertProps = React_2.ComponentProps<"div"> & {
+    variant?: "default" | "destructive" | "success" | "warning" | null;
+};
+
+// @public (undocumented)
 export function AlertTitle(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "attachmentVariants" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function Attachment(input: React_2.ComponentProps<"div"> & VariantProps<typeof attachmentVariants> & {
-    state?: "idle" | "uploading" | "processing" | "error" | "done";
-}): React_2.JSX.Element;
+export function Attachment(input: AttachmentProps): React_2.JSX.Element;
 
 // @public (undocumented)
 export function AttachmentAction(input: React_2.ComponentProps<typeof Button>): React_2.JSX.Element;
@@ -57,10 +56,20 @@ export function AttachmentDescription(input: React_2.ComponentProps<"span">): Re
 // @public (undocumented)
 export function AttachmentGroup(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "attachmentMediaVariants" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function AttachmentMedia(input: React_2.ComponentProps<"div"> & VariantProps<typeof attachmentMediaVariants>): React_2.JSX.Element;
+export function AttachmentMedia(input: AttachmentMediaProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type AttachmentMediaProps = React_2.ComponentProps<"div"> & {
+    variant?: "icon" | "image" | null;
+};
+
+// @public (undocumented)
+export type AttachmentProps = React_2.ComponentProps<"div"> & {
+    state?: "idle" | "uploading" | "processing" | "error" | "done";
+    size?: "default" | "sm" | "xs" | null;
+    orientation?: "horizontal" | "vertical" | null;
+};
 
 // @public (undocumented)
 export function AttachmentTitle(input: React_2.ComponentProps<"span">): React_2.JSX.Element;
@@ -240,10 +249,13 @@ export function EmptyDescription(input: React.ComponentProps<"p">): JSX.Element;
 // @public (undocumented)
 export function EmptyHeader(input: React.ComponentProps<"div">): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "emptyMediaVariants" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export function EmptyMedia(input: React.ComponentProps<"div"> & VariantProps<typeof emptyMediaVariants>): JSX.Element;
+export function EmptyMedia(input: EmptyMediaProps): JSX.Element;
+
+// @public (undocumented)
+export type EmptyMediaProps = React.ComponentProps<"div"> & {
+    variant?: "default" | "icon" | null;
+};
 
 // @public (undocumented)
 export function EmptyTitle(input: React.ComponentProps<"div">): JSX.Element;
@@ -369,10 +381,13 @@ export function PaginationEllipsis(input: React_2.ComponentProps<"span">): React
 // @public (undocumented)
 export function PaginationItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "PaginationLinkProps" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export function PaginationLink(input: PaginationLinkProps): React_2.JSX.Element;
+
+// @public (undocumented)
+export type PaginationLinkProps = {
+    isActive?: boolean;
+} & Pick<React_2.ComponentProps<typeof Button>, "size"> & React_2.ComponentProps<"a">;
 
 // @public (undocumented)
 export function PaginationNext(input: React_2.ComponentProps<typeof PaginationLink> & {
@@ -494,6 +509,26 @@ export function Sidebar(input: React_2.ComponentProps<"div"> & {
 export function SidebarContent(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
+export type SidebarContextProps = {
+    state: "expanded" | "collapsed";
+    open: boolean;
+    setOpen: (open: boolean) => void;
+    openMobile: boolean;
+    setOpenMobile: (open: boolean) => void;
+    isMobile: boolean;
+    sidebarId: string;
+    toggleSidebar: () => void;
+};
+
+// @public (undocumented)
+export type SidebarCookieOptions = {
+    path?: string;
+    maxAge?: number;
+    sameSite?: "Lax" | "Strict" | "None";
+    secure?: boolean;
+};
+
+// @public (undocumented)
 export function SidebarFooter(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
 // @public (undocumented)
@@ -528,13 +563,17 @@ export function SidebarMenuAction(input: useRender.ComponentProps<"button"> & Re
 // @public (undocumented)
 export function SidebarMenuBadge(input: React_2.ComponentProps<"div">): React_2.JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "sidebarMenuButtonVariants" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export function SidebarMenuButton(input: useRender.ComponentProps<"button"> & React_2.ComponentProps<"button"> & {
     isActive?: boolean;
     tooltip?: string | React_2.ComponentProps<typeof TooltipContent>;
 } & VariantProps<typeof sidebarMenuButtonVariants>): React_2.JSX.Element;
+
+// @public (undocumented)
+export const sidebarMenuButtonVariants: (props?: ({
+    variant?: "default" | "outline" | null | undefined;
+    size?: "default" | "lg" | "sm" | "xs" | null | undefined;
+} & ClassProp) | undefined) => string;
 
 // @public (undocumented)
 export function SidebarMenuItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
@@ -556,6 +595,9 @@ export function SidebarMenuSubButton(input: useRender.ComponentProps<"a"> & Reac
 
 // @public (undocumented)
 export function SidebarMenuSubItem(input: React_2.ComponentProps<"li">): React_2.JSX.Element;
+
+// @public (undocumented)
+export type SidebarPersistence = "none" | "localStorage" | "cookie";
 
 // @public (undocumented)
 export function SidebarProvider(input: React_2.ComponentProps<"div"> & {
@@ -645,15 +687,8 @@ export function useMivamaPortalContainer(): MivamaPortalContainer | undefined;
 // @public (undocumented)
 export function useOptionalMivamaContext(): MivamaContextValue | null;
 
-// Warning: (ae-forgotten-export) The symbol "SidebarContextProps" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export function useSidebar(): SidebarContextProps;
-
-// Warnings were encountered during analysis:
-//
-// src/components/ui/sidebar.tsx:72:3 - (ae-forgotten-export) The symbol "SidebarPersistence" needs to be exported by the entry point index.d.ts
-// src/components/ui/sidebar.tsx:74:3 - (ae-forgotten-export) The symbol "SidebarCookieOptions" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
