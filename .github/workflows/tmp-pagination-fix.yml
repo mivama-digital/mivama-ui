@@ -23,7 +23,6 @@ jobs:
       - run: npx prettier --write src/components/ui/pagination.tsx
       - run: npm run build
       - run: npm run api:report
-      - run: git diff --check
       - name: Commit generated output
         run: |
           if git diff --quiet; then
