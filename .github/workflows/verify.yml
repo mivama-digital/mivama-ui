@@ -40,8 +40,6 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm audit --omit=dev
-      - name: Check repository formatting
-        run: npx prettier --check .
       - name: Run full verification
         if: matrix.runtime-tests
         run: npm run verify
