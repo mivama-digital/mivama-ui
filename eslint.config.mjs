@@ -81,6 +81,8 @@ export default [
     },
     rules: {
       ...sharedRules,
+      "unused-imports/no-unused-imports": "off",
+      "unused-imports/no-unused-vars": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
     },
