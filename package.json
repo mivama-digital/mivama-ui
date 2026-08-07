@@ -187,7 +187,7 @@
     "audit:source": "node scripts/audit-source.mjs",
     "bundle:check": "node scripts/check-bundle-budgets.mjs",
     "pack:check": "node scripts/check-packed-package.mjs",
-    "verify": "npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm run test:coverage && npm run test:contracts && npm run pack:check && npm run package:lint",
+    "verify": "npm run lint && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run api:check && npm run bundle:check && npm run test:coverage && npm run test:contracts && npm run pack:check && npm run package:lint",
     "verify:package": "npm run lint:node && npm run format:check && npm run audit:source && npm run registry:check && npm run typecheck && npm run build && npm run bundle:check && npm run test:contracts && npm run pack:check && npm run package:lint",
     "prepublishOnly": "npm run verify",
     "prepare": "npm run build",
@@ -204,7 +204,9 @@
     "package:types": "attw --pack . --profile node16 --exclude-entrypoints styles.css tokens.css themes.css --ignore-rules cjs-resolves-to-esm",
     "package:lint": "npm run package:publint && npm run package:types",
     "registry:write": "node scripts/check-component-registry.mjs --write",
-    "registry:check": "node scripts/check-component-registry.mjs"
+    "registry:check": "node scripts/check-component-registry.mjs",
+    "api:check": "api-extractor run",
+    "api:report": "api-extractor run --local"
   },
   "peerDependencies": {
     "react": ">=18 <20",
