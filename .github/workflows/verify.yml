@@ -44,6 +44,14 @@ jobs:
       - name: Run full verification
         if: matrix.runtime-tests
         run: npm run verify
+      - name: Upload coverage report
+        if: always() && matrix.runtime-tests && matrix.node-version == 22
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: coverage-node-22
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Run Node 20 package compatibility
         if: ${{ !matrix.runtime-tests }}
         run: npm run verify:package
