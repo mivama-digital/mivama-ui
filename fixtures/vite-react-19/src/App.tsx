@@ -15,7 +15,20 @@ import {
   DialogTrigger,
 } from "@mivama/ui/dialog"
 import { Field, FieldDescription, FieldLabel, Input } from "@mivama/ui/forms"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@mivama/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@mivama/ui/tabs"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@mivama/ui/tooltip"
 
 export function App() {
   return (
@@ -59,15 +72,42 @@ export function App() {
               </TabsContent>
             </Tabs>
 
-            <Dialog>
-              <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
-              <DialogContent>
-                <DialogTitle>Consumer dialog</DialogTitle>
-                <DialogDescription>
-                  Client-side overlay primitives compile in a Vite application.
-                </DialogDescription>
-              </DialogContent>
-            </Dialog>
+            <div className="flex flex-wrap gap-3">
+              <Dialog>
+                <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Consumer dialog</DialogTitle>
+                  <DialogDescription>
+                    Client-side overlay primitives compile in a Vite
+                    application.
+                  </DialogDescription>
+                  <Input aria-label="Dialog email" type="email" />
+                </DialogContent>
+              </Dialog>
+
+              <Sheet>
+                <SheetTrigger render={<Button variant="outline" />}>
+                  Open sheet
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetTitle>Consumer sheet</SheetTitle>
+                  <SheetDescription>
+                    Sheet focus management is exercised from the packed
+                    distribution.
+                  </SheetDescription>
+                  <Input aria-label="Sheet email" type="email" />
+                </SheetContent>
+              </Sheet>
+
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger render={<Button variant="outline" />}>
+                    Tooltip target
+                  </TooltipTrigger>
+                  <TooltipContent>Consumer tooltip</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </CardContent>
         </Card>
       </main>
