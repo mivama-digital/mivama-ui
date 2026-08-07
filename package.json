@@ -192,7 +192,7 @@
     "prepare": "npm run build",
     "lint": "eslint \"scripts/**/*.mjs\" \"tests/**/*.mjs\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check package.json package-lock.json eslint.config.mjs vitest.config.ts tests/setup.ts \"tests/runtime/**/*.{ts,tsx}\" config/components.mjs scripts/check-component-registry.mjs docs/generated/exports.md",
+    "format:check": "prettier --check .",
     "test:runtime": "vitest run",
     "test:runtime:watch": "vitest",
     "test:coverage": "vitest run --coverage",
