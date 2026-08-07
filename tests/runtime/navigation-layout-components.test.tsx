@@ -3,10 +3,7 @@ import { render, screen } from "@testing-library/react"
 import axe from "axe-core"
 import { describe, expect, it } from "vitest"
 
-import {
-  BentoGrid,
-  BentoGridItem,
-} from "../../src/components/ui/bento-grid.js"
+import { BentoGrid, BentoGridItem } from "../../src/components/ui/bento-grid.js"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,16 +29,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../../src/components/ui/pagination.js"
-import {
-  ScrollLayer,
-  ScrollScene,
-} from "../../src/components/ui/scroll-scene.js"
+import { ScrollLayer, ScrollScene } from "../../src/components/ui/scroll-scene.js"
 import { Section } from "../../src/components/ui/section.js"
-import {
-  Eyebrow,
-  Heading,
-  Text,
-} from "../../src/components/ui/typography.js"
+import { Eyebrow, Heading, Text } from "../../src/components/ui/typography.js"
 
 describe("navigation and layout components", () => {
   it("composes breadcrumb navigation with a localized label and current page", async () => {
@@ -66,10 +56,9 @@ describe("navigation and layout components", () => {
       "href",
       "/projects"
     )
-    expect(screen.getByRole("link", { name: "Design system" })).toHaveAttribute(
-      "aria-current",
-      "page"
-    )
+    expect(
+      screen.getByRole("link", { name: "Design system" })
+    ).toHaveAttribute("aria-current", "page")
 
     const results = await axe.run(container)
     expect(results.violations).toEqual([])
@@ -100,17 +89,15 @@ describe("navigation and layout components", () => {
     expect(
       screen.getByRole("navigation", { name: "Result pages" })
     ).toBeVisible()
-    expect(screen.getByRole("link", { name: "Previous results" })).toHaveAttribute(
-      "href",
-      "/results?page=1"
-    )
+    expect(
+      screen.getByRole("link", { name: "Previous results" })
+    ).toHaveAttribute("href", "/results?page=1")
     const active = screen.getByRole("link", { name: "2" })
     expect(active).toHaveAttribute("aria-current", "page")
     expect(active).toHaveAttribute("data-active", "true")
-    expect(screen.getByRole("link", { name: "Next results" })).toHaveAttribute(
-      "href",
-      "/results?page=3"
-    )
+    expect(
+      screen.getByRole("link", { name: "Next results" })
+    ).toHaveAttribute("href", "/results?page=3")
 
     const results = await axe.run(container)
     expect(results.violations).toEqual([])
