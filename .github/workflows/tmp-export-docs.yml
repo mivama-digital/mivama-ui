@@ -1,0 +1,51 @@
+name: Temporary export documentation generator
+
+on:
+  push:
+    branches: [docs/export-registry-sync]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: docs/export-registry-sync
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Replace stale README export list
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs"
+
+          const path = "README.md"
+          const source = fs.readFileSync(path, "utf8")
+          const stale = `Explicit subpaths are available for \`button\`, \`sheet\`, \`card\`, \`scroll-scene\`,\n\`bento-grid\`, and \`forms\`.`
+          const replacement = `The complete public module and stylesheet subpath catalog is generated from the\ncomponent registry and package export map in [\`docs/generated/exports.md\`](docs/generated/exports.md).\nUse that catalog as the authoritative list instead of maintaining subpaths manually here.`
+          const next = source.replace(stale, replacement)
+          if (next === source && !source.includes("authoritative list instead")) {
+            throw new Error("README export paragraph not found")
+          }
+          fs.writeFileSync(path, next)
+          NODE
+      - run: npx prettier --write README.md scripts/check-component-registry.mjs
+      - run: npm run registry:write
+      - run: npx prettier --check docs/generated/exports.md
+      - run: npm run registry:check
+      - name: Commit generated documentation
+        run: |
+          if [ -z "$(git status --porcelain -- README.md scripts/check-component-registry.mjs docs/generated/exports.md)" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md scripts/check-component-registry.mjs docs/generated/exports.md
+          git commit -m "docs: synchronize package export catalog"
+          git push origin HEAD:docs/export-registry-sync
