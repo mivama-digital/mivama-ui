@@ -30,6 +30,19 @@ for (const duplicate of new Set(
   errors.push(`Duplicate component source: ${duplicate}`)
 }
 
+const rootExport = packageJson.exports?.["."]
+if (
+  !rootExport ||
+  typeof rootExport !== "object" ||
+  !rootExport.types ||
+  !rootExport.import ||
+  !rootExport.default
+) {
+  errors.push("Incomplete root package export contract: .")
+} else if (rootExport.import !== rootExport.default) {
+  errors.push("Import/default mismatch: .")
+}
+
 for (const component of components) {
   const sourcePath = path.join(root, component.source)
   try {
@@ -101,27 +114,53 @@ for (const slug of registeredSlugs) {
 }
 
 const sorted = [...components].sort((a, b) => a.slug.localeCompare(b.slug))
-const sections = sorted.map(
-  ({
-    name,
-    slug,
-    category,
-    status,
-    client,
-    interactive,
-  }) => `## \`@mivama/ui/${slug}\`
+const moduleSections = sorted.map(
+  ({ name, slug, category, status, client, interactive }) => {
+    const packageExport = packageJson.exports[`./${slug}`]
+    return `## \`@mivama/ui/${slug}\`
 
 - Primary component: ${name}
 - Category: ${category}
 - Status: ${status}
 - Client boundary: ${client ? "Yes" : "No"}
-- Interactive: ${interactive ? "Yes" : "No"}`
+- Interactive: ${interactive ? "Yes" : "No"}
+- Types: \`${packageExport.types}\`
+- Runtime: \`${packageExport.import}\``
+  }
 )
+
+const stylesheetExports = Object.entries(packageJson.exports ?? {})
+  .filter(([key, value]) => key !== "." && typeof value === "string")
+  .sort(([left], [right]) => left.localeCompare(right))
+
+const stylesheetLines = stylesheetExports.length
+  ? stylesheetExports
+      .map(
+        ([key, target]) =>
+          `- \`@mivama/ui/${key.slice(2)}\` → \`${target}\``
+      )
+      .join("\n")
+  : "- None"
+
 const generated = `# Package exports
 
-This file is generated from \`config/components.mjs\`. Do not edit it manually.
+This file is generated from \`config/components.mjs\` and \`package.json\`. Do not edit it manually.
 
-${sections.join("\n\n")}
+The registry is the authoritative catalog of public JavaScript/TypeScript component subpaths. Package export validation fails when a public module is missing from the registry or a registered module is missing from \`package.json\`.
+
+## Root barrel
+
+- Import: \`@mivama/ui\`
+- Types: \`${rootExport?.types ?? "missing"}\`
+- Runtime: \`${rootExport?.import ?? "missing"}\`
+
+## Component and module subpaths
+
+${moduleSections.join("\n\n")}
+
+## Stylesheet exports
+
+${stylesheetLines}
 `
 const docsPath = path.join(root, "docs/generated/exports.md")
 
@@ -148,4 +187,6 @@ if (errors.length > 0) {
   process.exit(1)
 }
 
-console.log(`Validated ${components.length} registered module exports`)
+console.log(
+  `Validated ${components.length} registered module exports and ${stylesheetExports.length} stylesheet exports`
+)
