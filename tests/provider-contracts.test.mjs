@@ -115,12 +115,12 @@ test("provider public API includes typed theme, density, and optional context", 
   assert.match(index, /MivamaContextValue/)
 })
 
-test("verify includes bundle budgets before package validation", async () => {
+test("verify includes API and bundle checks before package validation", async () => {
   const packageJson = JSON.parse(await read("package.json"))
 
   assert.match(
     packageJson.scripts.verify,
-    /npm run build && npm run bundle:check/
+    /npm run build && npm run api:check && npm run bundle:check/
   )
   assert.match(packageJson.scripts.verify, /npm run pack:check/)
 })
