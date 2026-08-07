@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm install --save-dev typescript-eslint eslint-plugin-react-hooks eslint-plugin-jsx-a11y --ignore-scripts
+      - run: npm install --save-dev @babel/core @babel/eslint-parser @babel/preset-typescript eslint-plugin-react-hooks eslint-plugin-jsx-a11y --ignore-scripts
       - name: Commit dependency lockfile
         shell: bash
         run: |
