@@ -1,6 +1,16 @@
 # Package exports
 
-This file is generated from `config/components.mjs`. Do not edit it manually.
+This file is generated from `config/components.mjs` and `package.json`. Do not edit it manually.
+
+The registry is the authoritative catalog of public JavaScript/TypeScript component subpaths. Package export validation fails when a public module is missing from the registry or a registered module is missing from `package.json`.
+
+## Root barrel
+
+- Import: `@mivama/ui`
+- Types: `./dist/index.d.ts`
+- Runtime: `./dist/index.js`
+
+## Component and module subpaths
 
 ## `@mivama/ui/alert`
 
@@ -9,6 +19,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/alert.d.ts`
+- Runtime: `./dist/components/ui/alert.js`
 
 ## `@mivama/ui/attachment`
 
@@ -17,6 +29,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/attachment.d.ts`
+- Runtime: `./dist/components/ui/attachment.js`
 
 ## `@mivama/ui/badge`
 
@@ -25,6 +39,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/badge.d.ts`
+- Runtime: `./dist/components/ui/badge.js`
 
 ## `@mivama/ui/bento-grid`
 
@@ -33,6 +49,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/bento-grid.d.ts`
+- Runtime: `./dist/components/ui/bento-grid.js`
 
 ## `@mivama/ui/breadcrumb`
 
@@ -41,6 +59,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/breadcrumb.d.ts`
+- Runtime: `./dist/components/ui/breadcrumb.js`
 
 ## `@mivama/ui/button`
 
@@ -49,6 +69,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/button.d.ts`
+- Runtime: `./dist/components/ui/button.js`
 
 ## `@mivama/ui/card`
 
@@ -57,6 +79,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/card.d.ts`
+- Runtime: `./dist/components/ui/card.js`
 
 ## `@mivama/ui/choice`
 
@@ -65,6 +89,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/choice.d.ts`
+- Runtime: `./dist/components/ui/choice.js`
 
 ## `@mivama/ui/container`
 
@@ -73,6 +99,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/container.d.ts`
+- Runtime: `./dist/components/ui/container.js`
 
 ## `@mivama/ui/dialog`
 
@@ -81,6 +109,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/dialog.d.ts`
+- Runtime: `./dist/components/ui/dialog.js`
 
 ## `@mivama/ui/editorial-grid`
 
@@ -89,6 +119,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/editorial-grid.d.ts`
+- Runtime: `./dist/components/ui/editorial-grid.js`
 
 ## `@mivama/ui/empty`
 
@@ -97,6 +129,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/empty.d.ts`
+- Runtime: `./dist/components/ui/empty.js`
 
 ## `@mivama/ui/field`
 
@@ -105,6 +139,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/field.d.ts`
+- Runtime: `./dist/components/ui/field.js`
 
 ## `@mivama/ui/forms`
 
@@ -113,6 +149,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/forms.d.ts`
+- Runtime: `./dist/forms.js`
 
 ## `@mivama/ui/input`
 
@@ -121,6 +159,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/input.d.ts`
+- Runtime: `./dist/components/ui/input.js`
 
 ## `@mivama/ui/message`
 
@@ -129,6 +169,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/message.d.ts`
+- Runtime: `./dist/components/ui/message.js`
 
 ## `@mivama/ui/pagination`
 
@@ -137,6 +179,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/pagination.d.ts`
+- Runtime: `./dist/components/ui/pagination.js`
 
 ## `@mivama/ui/progress`
 
@@ -145,6 +189,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/progress.d.ts`
+- Runtime: `./dist/components/ui/progress.js`
 
 ## `@mivama/ui/provider`
 
@@ -153,6 +199,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: No
+- Types: `./dist/components/mivama-provider.d.ts`
+- Runtime: `./dist/components/mivama-provider.js`
 
 ## `@mivama/ui/scroll-scene`
 
@@ -161,6 +209,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/scroll-scene.d.ts`
+- Runtime: `./dist/components/ui/scroll-scene.js`
 
 ## `@mivama/ui/section`
 
@@ -169,6 +219,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/section.d.ts`
+- Runtime: `./dist/components/ui/section.js`
 
 ## `@mivama/ui/select`
 
@@ -177,6 +229,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/select.d.ts`
+- Runtime: `./dist/components/ui/select.js`
 
 ## `@mivama/ui/separator`
 
@@ -185,6 +239,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/separator.d.ts`
+- Runtime: `./dist/components/ui/separator.js`
 
 ## `@mivama/ui/sheet`
 
@@ -193,6 +249,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/sheet.d.ts`
+- Runtime: `./dist/components/ui/sheet.js`
 
 ## `@mivama/ui/sidebar`
 
@@ -201,6 +259,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/sidebar.d.ts`
+- Runtime: `./dist/components/ui/sidebar.js`
 
 ## `@mivama/ui/skeleton`
 
@@ -209,6 +269,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/skeleton.d.ts`
+- Runtime: `./dist/components/ui/skeleton.js`
 
 ## `@mivama/ui/switch`
 
@@ -217,6 +279,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/switch.d.ts`
+- Runtime: `./dist/components/ui/switch.js`
 
 ## `@mivama/ui/tabs`
 
@@ -225,6 +289,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/tabs.d.ts`
+- Runtime: `./dist/components/ui/tabs.js`
 
 ## `@mivama/ui/textarea`
 
@@ -233,6 +299,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: Yes
+- Types: `./dist/components/ui/textarea.d.ts`
+- Runtime: `./dist/components/ui/textarea.js`
 
 ## `@mivama/ui/tooltip`
 
@@ -241,6 +309,8 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: Yes
 - Interactive: Yes
+- Types: `./dist/components/ui/tooltip.d.ts`
+- Runtime: `./dist/components/ui/tooltip.js`
 
 ## `@mivama/ui/typography`
 
@@ -249,3 +319,11 @@ This file is generated from `config/components.mjs`. Do not edit it manually.
 - Status: stable
 - Client boundary: No
 - Interactive: No
+- Types: `./dist/components/ui/typography.d.ts`
+- Runtime: `./dist/components/ui/typography.js`
+
+## Stylesheet exports
+
+- `@mivama/ui/styles.css` → `./dist/styles.css`
+- `@mivama/ui/themes.css` → `./dist/themes.css`
+- `@mivama/ui/tokens.css` → `./dist/tokens.css`

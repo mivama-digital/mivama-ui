@@ -136,8 +136,7 @@ const stylesheetExports = Object.entries(packageJson.exports ?? {})
 const stylesheetLines = stylesheetExports.length
   ? stylesheetExports
       .map(
-        ([key, target]) =>
-          `- \`@mivama/ui/${key.slice(2)}\` → \`${target}\``
+        ([key, target]) => `- \`@mivama/ui/${key.slice(2)}\` → \`${target}\``
       )
       .join("\n")
   : "- None"
