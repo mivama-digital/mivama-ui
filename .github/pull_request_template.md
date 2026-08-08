@@ -5,7 +5,7 @@ Describe what changed and why.
 ## Validation
 
 - [ ] `npm run verify`
-- [ ] CodeQL completed successfully
+- [ ] CodeQL completed successfully when available for the repository plan and visibility
 - [ ] Tests cover behavior changes
 - [ ] Accessibility impact was reviewed
 - [ ] Bundle-size impact was reviewed
@@ -13,7 +13,7 @@ Describe what changed and why.
 
 ## Release impact
 
-For package-facing changes, choose exactly one. The `Policy` check enforces this for `src/**` and published package-contract changes.
+For package-facing changes, choose exactly one. The `Release policy` check enforces this for `src/**` and published package-contract changes.
 
 - [ ] Changeset added with the correct patch/minor/major intent
 - [ ] No package release required
