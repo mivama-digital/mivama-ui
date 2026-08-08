@@ -1,8 +1,9 @@
 import { execFile } from "node:child_process"
-import { mkdir, rm } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
+
+import { preparePackageSource } from "./lib/package-source.mjs"
 
 const execFileAsync = promisify(execFile)
 const root = fileURLToPath(new URL("..", import.meta.url))
@@ -24,17 +25,9 @@ async function runNpm(args, cwd) {
   }
 }
 
-await rm(artifacts, { recursive: true, force: true })
-await mkdir(artifacts, { recursive: true })
+const packageSource = await preparePackageSource({ root, artifacts })
 
 try {
-  const packOutput = await runNpm(
-    ["pack", "--json", "--pack-destination", artifacts],
-    root
-  )
-  const [packed] = JSON.parse(packOutput)
-  const tarball = path.join(artifacts, packed.filename)
-
   await runNpm(["ci", "--ignore-scripts"], fixture)
   await runNpm(
     [
@@ -42,7 +35,7 @@ try {
       "--ignore-scripts",
       "--no-save",
       "--package-lock=false",
-      tarball,
+      packageSource.spec,
     ],
     fixture
   )
@@ -50,7 +43,7 @@ try {
   await runNpm(["run", "typecheck"], fixture)
   await runNpm(["run", "build"], fixture)
 
-  console.log("Vite React 19 packed consumer fixture passed")
+  console.log(`Vite React 19 consumer passed with ${packageSource.label}`)
 } finally {
-  await rm(artifacts, { recursive: true, force: true })
+  await packageSource.cleanup()
 }

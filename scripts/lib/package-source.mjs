@@ -6,6 +6,8 @@ import { promisify } from "node:util"
 const execFileAsync = promisify(execFile)
 
 export async function preparePackageSource({ root, artifacts }) {
+  await rm(artifacts, { recursive: true, force: true })
+
   const registrySpec = process.env.MIVAMA_PACKAGE_SPEC?.trim()
   if (registrySpec) {
     return {
@@ -15,9 +17,7 @@ export async function preparePackageSource({ root, artifacts }) {
     }
   }
 
-  await rm(artifacts, { recursive: true, force: true })
   await mkdir(artifacts, { recursive: true })
-
   const { stdout } = await execFileAsync(
     "npm",
     ["pack", "--json", "--pack-destination", artifacts],
