@@ -8,11 +8,19 @@ import { preparePackageSource } from "./lib/package-source.mjs"
 const execFileAsync = promisify(execFile)
 const root = fileURLToPath(new URL("..", import.meta.url))
 const fixtureName = process.argv[2]?.trim()
-const supportedFixtures = new Set(["vite-react-18", "vite-react-19"])
+const fixtures = {
+  "vite-react-18": { maxBuffer: 16 * 1024 * 1024 },
+  "vite-react-19": { maxBuffer: 16 * 1024 * 1024 },
+  "next-app-router": {
+    env: { NEXT_TELEMETRY_DISABLED: "1" },
+    maxBuffer: 32 * 1024 * 1024,
+  },
+}
+const fixtureConfig = fixtures[fixtureName]
 
-if (!fixtureName || !supportedFixtures.has(fixtureName)) {
+if (!fixtureConfig) {
   throw new Error(
-    `Usage: node scripts/test-vite-consumer.mjs <${[...supportedFixtures].join("|")}>`
+    `Usage: node scripts/test-app-consumer.mjs <${Object.keys(fixtures).join("|")}>`
   )
 }
 
@@ -24,7 +32,8 @@ async function runNpm(args) {
   try {
     const result = await execFileAsync("npm", args, {
       cwd: fixture,
-      maxBuffer: 16 * 1024 * 1024,
+      env: { ...process.env, ...fixtureConfig.env },
+      maxBuffer: fixtureConfig.maxBuffer,
     })
     if (result.stdout) process.stdout.write(result.stdout)
     if (result.stderr) process.stderr.write(result.stderr)
