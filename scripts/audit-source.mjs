@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url"
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const sourceRoot = path.join(root, "src")
+const workflowRoot = path.join(root, ".github", "workflows")
 
 async function walk(directory) {
   const entries = await readdir(directory, { withFileTypes: true })
@@ -37,17 +38,49 @@ for (const file of await walk(sourceRoot)) {
   }
 }
 
-const workflow = await readFile(
-  path.join(root, ".github/workflows/verify.yml"),
+const workflowFiles = (await readdir(workflowRoot)).filter((file) =>
+  /\.ya?ml$/.test(file)
+)
+assert.ok(
+  workflowFiles.length > 0,
+  "Expected at least one GitHub Actions workflow"
+)
+
+for (const file of workflowFiles) {
+  const workflow = await readFile(path.join(workflowRoot, file), "utf8")
+  const actionReferences = [
+    ...workflow.matchAll(/uses:\s+([^\s@]+)@([^\s#]+)/g),
+  ]
+
+  for (const [, action, reference] of actionReferences) {
+    assert.match(
+      reference,
+      /^[0-9a-f]{40}$/,
+      `${file}: ${action} must be pinned to an immutable full commit SHA`
+    )
+  }
+
+  const checkoutCount = actionReferences.filter(
+    ([, action]) => action === "actions/checkout"
+  ).length
+  const nonPersistentCheckoutCount = [
+    ...workflow.matchAll(/persist-credentials:\s*false/g),
+  ].length
+  assert.ok(
+    nonPersistentCheckoutCount >= checkoutCount,
+    `${file}: every actions/checkout step must disable persisted credentials`
+  )
+}
+
+const verifyWorkflow = await readFile(
+  path.join(workflowRoot, "verify.yml"),
   "utf8"
 )
-assert.doesNotMatch(workflow, /uses:\s+[^\s]+@(?:main|master|v\d+)\b/)
-assert.match(workflow, /persist-credentials:\s*false/)
-assert.match(workflow, /npm ci --ignore-scripts/)
+assert.match(verifyWorkflow, /npm ci --ignore-scripts/)
 
 assert.deepEqual(
   violations,
   [],
   `Source audit violations:\n${violations.join("\n")}`
 )
-console.log("Source security audit passed")
+console.log("Source and workflow security audit passed")

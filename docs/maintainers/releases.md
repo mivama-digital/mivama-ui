@@ -2,14 +2,31 @@
 
 `@mivama/ui` uses Changesets for release intent and a manual GitHub Actions workflow for npm publishing.
 
+## Release policy
+
+Use semantic versioning for the published package:
+
+| Change                                                        | Release intent     |
+| ------------------------------------------------------------- | ------------------ |
+| Backwards-compatible bug fix or consumer-visible styling fix  | Patch              |
+| Backwards-compatible public API or component capability       | Minor              |
+| Breaking public API, behavior, peer requirement, or migration | Major              |
+| Tests, docs, CI, or tooling only                              | No package release |
+| Strictly internal refactor with unchanged consumer behavior   | No package release |
+
+Pull requests that change `src/**` or release-relevant `package.json` fields are checked by `.github/workflows/policy.yml`. They must either add a Changeset or explicitly check **No package release required** in the pull request template. Do not check both.
+
+The no-release declaration is an escape hatch for genuinely internal work, not a way to skip versioning for consumer-visible changes.
+
 ## Release preparation
 
-1. Published-package changes should include a Changeset with the appropriate `patch`, `minor`, or `major` bump.
+1. Published-package changes include a Changeset with the appropriate `patch`, `minor`, or `major` bump.
 2. Review the pending plan with `npm run release:status`.
 3. Run `npm run release:version` on a release branch. This consumes pending Changesets and updates the package version and changelog.
 4. Review and merge the version change through the normal pull-request gates.
 5. Confirm `main` has no pending `.changeset/*.md` files other than `.changeset/README.md`.
 
+Version-only release preparation changes do not require another Changeset.
 Do not publish directly from a feature branch.
 
 ## npm Trusted Publisher setup
@@ -56,9 +73,22 @@ The workflow then:
 
 No `NPM_TOKEN` or other long-lived npm write credential is required for publishing.
 
+## First real release probe
+
+The first Trusted Publishing release is also the end-to-end release validation. After publishing, install the exact registry version in a clean consumer and verify at minimum:
+
+- Vite production build
+- Next.js App Router production build
+- SSR import/render path
+- package subpath imports
+- root-barrel tree shaking
+- npm provenance is present for the published version
+
+Do not treat a local tarball-only test as proof that registry publishing is complete.
+
 ## After the first successful OIDC release
 
-Once trusted publishing is confirmed to work, remove/revoke obsolete npm automation write tokens. Keep any token needed for unrelated private-package installation read-only and scoped as narrowly as possible.
+Once trusted publishing is confirmed to work, remove or revoke obsolete npm automation write tokens. Keep any token needed for unrelated private-package installation read-only and scoped as narrowly as possible.
 
 Public releases from this public repository receive npm provenance automatically when published through Trusted Publishing.
 
@@ -69,3 +99,4 @@ Public releases from this public repository receive npm provenance automatically
 - Version mismatch: enter the exact `package.json` version or merge the correct version PR first.
 - Version already published: create and merge a new version instead of retrying the same package version.
 - Pending Changesets: run the versioning step and merge the resulting release change before publishing.
+- Release policy failure: add release intent or explicitly declare a strictly internal no-release change in the PR template.
