@@ -115,12 +115,33 @@ test("provider public API includes typed theme, density, and optional context", 
   assert.match(index, /MivamaContextValue/)
 })
 
-test("verify includes API and bundle checks before package validation", async () => {
+test("verification scripts share one canonical core pipeline", async () => {
   const packageJson = JSON.parse(await read("package.json"))
+  const scripts = packageJson.scripts
 
+  assert.match(scripts.verify, /npm run lint && npm run verify:core/)
+  assert.match(scripts.verify, /npm run api:check/)
+  assert.match(scripts.verify, /npm run test:coverage/)
   assert.match(
-    packageJson.scripts.verify,
-    /npm run build && npm run api:check && npm run bundle:check/
+    scripts["verify:package"],
+    /npm run lint:node && npm run verify:core/
   )
-  assert.match(packageJson.scripts.verify, /npm run pack:check/)
+
+  for (const check of [
+    "format:check",
+    "audit:source",
+    "registry:check",
+    "storybook:check",
+    "typecheck",
+    "build",
+    "bundle:check",
+    "test:contracts",
+    "pack:check",
+    "package:lint",
+  ]) {
+    assert.match(
+      scripts["verify:core"],
+      new RegExp(`npm run ${check.replace(":", "\\:")}`)
+    )
+  }
 })

@@ -59,13 +59,20 @@ assert.ok(
 )
 
 const env = { MIVAMA_PACKAGE_SPEC: packageSpec }
-for (const script of [
-  "test-vite-react-19-consumer.mjs",
-  "test-next-app-router-consumer.mjs",
-  "check-packed-ssr.mjs",
-  "check-packed-tree-shaking.mjs",
-]) {
-  await run(process.execPath, [path.join(root, "scripts", script)], root, env)
+const consumerChecks = [
+  ["test-vite-consumer.mjs", "vite-react-19"],
+  ["test-next-app-router-consumer.mjs"],
+  ["check-packed-ssr.mjs"],
+  ["check-packed-tree-shaking.mjs"],
+]
+
+for (const [script, ...args] of consumerChecks) {
+  await run(
+    process.execPath,
+    [path.join(root, "scripts", script), ...args],
+    root,
+    env
+  )
 }
 
 const auditDir = await mkdtemp(path.join(tmpdir(), "mivama-ui-audit-"))
