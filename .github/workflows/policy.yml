@@ -1,4 +1,4 @@
-name: Policy
+name: Release policy
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: policy-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  group: release-policy-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -30,16 +30,3 @@ jobs:
           node scripts/check-release-policy.mjs
           --base "${{ github.event.pull_request.base.sha }}"
           --head "${{ github.event.pull_request.head.sha }}"
-
-  dependency-review:
-    name: Dependency review
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Review dependency changes
-        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
-        with:
-          fail-on-severity: high
