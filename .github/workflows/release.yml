@@ -103,8 +103,7 @@ jobs:
           }
           NODE
       - run: npm audit --omit=dev
-      - run: npm run verify
-      - name: Publish with npm Trusted Publishing
+      - name: Publish with prepublishOnly verification and npm Trusted Publishing
         env:
           NPM_TAG: ${{ inputs.tag }}
         run: npm publish --access public --tag "$NPM_TAG"

@@ -14,48 +14,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vite-react-18:
-    name: Vite React 18
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            fixtures/vite-react-18/package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npm audit --omit=dev
-      - run: node scripts/test-vite-react-18-consumer.mjs
-
-  vite-react-19:
-    name: Vite React 19
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            fixtures/vite-react-19/package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npm audit --omit=dev
-      - run: node scripts/test-vite-react-19-consumer.mjs
-
-  next-app-router:
-    name: Next App Router
+  consumer:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Vite React 18
+            script: scripts/test-vite-consumer.mjs
+            args: vite-react-18
+            cache_path: |
+              package-lock.json
+              fixtures/vite-react-18/package-lock.json
+          - name: Vite React 19
+            script: scripts/test-vite-consumer.mjs
+            args: vite-react-19
+            cache_path: |
+              package-lock.json
+              fixtures/vite-react-19/package-lock.json
+          - name: Next App Router
+            script: scripts/test-next-app-router-consumer.mjs
+            args: ""
+            cache_path: |
+              package-lock.json
+              fixtures/next-app-router/package-lock.json
+          - name: SSR Imports
+            script: scripts/check-packed-ssr.mjs
+            args: ""
+            cache_path: package-lock.json
+          - name: Tree Shaking
+            script: scripts/check-packed-tree-shaking.mjs
+            args: ""
+            cache_path: |
+              package-lock.json
+              fixtures/vite-react-19/package-lock.json
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -64,44 +58,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            fixtures/next-app-router/package-lock.json
+          cache-dependency-path: ${{ matrix.cache_path }}
       - run: npm ci --ignore-scripts
       - run: npm audit --omit=dev
-      - run: node scripts/test-next-app-router-consumer.mjs
-
-  ssr-imports:
-    name: SSR Imports
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci --ignore-scripts
-      - run: npm audit --omit=dev
-      - run: node scripts/check-packed-ssr.mjs
-
-  tree-shaking:
-    name: Tree Shaking
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            fixtures/vite-react-19/package-lock.json
-      - run: npm ci --ignore-scripts
-      - run: npm audit --omit=dev
-      - run: node scripts/check-packed-tree-shaking.mjs
+      - name: Run ${{ matrix.name }} consumer contract
+        run: node "${{ matrix.script }}" ${{ matrix.args }}

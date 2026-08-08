@@ -34,7 +34,7 @@ export default defineConfig({
   ],
   webServer: {
     command:
-      "node scripts/test-vite-react-19-consumer.mjs && npm --prefix fixtures/vite-react-19 run preview",
+      "node scripts/test-vite-consumer.mjs vite-react-19 && npm --prefix fixtures/vite-react-19 run preview",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

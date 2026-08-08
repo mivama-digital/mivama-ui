@@ -19,8 +19,10 @@ test("release workflow is manual, OIDC-only, and GitHub-hosted", () => {
 
   assert.match(workflow, /npm install --global npm@11\.18\.0/)
   assert.match(workflow, /npm ci --ignore-scripts/)
-  assert.match(workflow, /npm run verify/)
   assert.match(workflow, /npm publish --access public --tag/)
+  assert.equal(packageJson.scripts?.prepublishOnly, "npm run verify")
+  assert.equal(packageJson.scripts?.["release:publish"], undefined)
+  assert.doesNotMatch(workflow, /run: npm run verify/)
 
   assert.doesNotMatch(workflow, /NPM_TOKEN/)
   assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN/)
