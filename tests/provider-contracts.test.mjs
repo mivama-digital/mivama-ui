@@ -47,7 +47,7 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
   )
 })
 
-test("legacy portal synchronization is disabled inside a provider", async () => {
+test("provider-less portal compatibility is disabled inside a provider", async () => {
   const shellAttributes = await read("src/lib/shell-attributes.ts")
 
   assert.match(
