@@ -1,14 +1,24 @@
 import { InputExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Form/Input",
-  "Native text input with design-system focus and invalid states.",
-  "centered"
-)
+const meta = {
+  title: "Form/Input",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Native text input with design-system focus and invalid states.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <InputExample />,
 }

@@ -1,14 +1,23 @@
 import { MivamaProviderExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Provider/MivamaProvider",
-  "Provider shell for theme, density, and portal context.",
-  "centered"
-)
+const meta = {
+  title: "Provider/MivamaProvider",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component: "Provider shell for theme, density, and portal context.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <MivamaProviderExample />,
 }

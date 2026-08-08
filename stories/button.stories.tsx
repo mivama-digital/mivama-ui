@@ -1,14 +1,24 @@
 import { ButtonExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Action/Button",
-  "Primary action primitive. Native button keyboard activation and focus semantics are preserved.",
-  "centered"
-)
+const meta = {
+  title: "Action/Button",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Primary action primitive. Native button keyboard activation and focus semantics are preserved.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <ButtonExample />,
 }

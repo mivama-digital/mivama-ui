@@ -1,14 +1,23 @@
 import { EditorialGridExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Layout/EditorialGrid",
-  "Editorial layout grid for content-led surfaces.",
-  "padded"
-)
+const meta = {
+  title: "Layout/EditorialGrid",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component: "Editorial layout grid for content-led surfaces.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <EditorialGridExample />,
 }

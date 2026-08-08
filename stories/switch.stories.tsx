@@ -1,14 +1,24 @@
 import { SwitchExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Form/Switch",
-  "Binary switch with keyboard and focus semantics from Base UI.",
-  "centered"
-)
+const meta = {
+  title: "Form/Switch",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Binary switch with keyboard and focus semantics from Base UI.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <SwitchExample />,
 }

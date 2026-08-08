@@ -1,18 +1,28 @@
 import { SidebarCollapsibleExample, SidebarExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Navigation/Sidebar",
-  "Responsive navigation shell with keyboard shortcut, persistence, mobile Sheet behavior, and focus restoration.",
-  "fullscreen"
-)
+const meta = {
+  title: "Navigation/Sidebar",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "fullscreen",
+    docs: {
+      description: {
+        component:
+          "Responsive navigation shell with keyboard shortcut, persistence, mobile Sheet behavior, and focus restoration.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <SidebarExample />,
 }
 
-export const Collapsible: MivamaStory = {
+export const Collapsible: Story = {
   render: () => <SidebarCollapsibleExample />,
 }

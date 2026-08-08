@@ -1,14 +1,24 @@
 import { ScrollSceneExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Layout/ScrollScene",
-  "Progressively enhanced scroll-motion composition with reduced-motion support.",
-  "centered"
-)
+const meta = {
+  title: "Layout/ScrollScene",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Progressively enhanced scroll-motion composition with reduced-motion support.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <ScrollSceneExample />,
 }

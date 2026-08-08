@@ -95,7 +95,11 @@ import {
 
 export function MivamaProviderExample() {
   return (
-    <MivamaProvider theme="editorial" density="compact" className="rounded-xl border p-6">
+    <MivamaProvider
+      theme="editorial"
+      density="compact"
+      className="rounded-xl border p-6"
+    >
       <Heading variant="title">Provider shell</Heading>
       <Text>The provider owns theme, density, and portal context.</Text>
     </MivamaProvider>
@@ -106,7 +110,9 @@ export function AlertExample() {
   return (
     <Alert className="max-w-md">
       <AlertTitle>Deployment complete</AlertTitle>
-      <AlertDescription>The production build passed all required checks.</AlertDescription>
+      <AlertDescription>
+        The production build passed all required checks.
+      </AlertDescription>
     </Alert>
   )
 }
@@ -130,9 +136,15 @@ export function BadgeExample() {
 export function BentoGridExample() {
   return (
     <BentoGrid className="w-[44rem] max-w-full">
-      <BentoGridItem className="rounded-xl border bg-card p-5">Primary story</BentoGridItem>
-      <BentoGridItem className="rounded-xl border bg-card p-5">Supporting story</BentoGridItem>
-      <BentoGridItem className="rounded-xl border bg-card p-5">Signal</BentoGridItem>
+      <BentoGridItem className="rounded-xl border bg-card p-5">
+        Primary story
+      </BentoGridItem>
+      <BentoGridItem className="rounded-xl border bg-card p-5">
+        Supporting story
+      </BentoGridItem>
+      <BentoGridItem className="rounded-xl border bg-card p-5">
+        Signal
+      </BentoGridItem>
     </BentoGrid>
   )
 }
@@ -166,10 +178,14 @@ export function CardExample() {
     <Card className="w-[24rem] max-w-full">
       <CardHeader>
         <CardTitle>Design-system card</CardTitle>
-        <CardDescription>Use one surface primitive for grouped content.</CardDescription>
+        <CardDescription>
+          Use one surface primitive for grouped content.
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Text>Card spacing and surface tokens respond to theme and density.</Text>
+        <Text>
+          Card spacing and surface tokens respond to theme and density.
+        </Text>
       </CardContent>
     </Card>
   )
@@ -195,7 +211,9 @@ export function ContainerExample() {
   return (
     <Container size="reading" className="rounded-xl border bg-card py-6">
       <Heading variant="title">Reading container</Heading>
-      <Text>Container centralizes responsive width and page gutter behavior.</Text>
+      <Text>
+        Container centralizes responsive width and page gutter behavior.
+      </Text>
     </Container>
   )
 }
@@ -206,7 +224,9 @@ export function DialogExample() {
       <DialogTrigger render={<Button />}>Open dialog</DialogTrigger>
       <DialogContent>
         <DialogTitle>Confirm change</DialogTitle>
-        <DialogDescription>Focus stays inside the modal until it closes.</DialogDescription>
+        <DialogDescription>
+          Focus stays inside the modal until it closes.
+        </DialogDescription>
         <Input aria-label="Change note" placeholder="Optional note" />
       </DialogContent>
     </Dialog>
@@ -216,9 +236,15 @@ export function DialogExample() {
 export function EditorialGridExample() {
   return (
     <EditorialGrid className="w-[48rem] max-w-full">
-      <Card><CardContent className="p-5">Lead</CardContent></Card>
-      <Card><CardContent className="p-5">Analysis</CardContent></Card>
-      <Card><CardContent className="p-5">Context</CardContent></Card>
+      <Card>
+        <CardContent className="p-5">Lead</CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-5">Analysis</CardContent>
+      </Card>
+      <Card>
+        <CardContent className="p-5">Context</CardContent>
+      </Card>
     </EditorialGrid>
   )
 }
@@ -228,7 +254,9 @@ export function EmptyExample() {
     <Empty className="w-[28rem] max-w-full">
       <EmptyHeader>
         <EmptyTitle>No projects yet</EmptyTitle>
-        <EmptyDescription>Create the first project to start organizing work.</EmptyDescription>
+        <EmptyDescription>
+          Create the first project to start organizing work.
+        </EmptyDescription>
       </EmptyHeader>
     </Empty>
   )
@@ -245,7 +273,13 @@ export function FieldExample() {
 }
 
 export function InputExample() {
-  return <Input className="w-80 max-w-full" aria-label="Project name" placeholder="Project name" />
+  return (
+    <Input
+      className="w-80 max-w-full"
+      aria-label="Project name"
+      placeholder="Project name"
+    />
+  )
 }
 
 export function MessageExample() {
@@ -253,7 +287,9 @@ export function MessageExample() {
     <Message className="w-[28rem] max-w-full">
       <MessageContent>
         <MessageHeader>Release bot · now</MessageHeader>
-        <div className="rounded-xl bg-muted px-3 py-2">All package checks passed.</div>
+        <div className="rounded-xl bg-muted px-3 py-2">
+          All package checks passed.
+        </div>
         <MessageFooter>Delivered</MessageFooter>
       </MessageContent>
     </Message>
@@ -264,10 +300,20 @@ export function PaginationExample() {
   return (
     <Pagination>
       <PaginationContent>
-        <PaginationItem><PaginationPrevious href="#" /></PaginationItem>
-        <PaginationItem><PaginationLink href="#" isActive>1</PaginationLink></PaginationItem>
-        <PaginationItem><PaginationLink href="#">2</PaginationLink></PaginationItem>
-        <PaginationItem><PaginationNext href="#" /></PaginationItem>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            1
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">2</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
       </PaginationContent>
     </Pagination>
   )
@@ -287,7 +333,9 @@ export function ScrollSceneExample() {
     <ScrollScene className="w-[32rem] max-w-full rounded-xl border bg-card p-6">
       <ScrollLayer effect="reveal" distance={16}>
         <Heading variant="title">Progressive motion</Heading>
-        <Text>Scroll effects fall back cleanly and respect reduced motion.</Text>
+        <Text>
+          Scroll effects fall back cleanly and respect reduced motion.
+        </Text>
       </ScrollLayer>
     </ScrollScene>
   )
@@ -295,10 +343,15 @@ export function ScrollSceneExample() {
 
 export function SectionExample() {
   return (
-    <Section density="compact" className="w-[40rem] max-w-full rounded-xl border">
+    <Section
+      density="compact"
+      className="w-[40rem] max-w-full rounded-xl border"
+    >
       <Container size="reading">
         <Heading variant="title">Section rhythm</Heading>
-        <Text>Section owns vertical rhythm without fixing document semantics.</Text>
+        <Text>
+          Section owns vertical rhythm without fixing document semantics.
+        </Text>
       </Container>
     </Section>
   )
@@ -306,7 +359,11 @@ export function SectionExample() {
 
 export function SelectExample() {
   return (
-    <Select className="w-80 max-w-full" aria-label="Environment" defaultValue="production">
+    <Select
+      className="w-80 max-w-full"
+      aria-label="Environment"
+      defaultValue="production"
+    >
       <option value="preview">Preview</option>
       <option value="production">Production</option>
     </Select>
@@ -326,10 +383,14 @@ export function SeparatorExample() {
 export function SheetExample() {
   return (
     <Sheet>
-      <SheetTrigger render={<Button variant="outline" />}>Open sheet</SheetTrigger>
+      <SheetTrigger render={<Button variant="outline" />}>
+        Open sheet
+      </SheetTrigger>
       <SheetContent>
         <SheetTitle>Project details</SheetTitle>
-        <SheetDescription>Sheet uses the same modal focus contract as Dialog.</SheetDescription>
+        <SheetDescription>
+          Sheet uses the same modal focus contract as Dialog.
+        </SheetDescription>
         <Input aria-label="Project title" placeholder="Project title" />
       </SheetContent>
     </Sheet>
@@ -339,14 +400,20 @@ export function SheetExample() {
 function SidebarNavigation() {
   return (
     <>
-      <SidebarHeader><strong>Workspace</strong></SidebarHeader>
+      <SidebarHeader>
+        <strong>Workspace</strong>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem><SidebarMenuButton isActive>Dashboard</SidebarMenuButton></SidebarMenuItem>
-              <SidebarMenuItem><SidebarMenuButton>Projects</SidebarMenuButton></SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton isActive>Dashboard</SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton>Projects</SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -360,7 +427,9 @@ export function SidebarExample() {
   return (
     <div className="h-80 w-[52rem] max-w-full overflow-hidden rounded-xl border">
       <SidebarProvider defaultOpen>
-        <Sidebar collapsible="none"><SidebarNavigation /></Sidebar>
+        <Sidebar collapsible="none">
+          <SidebarNavigation />
+        </Sidebar>
         <SidebarInset className="min-h-80 p-6">
           <Heading variant="title">Static sidebar</Heading>
           <Text>Use the responsive shell for application navigation.</Text>
@@ -373,7 +442,11 @@ export function SidebarExample() {
 export function SidebarCollapsibleExample() {
   return (
     <SidebarProvider defaultOpen>
-      <Sidebar collapsible="icon" mobileTitle="Storybook navigation" mobileDescription="Navigation example for the Sidebar component.">
+      <Sidebar
+        collapsible="icon"
+        mobileTitle="Storybook navigation"
+        mobileDescription="Navigation example for the Sidebar component."
+      >
         <SidebarNavigation />
         <SidebarRail label="Toggle Storybook navigation" />
       </Sidebar>
@@ -411,21 +484,33 @@ export function TabsExample() {
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="accessibility">Accessibility</TabsTrigger>
       </TabsList>
-      <TabsContent value="overview">Tabs associate each trigger with one panel.</TabsContent>
-      <TabsContent value="accessibility">Arrow keys move between tab triggers.</TabsContent>
+      <TabsContent value="overview">
+        Tabs associate each trigger with one panel.
+      </TabsContent>
+      <TabsContent value="accessibility">
+        Arrow keys move between tab triggers.
+      </TabsContent>
     </Tabs>
   )
 }
 
 export function TextareaExample() {
-  return <Textarea className="w-80 max-w-full" aria-label="Release notes" placeholder="Release notes" />
+  return (
+    <Textarea
+      className="w-80 max-w-full"
+      aria-label="Release notes"
+      placeholder="Release notes"
+    />
+  )
 }
 
 export function TooltipExample() {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger render={<Button variant="outline" />}>Hover or focus</TooltipTrigger>
+        <TooltipTrigger render={<Button variant="outline" />}>
+          Hover or focus
+        </TooltipTrigger>
         <TooltipContent>Keyboard-focusable tooltip target</TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -436,8 +521,12 @@ export function TypographyExample() {
   return (
     <div className="grid w-[36rem] max-w-full gap-3">
       <Eyebrow>Design system</Eyebrow>
-      <Heading variant="page">Clear hierarchy without local type scales</Heading>
-      <Text>Typography primitives use shared semantic tokens across themes.</Text>
+      <Heading variant="page">
+        Clear hierarchy without local type scales
+      </Heading>
+      <Text>
+        Typography primitives use shared semantic tokens across themes.
+      </Text>
     </div>
   )
 }
@@ -454,7 +543,9 @@ export function FormsExample() {
         <option value="personal">Personal</option>
         <option value="team">Team</option>
       </Select>
-      <label className="flex items-center gap-2"><Choice type="checkbox" /> Email updates</label>
+      <label className="flex items-center gap-2">
+        <Choice type="checkbox" /> Email updates
+      </label>
       <Textarea aria-label="Notes" placeholder="Notes" />
     </div>
   )

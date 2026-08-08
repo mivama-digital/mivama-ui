@@ -1,14 +1,24 @@
 import { ChoiceExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Form/Choice",
-  "Native checkbox/radio inputs with visible labels and keyboard behavior.",
-  "centered"
-)
+const meta = {
+  title: "Form/Choice",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Native checkbox/radio inputs with visible labels and keyboard behavior.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <ChoiceExample />,
 }

@@ -1,14 +1,24 @@
 import { ProgressExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Feedback/Progress",
-  "Progress status with label, value, track, and indicator semantics.",
-  "centered"
-)
+const meta = {
+  title: "Feedback/Progress",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Progress status with label, value, track, and indicator semantics.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <ProgressExample />,
 }

@@ -1,14 +1,23 @@
 import { MessageExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Feedback/Message",
-  "Conversation/message layout primitive.",
-  "centered"
-)
+const meta = {
+  title: "Feedback/Message",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component: "Conversation/message layout primitive.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <MessageExample />,
 }

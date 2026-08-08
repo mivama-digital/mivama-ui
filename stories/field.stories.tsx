@@ -1,14 +1,24 @@
 import { FieldExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Form/Field",
-  "Form-field composition connecting label, control, and description.",
-  "centered"
-)
+const meta = {
+  title: "Form/Field",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Form-field composition connecting label, control, and description.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <FieldExample />,
 }

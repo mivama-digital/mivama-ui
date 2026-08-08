@@ -1,14 +1,23 @@
 import { SkeletonExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Feedback/Skeleton",
-  "Deterministic loading placeholder.",
-  "centered"
-)
+const meta = {
+  title: "Feedback/Skeleton",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component: "Deterministic loading placeholder.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <SkeletonExample />,
 }

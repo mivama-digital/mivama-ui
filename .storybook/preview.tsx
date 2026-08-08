@@ -10,7 +10,10 @@ const withMivamaShell: Decorator = (Story, context) => {
   const direction = String(context.globals.direction ?? "ltr") as "ltr" | "rtl"
 
   return (
-    <div className={mode === "dark" ? "dark min-h-screen" : "min-h-screen"} dir={direction}>
+    <div
+      className={mode === "dark" ? "dark min-h-screen" : "min-h-screen"}
+      dir={direction}
+    >
       <MivamaProvider
         theme={theme}
         density={density}

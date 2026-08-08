@@ -1,14 +1,23 @@
 import { SectionExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Layout/Section",
-  "Vertical rhythm and surface section primitive.",
-  "padded"
-)
+const meta = {
+  title: "Layout/Section",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component: "Vertical rhythm and surface section primitive.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <SectionExample />,
 }

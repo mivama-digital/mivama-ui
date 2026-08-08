@@ -8,8 +8,12 @@ import { components } from "../config/components.mjs"
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const storiesRoot = path.join(root, "stories")
 const files = await readdir(storiesRoot)
-const actualStoryFiles = files.filter((file) => file.endsWith(".stories.tsx")).sort()
-const expectedStoryFiles = components.map(({ slug }) => `${slug}.stories.tsx`).sort()
+const actualStoryFiles = files
+  .filter((file) => file.endsWith(".stories.tsx"))
+  .sort()
+const expectedStoryFiles = components
+  .map(({ slug }) => `${slug}.stories.tsx`)
+  .sort()
 
 assert.deepEqual(
   actualStoryFiles,
@@ -18,7 +22,10 @@ assert.deepEqual(
 )
 
 for (const { name, slug } of components) {
-  const story = await readFile(path.join(storiesRoot, `${slug}.stories.tsx`), "utf8")
+  const story = await readFile(
+    path.join(storiesRoot, `${slug}.stories.tsx`),
+    "utf8"
+  )
   assert.match(
     story,
     /export const Basic\b/,

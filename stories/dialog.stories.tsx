@@ -1,14 +1,24 @@
 import { DialogExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Overlay/Dialog",
-  "Modal dialog with Escape dismissal, focus management, and focus restoration.",
-  "centered"
-)
+const meta = {
+  title: "Overlay/Dialog",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "centered",
+    docs: {
+      description: {
+        component:
+          "Modal dialog with Escape dismissal, focus management, and focus restoration.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <DialogExample />,
 }

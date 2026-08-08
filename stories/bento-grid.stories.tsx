@@ -1,14 +1,23 @@
 import { BentoGridExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Layout/BentoGrid",
-  "Responsive editorial card grid.",
-  "padded"
-)
+const meta = {
+  title: "Layout/BentoGrid",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component: "Responsive editorial card grid.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <BentoGridExample />,
 }

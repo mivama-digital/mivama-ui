@@ -1,14 +1,24 @@
 import { TypographyExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Typography/Typography",
-  "Semantic heading and text styles driven by design-system tokens.",
-  "padded"
-)
+const meta = {
+  title: "Typography/Typography",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component:
+          "Semantic heading and text styles driven by design-system tokens.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <TypographyExample />,
 }

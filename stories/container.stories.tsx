@@ -1,14 +1,23 @@
 import { ContainerExample } from "./_examples.js"
-import { defineMivamaMeta, type MivamaStory } from "./_support.js"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-const meta = defineMivamaMeta(
-  "Layout/Container",
-  "Responsive content-width and page-gutter primitive.",
-  "padded"
-)
+const meta = {
+  title: "Layout/Container",
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded",
+    docs: {
+      description: {
+        component: "Responsive content-width and page-gutter primitive.",
+      },
+    },
+  },
+} satisfies Meta
 
 export default meta
 
-export const Basic: MivamaStory = {
+type Story = StoryObj<typeof meta>
+
+export const Basic: Story = {
   render: () => <ContainerExample />,
 }
