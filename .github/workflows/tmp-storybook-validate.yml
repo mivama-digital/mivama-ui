@@ -26,6 +26,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --ignore-scripts
+      - name: Convert stories to static CSF metadata
+        run: node scripts/tmp-convert-storybook-csf.mjs
       - name: Normalize Storybook sources
         run: npx prettier --write .storybook stories scripts/check-storybook-coverage.mjs tsconfig.storybook.json
       - run: npm run storybook:check
@@ -35,10 +37,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git rm .github/workflows/tmp-storybook-validate.yml
+          git rm .github/workflows/tmp-storybook-validate.yml scripts/tmp-convert-storybook-csf.mjs
           git add .storybook stories scripts/check-storybook-coverage.mjs tsconfig.storybook.json
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: normalize Storybook sources"
+          git commit -m "chore: finalize static Storybook stories"
           gh auth setup-git
           git push origin HEAD:docs/storybook
