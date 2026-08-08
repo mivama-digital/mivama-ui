@@ -38,7 +38,8 @@ Run this audit before declaring a release train or major design-system milestone
 ## Supply chain and repository security
 
 - [ ] CodeQL is green
-- [ ] Dependency & release policy is green
+- [ ] Release policy is green
+- [ ] Dependency review is green
 - [ ] OpenSSF Scorecard workflow has completed successfully on `main`
 - [ ] Dependabot npm and GitHub Actions updates remain enabled
 - [ ] permanent workflow actions are pinned to immutable commit SHAs

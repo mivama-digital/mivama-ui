@@ -41,7 +41,10 @@ for (const file of await walk(sourceRoot)) {
 const workflowFiles = (await readdir(workflowRoot)).filter((file) =>
   /\.ya?ml$/.test(file)
 )
-assert.ok(workflowFiles.length > 0, "Expected at least one GitHub Actions workflow")
+assert.ok(
+  workflowFiles.length > 0,
+  "Expected at least one GitHub Actions workflow"
+)
 
 for (const file of workflowFiles) {
   const workflow = await readFile(path.join(workflowRoot, file), "utf8")

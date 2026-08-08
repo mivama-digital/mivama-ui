@@ -26,9 +26,10 @@ Require these exact permanent checks:
 - `Node 22 (full)`
 - `Node 24 (full)`
 - `CodeQL / analyze`
-- `Dependency & release policy`
+- `Release policy`
+- `Dependency review`
 
-The policy check becomes eligible to require after `.github/workflows/policy.yml` has landed on `main` and completed successfully at least once.
+The two Policy workflow checks become eligible to require after `.github/workflows/policy.yml` has landed on `main` and each check has completed successfully at least once.
 
 Treat job names as repository-level interfaces. If a workflow job name changes, update the ruleset in the same maintenance window.
 
@@ -74,6 +75,8 @@ Enable and retain:
 - CodeQL advanced setup from `.github/workflows/codeql.yml`; do not also enable a duplicate default CodeQL setup.
 - Dependency Review through `.github/workflows/policy.yml`.
 - OpenSSF Scorecard through `.github/workflows/scorecard.yml`.
+
+Dependency Review intentionally fails closed when Dependency Graph is disabled. Enable Dependency Graph before requiring the `Dependency review` check.
 
 If a feature is unavailable for the repository plan or visibility, record that limitation in an issue rather than silently omitting it.
 

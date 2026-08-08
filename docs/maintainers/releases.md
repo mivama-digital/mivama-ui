@@ -6,13 +6,13 @@
 
 Use semantic versioning for the published package:
 
-| Change | Release intent |
-| --- | --- |
-| Backwards-compatible bug fix or consumer-visible styling fix | Patch |
-| Backwards-compatible public API or component capability | Minor |
-| Breaking public API, behavior, peer requirement, or migration | Major |
-| Tests, docs, CI, or tooling only | No package release |
-| Strictly internal refactor with unchanged consumer behavior | No package release |
+| Change                                                        | Release intent     |
+| ------------------------------------------------------------- | ------------------ |
+| Backwards-compatible bug fix or consumer-visible styling fix  | Patch              |
+| Backwards-compatible public API or component capability       | Minor              |
+| Breaking public API, behavior, peer requirement, or migration | Major              |
+| Tests, docs, CI, or tooling only                              | No package release |
+| Strictly internal refactor with unchanged consumer behavior   | No package release |
 
 Pull requests that change `src/**` or release-relevant `package.json` fields are checked by `.github/workflows/policy.yml`. They must either add a Changeset or explicitly check **No package release required** in the pull request template. Do not check both.
 
@@ -99,4 +99,4 @@ Public releases from this public repository receive npm provenance automatically
 - Version mismatch: enter the exact `package.json` version or merge the correct version PR first.
 - Version already published: create and merge a new version instead of retrying the same package version.
 - Pending Changesets: run the versioning step and merge the resulting release change before publishing.
-- Policy check failure: add release intent or explicitly declare a strictly internal no-release change in the PR template.
+- Release policy failure: add release intent or explicitly declare a strictly internal no-release change in the PR template.

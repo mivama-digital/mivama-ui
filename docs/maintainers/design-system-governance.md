@@ -4,16 +4,16 @@
 
 ## Sources of truth
 
-| Concern | Canonical source |
-| --- | --- |
-| Design tokens and theme values | `src/tokens.css`, `src/themes.css`, and shared CSS foundations |
-| Public component inventory | `config/components.mjs` |
-| Published package entry points | `package.json#exports` |
-| Generated export documentation | `docs/generated/exports.md` |
-| TypeScript public API contract | `etc/api/mivama-ui.api.md` via API Extractor |
-| Release intent | Changesets plus the PR release-policy gate |
-| Component behavior | Runtime and browser tests |
-| Repository security policy | Permanent workflows plus `docs/maintainers/repository-settings.md` |
+| Concern                        | Canonical source                                                   |
+| ------------------------------ | ------------------------------------------------------------------ |
+| Design tokens and theme values | `src/tokens.css`, `src/themes.css`, and shared CSS foundations     |
+| Public component inventory     | `config/components.mjs`                                            |
+| Published package entry points | `package.json#exports`                                             |
+| Generated export documentation | `docs/generated/exports.md`                                        |
+| TypeScript public API contract | `etc/api/mivama-ui.api.md` via API Extractor                       |
+| Release intent                 | Changesets plus the PR release-policy gate                         |
+| Component behavior             | Runtime and browser tests                                          |
+| Repository security policy     | Permanent workflows plus `docs/maintainers/repository-settings.md` |
 
 Do not maintain a second hand-written list when a source above can generate or validate it.
 

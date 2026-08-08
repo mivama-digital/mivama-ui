@@ -2,14 +2,14 @@
 
 This matrix is the maintainer contract for high-risk interactive primitives. It documents expected behavior; automated tests remain the enforcement mechanism.
 
-| Component | Tab / focus entry | Enter / Space | Escape | Arrow keys | Focus restore | Browser coverage |
-| --- | --- | --- | --- | --- | --- | --- |
-| Dialog | Trigger and modal focus cycle | Trigger activates | Closes | Not primary navigation | Returns to trigger | Chromium, Firefox, WebKit |
-| Sheet | Trigger and modal focus cycle | Trigger activates | Closes | Not primary navigation | Returns to trigger | Chromium, Firefox, WebKit |
-| Tooltip | Trigger remains keyboard reachable | Trigger semantics remain native | Dismisses when applicable | Not primary navigation | Trigger retains focus | Chromium, Firefox, WebKit |
-| Sidebar | Trigger reachable; content follows document order | Trigger toggles | Mobile sheet closes | Component-specific controls only | Mobile trigger restored | Chromium, Firefox, WebKit |
-| Tabs | Active/selected tab is reachable | Activates according to component contract | Not a close interaction | Moves between tabs | Stays within tablist | Runtime plus browser coverage when behavior changes |
-| Pagination | Links remain native links | Native link activation | Not applicable | Browser-native | Browser-native | Runtime semantic coverage |
+| Component  | Tab / focus entry                                 | Enter / Space                             | Escape                    | Arrow keys                       | Focus restore           | Browser coverage                                    |
+| ---------- | ------------------------------------------------- | ----------------------------------------- | ------------------------- | -------------------------------- | ----------------------- | --------------------------------------------------- |
+| Dialog     | Trigger and modal focus cycle                     | Trigger activates                         | Closes                    | Not primary navigation           | Returns to trigger      | Chromium, Firefox, WebKit                           |
+| Sheet      | Trigger and modal focus cycle                     | Trigger activates                         | Closes                    | Not primary navigation           | Returns to trigger      | Chromium, Firefox, WebKit                           |
+| Tooltip    | Trigger remains keyboard reachable                | Trigger semantics remain native           | Dismisses when applicable | Not primary navigation           | Trigger retains focus   | Chromium, Firefox, WebKit                           |
+| Sidebar    | Trigger reachable; content follows document order | Trigger toggles                           | Mobile sheet closes       | Component-specific controls only | Mobile trigger restored | Chromium, Firefox, WebKit                           |
+| Tabs       | Active/selected tab is reachable                  | Activates according to component contract | Not a close interaction   | Moves between tabs               | Stays within tablist    | Runtime plus browser coverage when behavior changes |
+| Pagination | Links remain native links                         | Native link activation                    | Not applicable            | Browser-native                   | Browser-native          | Runtime semantic coverage                           |
 
 ## Test placement
 

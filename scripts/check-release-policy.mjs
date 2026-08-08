@@ -83,7 +83,8 @@ export function evaluateReleasePolicy({
   if (noReleaseDeclared) {
     return {
       ok: true,
-      reason: "Package-facing change explicitly declares that no release is required.",
+      reason:
+        "Package-facing change explicitly declares that no release is required.",
     }
   }
 
@@ -106,7 +107,11 @@ function parseArgument(name) {
   return index === -1 ? undefined : process.argv[index + 1]
 }
 
-export function runReleasePolicy({ base, head, eventPath = process.env.GITHUB_EVENT_PATH }) {
+export function runReleasePolicy({
+  base,
+  head,
+  eventPath = process.env.GITHUB_EVENT_PATH,
+}) {
   if (!base || !head) {
     throw new Error("Both --base and --head commit SHAs are required.")
   }
