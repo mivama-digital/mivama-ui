@@ -74,27 +74,32 @@ test("shared buttons default to type button unless overridden", async () => {
 })
 
 test("sidebar internal buttons never submit ancestor forms and expose disclosure state", async () => {
-  const sidebar = await source("sidebar")
+  const [shell, content, menu, context] = await Promise.all([
+    source("sidebar/shell"),
+    source("sidebar/content"),
+    source("sidebar/menu"),
+    source("sidebar/context"),
+  ])
   assert.match(
-    sidebar,
+    shell,
     /function SidebarTrigger[\s\S]*aria-expanded=\{isMobile \? openMobile : state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/
   )
   assert.match(
-    sidebar,
+    shell,
     /function SidebarRail[\s\S]*type="button"[\s\S]*aria-expanded=\{state === "expanded"\}[\s\S]*aria-controls=\{sidebarId\}/
   )
-  assert.match(sidebar, /function SidebarGroupAction[\s\S]*type: "button"/)
-  assert.match(sidebar, /function SidebarMenuButton[\s\S]*type: "button"/)
-  assert.match(sidebar, /function SidebarMenuAction[\s\S]*type: "button"/)
-  assert.match(sidebar, /sidebarId: string/)
+  assert.match(content, /function SidebarGroupAction[\s\S]*type: "button"/)
+  assert.match(menu, /function SidebarMenuButton[\s\S]*type: "button"/)
+  assert.match(menu, /function SidebarMenuAction[\s\S]*type: "button"/)
+  assert.match(context, /sidebarId: string/)
 })
 
 test("sidebar keyboard shortcut ignores editable targets", async () => {
-  const sidebar = await source("sidebar")
-  assert.match(sidebar, /target instanceof Element/)
-  assert.match(sidebar, /target\.matches\("input, textarea, select"\)/)
-  assert.match(sidebar, /target\.closest\(/)
-  assert.match(sidebar, /contenteditable/)
+  const context = await source("sidebar/context")
+  assert.match(context, /target instanceof Element/)
+  assert.match(context, /target\.matches\("input, textarea, select"\)/)
+  assert.match(context, /target\.closest\(/)
+  assert.match(context, /contenteditable/)
 })
 
 test("portaled content inherits the application shell theme and density", async () => {
@@ -140,13 +145,13 @@ test("compact density controls fit their documented 32px height", async () => {
 })
 
 test("skeleton output and hidden ellipses are deterministic", async () => {
-  const [sidebar, pagination, breadcrumb] = await Promise.all([
-    source("sidebar"),
+  const [sidebarMenu, pagination, breadcrumb] = await Promise.all([
+    source("sidebar/menu"),
     source("pagination"),
     source("breadcrumb"),
   ])
-  assert.doesNotMatch(sidebar, /Math\.random/)
-  assert.match(sidebar, /width = "70%"/)
+  assert.doesNotMatch(sidebarMenu, /Math\.random/)
+  assert.match(sidebarMenu, /width = "70%"/)
   assert.doesNotMatch(pagination, /sr-only[^\n]*More/)
   assert.doesNotMatch(breadcrumb, /sr-only[^\n]*More/)
 })
@@ -179,10 +184,10 @@ test("sheets expose reusable overlays and typed horizontal sizes", async () => {
 })
 
 test("normal targets are 44px by default while xs remains explicitly dense", async () => {
-  const [button, tabs, sidebar, tokens] = await Promise.all([
+  const [button, tabs, sidebarMenu, tokens] = await Promise.all([
     source("button"),
     source("tabs"),
-    source("sidebar"),
+    source("sidebar/menu"),
     readFile(new URL("../src/tokens.css", import.meta.url), "utf8"),
   ])
   assert.match(button, /xs: "min-h-8/)
@@ -190,8 +195,8 @@ test("normal targets are 44px by default while xs remains explicitly dense", asy
   assert.match(button, /"icon-sm":[\s\S]*"size-\(--control-height\)/)
   assert.match(button, /default:\s*"min-h-\(--control-height\)/)
   assert.match(tabs, /min-h-\(--control-height\)/)
-  assert.match(sidebar, /default: "min-h-\(--sidebar-row-height\)/)
-  assert.match(sidebar, /xs: "h-7/)
+  assert.match(sidebarMenu, /default: "min-h-\(--sidebar-row-height\)/)
+  assert.match(sidebarMenu, /xs: "h-7/)
   assert.match(
     tokens,
     /:root,\n\[data-density="comfortable"\] \{\s*--panel-padding: var\(--space-6\);\s*--control-height: 44px;/
@@ -207,16 +212,16 @@ test("normal targets are 44px by default while xs remains explicitly dense", asy
 })
 
 test("built-in navigation labels expose localization props", async () => {
-  const [pagination, breadcrumb, sidebar] = await Promise.all([
+  const [pagination, breadcrumb, sidebarShell] = await Promise.all([
     source("pagination"),
     source("breadcrumb"),
-    source("sidebar"),
+    source("sidebar/shell"),
   ])
   assert.match(pagination, /label = "Pagination"/)
   assert.match(pagination, /label = "Go to previous page"/)
   assert.match(breadcrumb, /label = "Breadcrumb"/)
-  assert.match(sidebar, /mobileTitle = "Sidebar"/)
-  assert.match(sidebar, /label = "Toggle sidebar"/)
+  assert.match(sidebarShell, /mobileTitle = "Sidebar"/)
+  assert.match(sidebarShell, /label = "Toggle sidebar"/)
 })
 
 test("the stable scrollbar gutter does not offset both viewport edges", async () => {
