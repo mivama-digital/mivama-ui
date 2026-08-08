@@ -122,7 +122,9 @@ export function SidebarProvider({
   )
 
   const toggleSidebar = React.useCallback(() => {
-    return isMobile ? setOpenMobile((value) => !value) : setOpen((value) => !value)
+    return isMobile
+      ? setOpenMobile((value) => !value)
+      : setOpen((value) => !value)
   }, [isMobile, setOpen, setOpenMobile])
 
   useSidebarKeyboardShortcut(toggleSidebar)
