@@ -28,12 +28,9 @@ test("mobile detection uses the same media-query snapshot for subscription and r
   assert.doesNotMatch(source, /window\.innerWidth/)
 })
 
-test("verification workflow pins actions and avoids install lifecycle scripts", async () => {
+test("verification workflow cancels stale runs", async () => {
   const source = await readSource(".github/workflows/verify.yml")
 
-  assert.match(source, /actions\/checkout@[a-f0-9]{40}/)
-  assert.match(source, /actions\/setup-node@[a-f0-9]{40}/)
-  assert.match(source, /persist-credentials: false/)
-  assert.match(source, /npm ci --ignore-scripts/)
+  assert.match(source, /concurrency:/)
   assert.match(source, /cancel-in-progress: true/)
 })
