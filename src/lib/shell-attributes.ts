@@ -20,9 +20,10 @@ function syncShellAttributes(shell: Element, portalSelector: string) {
 }
 
 /**
- * Legacy fallback for applications that do not use MivamaProvider.
+ * v3 compatibility fallback for applications that do not use MivamaProvider.
  * Copies theme and density attributes from the active application shell onto
- * every matching portaled element and reacts to shell or portal changes.
+ * matching portaled elements. New code must use the provider-owned portal
+ * container path. Remove this fallback in v4; tracked by issue #60.
  */
 export function useShellAttributes(portalSelector: string) {
   const providerContainer = useMivamaPortalContainer()

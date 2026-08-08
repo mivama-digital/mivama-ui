@@ -65,6 +65,9 @@
   --sidebar-ring: #0c62ed;
 }
 
+/* v3 compatibility: the class mirrors the canonical editorial data selector.
+ * New code must use data-mivama-theme="editorial". Remove the class in v4 (#59).
+ */
 [data-mivama-theme="editorial"],
 .mivama-editorial-theme {
   color-scheme: light;
