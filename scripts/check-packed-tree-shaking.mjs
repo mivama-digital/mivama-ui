@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url"
 import { promisify } from "node:util"
 import { brotliCompressSync, constants, gzipSync } from "node:zlib"
 
+import { preparePackageSource } from "./lib/package-source.mjs"
+
 const execFileAsync = promisify(execFile)
 const root = fileURLToPath(new URL("..", import.meta.url))
 const fixture = path.join(root, "fixtures", "vite-react-19")
@@ -50,19 +52,10 @@ function measure(content) {
   }
 }
 
-await rm(artifacts, { recursive: true, force: true })
 await rm(workspace, { recursive: true, force: true })
-await mkdir(artifacts, { recursive: true })
+const packageSource = await preparePackageSource({ root, artifacts })
 
 try {
-  const packOutput = await run(
-    "npm",
-    ["pack", "--json", "--pack-destination", artifacts],
-    root
-  )
-  const [packed] = JSON.parse(packOutput)
-  const tarball = path.join(artifacts, packed.filename)
-
   await run("npm", ["ci", "--ignore-scripts"], fixture)
   await run(
     "npm",
@@ -71,7 +64,7 @@ try {
       "--ignore-scripts",
       "--no-save",
       "--package-lock=false",
-      tarball,
+      packageSource.spec,
     ],
     fixture
   )
@@ -151,9 +144,9 @@ export default defineConfig({
   }
 
   console.log(
-    `Packed tree shaking passed: direct=${JSON.stringify(results.direct)}, root=${JSON.stringify(results.root)}`
+    `Tree shaking passed with ${packageSource.label}: direct=${JSON.stringify(results.direct)}, root=${JSON.stringify(results.root)}`
   )
 } finally {
   await rm(workspace, { recursive: true, force: true })
-  await rm(artifacts, { recursive: true, force: true })
+  await packageSource.cleanup()
 }
