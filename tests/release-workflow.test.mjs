@@ -28,6 +28,24 @@ test("release workflow is manual, OIDC-only, and GitHub-hosted", () => {
   assert.doesNotMatch(workflow, /NODE_AUTH_TOKEN/)
 })
 
+test("release workflow requires provenance-capable repository visibility", () => {
+  assert.match(workflow, /github\.event\.repository\.visibility/)
+  assert.match(workflow, /REPOSITORY_VISIBILITY !== "public"/)
+  assert.match(workflow, /requires npm provenance/)
+})
+
+test("release workflow verifies the exact published version after publish", () => {
+  const publishIndex = workflow.indexOf(
+    'run: npm publish --access public --tag "$NPM_TAG"'
+  )
+  const probeIndex = workflow.indexOf(
+    'node scripts/check-registry-release.mjs "${{ inputs.version }}"'
+  )
+
+  assert.ok(publishIndex >= 0, "release workflow must publish through npm")
+  assert.ok(probeIndex > publishIndex, "registry probe must run after publish")
+})
+
 test("release workflow validates the canonical package repository", () => {
   assert.deepEqual(packageJson.repository, {
     type: "git",

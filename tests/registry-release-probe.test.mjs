@@ -27,6 +27,13 @@ test("registry release probe requires an exact version and provenance", () => {
   assert.match(probe, /npm["'], \["audit", "signatures"\]/)
 })
 
+test("registry release probe tolerates bounded registry propagation", () => {
+  assert.match(probe, /const registryAttempts = 12/)
+  assert.match(probe, /const registryRetryDelayMs = 10_000/)
+  assert.match(probe, /waitForRegistryRelease/)
+  assert.match(probe, /attempt <= registryAttempts/)
+})
+
 test("registry release probe reuses canonical consumer runners", () => {
   for (const script of [
     "test-app-consumer.mjs",
@@ -35,6 +42,7 @@ test("registry release probe reuses canonical consumer runners", () => {
   ]) {
     assert.match(probe, new RegExp(script.replaceAll(".", "\\.")))
   }
+  assert.match(probe, /"test-app-consumer\.mjs", "vite-react-18"/)
   assert.match(probe, /"test-app-consumer\.mjs", "vite-react-19"/)
   assert.match(probe, /"test-app-consumer\.mjs", "next-app-router"/)
 })
