@@ -6,11 +6,19 @@ Describe what changed and why.
 
 - [ ] `npm run verify`
 - [ ] CodeQL completed successfully
-- [ ] New or changed public API is documented
 - [ ] Tests cover behavior changes
 - [ ] Accessibility impact was reviewed
 - [ ] Bundle-size impact was reviewed
-- [ ] A changeset will be added when release automation is enabled
+- [ ] New or changed public API is documented
+
+## Release impact
+
+For package-facing changes, choose exactly one. The `Policy` check enforces this for `src/**` and published package-contract changes.
+
+- [ ] Changeset added with the correct patch/minor/major intent
+- [ ] No package release required
+
+Use **No package release required** only for changes that do not alter the published consumer contract or behavior, such as a strictly internal refactor.
 
 ## Security and compatibility
 

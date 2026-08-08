@@ -26,6 +26,9 @@ Require these exact permanent checks:
 - `Node 22 (full)`
 - `Node 24 (full)`
 - `CodeQL / analyze`
+- `Dependency & release policy`
+
+The policy check becomes eligible to require after `.github/workflows/policy.yml` has landed on `main` and completed successfully at least once.
 
 Treat job names as repository-level interfaces. If a workflow job name changes, update the ruleset in the same maintenance window.
 
@@ -56,6 +59,7 @@ Recommended repository merge configuration:
 - Pin external actions to immutable full commit SHAs.
 - Restrict workflow approval for first-time external contributors.
 - Keep `persist-credentials: false` on checkout steps unless a job intentionally writes to the repository.
+- Keep the repository security audit responsible for validating action pins across every permanent workflow rather than maintaining per-workflow duplicate checks.
 
 ## Security features
 
@@ -67,19 +71,18 @@ Enable and retain:
 - Secret scanning.
 - Secret scanning push protection.
 - Private vulnerability reporting.
-- CodeQL default or advanced setup, but not duplicate competing configurations.
+- CodeQL advanced setup from `.github/workflows/codeql.yml`; do not also enable a duplicate default CodeQL setup.
+- Dependency Review through `.github/workflows/policy.yml`.
+- OpenSSF Scorecard through `.github/workflows/scorecard.yml`.
 
 If a feature is unavailable for the repository plan or visibility, record that limitation in an issue rather than silently omitting it.
 
 ## npm publishing
 
-When release automation is introduced:
-
 - Use npm Trusted Publishing with OpenID Connect.
-- Use a protected GitHub Environment for production publishing.
+- Use a protected GitHub Environment named `npm` for production publishing.
 - Grant `id-token: write` only to the publish job.
 - Publish only from the protected default branch after the complete verification pipeline.
-- Publish with provenance.
 - Do not store a long-lived npm automation token when Trusted Publishing is available.
 
 ## Verification checklist
@@ -92,14 +95,17 @@ After creating or changing the ruleset:
 4. Confirm that unresolved review conversations block merge.
 5. Confirm that a direct push to `main` is rejected.
 6. Confirm that force push and branch deletion are rejected.
-7. Close or merge the test pull request and record any deviations in a GitHub issue.
+7. Query the GitHub API and confirm `main` reports protected before closing the protection issue.
+8. Close or merge the test pull request and record any deviations in a GitHub issue.
 
 ## Maintenance ownership
 
 Changes to any of the following require reviewing this document and the live ruleset together:
 
 - `.github/workflows/verify.yml`
+- `.github/workflows/policy.yml`
 - `.github/workflows/codeql.yml`
+- `.github/workflows/scorecard.yml`
 - `.github/CODEOWNERS`
 - repository merge settings
 - GitHub Actions permissions
