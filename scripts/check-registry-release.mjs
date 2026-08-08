@@ -12,7 +12,9 @@ const version = process.argv[2]?.trim()
 const exactVersionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 
 if (!version || !exactVersionPattern.test(version)) {
-  throw new Error("Usage: node scripts/check-registry-release.mjs <exact-version>")
+  throw new Error(
+    "Usage: node scripts/check-registry-release.mjs <exact-version>"
+  )
 }
 
 const packageSpec = `${packageName}@${version}`

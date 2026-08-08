@@ -74,10 +74,14 @@ try {
       `console.log(\`Imported \${specifiers.length} ESM entry points and rendered SSR markup\`);\n`
   )
 
-  const { stdout, stderr } = await execFileAsync(process.execPath, [checkFile], {
-    cwd: temp,
-    maxBuffer: 16 * 1024 * 1024,
-  })
+  const { stdout, stderr } = await execFileAsync(
+    process.execPath,
+    [checkFile],
+    {
+      cwd: temp,
+      maxBuffer: 16 * 1024 * 1024,
+    }
+  )
   if (stdout) process.stdout.write(stdout)
   if (stderr) process.stderr.write(stderr)
   console.log(`SSR consumer passed with ${packageSource.label}`)
