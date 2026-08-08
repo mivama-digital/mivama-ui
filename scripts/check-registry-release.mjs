@@ -60,8 +60,8 @@ assert.ok(
 
 const env = { MIVAMA_PACKAGE_SPEC: packageSpec }
 const consumerChecks = [
-  ["test-vite-consumer.mjs", "vite-react-19"],
-  ["test-next-app-router-consumer.mjs"],
+  ["test-app-consumer.mjs", "vite-react-19"],
+  ["test-app-consumer.mjs", "next-app-router"],
   ["check-packed-ssr.mjs"],
   ["check-packed-tree-shaking.mjs"],
 ]

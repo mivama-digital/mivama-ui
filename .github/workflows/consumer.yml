@@ -23,20 +23,20 @@ jobs:
       matrix:
         include:
           - name: Vite React 18
-            script: scripts/test-vite-consumer.mjs
+            script: scripts/test-app-consumer.mjs
             args: vite-react-18
             cache_path: |
               package-lock.json
               fixtures/vite-react-18/package-lock.json
           - name: Vite React 19
-            script: scripts/test-vite-consumer.mjs
+            script: scripts/test-app-consumer.mjs
             args: vite-react-19
             cache_path: |
               package-lock.json
               fixtures/vite-react-19/package-lock.json
           - name: Next App Router
-            script: scripts/test-next-app-router-consumer.mjs
-            args: ""
+            script: scripts/test-app-consumer.mjs
+            args: next-app-router
             cache_path: |
               package-lock.json
               fixtures/next-app-router/package-lock.json

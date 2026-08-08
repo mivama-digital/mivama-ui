@@ -29,12 +29,12 @@ test("registry release probe requires an exact version and provenance", () => {
 
 test("registry release probe reuses canonical consumer runners", () => {
   for (const script of [
-    "test-vite-consumer.mjs",
-    "test-next-app-router-consumer.mjs",
+    "test-app-consumer.mjs",
     "check-packed-ssr.mjs",
     "check-packed-tree-shaking.mjs",
   ]) {
     assert.match(probe, new RegExp(script.replaceAll(".", "\\.")))
   }
-  assert.match(probe, /"test-vite-consumer\.mjs", "vite-react-19"/)
+  assert.match(probe, /"test-app-consumer\.mjs", "vite-react-19"/)
+  assert.match(probe, /"test-app-consumer\.mjs", "next-app-router"/)
 })
