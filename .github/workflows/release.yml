@@ -26,9 +26,9 @@ concurrency:
 
 jobs:
   publish:
-    name: Publish npm package
+    name: Publish and verify npm package
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     environment: npm
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -48,6 +48,7 @@ jobs:
         env:
           REQUESTED_VERSION: ${{ inputs.version }}
           NPM_TAG: ${{ inputs.tag }}
+          REPOSITORY_VISIBILITY: ${{ github.event.repository.visibility }}
         run: |
           node --input-type=module <<'NODE'
           import fs from "node:fs"
@@ -59,6 +60,11 @@ jobs:
 
           if (process.env.GITHUB_REF !== "refs/heads/main") {
             throw new Error(`Releases must run from main, got ${process.env.GITHUB_REF}`)
+          }
+          if (process.env.REPOSITORY_VISIBILITY !== "public") {
+            throw new Error(
+              `This release contract requires npm provenance, which Trusted Publishing only generates from a public GitHub repository. Current visibility: ${process.env.REPOSITORY_VISIBILITY}`
+            )
           }
           if (process.env.REQUESTED_VERSION !== pkg.version) {
             throw new Error(
@@ -107,3 +113,5 @@ jobs:
         env:
           NPM_TAG: ${{ inputs.tag }}
         run: npm publish --access public --tag "$NPM_TAG"
+      - name: Verify exact published registry release
+        run: node scripts/check-registry-release.mjs "${{ inputs.version }}"
