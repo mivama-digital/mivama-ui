@@ -23,7 +23,6 @@ If stronger branch protection becomes available later, configure it to enforce t
 
 The repository owns the checks it can execute consistently:
 
-- Verify / Node 20 package compatibility
 - Verify / Node 22 full verification
 - Verify / Node 24 full verification
 - Storybook build
@@ -34,7 +33,7 @@ The repository owns the checks it can execute consistently:
 - Release policy
 - CodeQL when code scanning is available for the repository plan and visibility
 
-A check that is unavailable for the current repository plan must not be represented by a permanently failing placeholder workflow.
+Do not keep CI coverage for an end-of-life runtime unless the published package explicitly promises support for that runtime. A check that is unavailable for the current repository plan must not be represented by a permanently failing placeholder workflow.
 
 ## Release policy
 
@@ -50,6 +49,7 @@ Changesets remain the only release metadata format. Do not introduce labels, cus
 - Keep `persist-credentials: false` on checkout steps unless the job intentionally writes to the repository.
 - Keep the repository source audit responsible for validating action pins and checkout credential handling across permanent workflows; do not add one pin checker per workflow.
 - Do not keep temporary write-capable bootstrap or formatter workflows after a migration is complete.
+- Keep permanent actions on supported action runtimes; upgrade pinned actions instead of relying on runner compatibility shims for end-of-life Node runtimes.
 
 ## Security features
 

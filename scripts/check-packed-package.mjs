@@ -1,66 +1,41 @@
 import assert from "node:assert/strict"
-import { execFile } from "node:child_process"
-import {
-  access,
-  mkdtemp,
-  mkdir,
-  readFile,
-  rename,
-  rm,
-  symlink,
-  writeFile,
-} from "node:fs/promises"
+import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
-import { promisify } from "node:util"
 
-const execFileAsync = promisify(execFile)
+import {
+  getModuleExportSubpaths,
+  getModuleImportSpecifiers,
+} from "./lib/package-exports.mjs"
+import { preparePackageSource } from "./lib/package-source.mjs"
+import { runCommand, runNpm } from "./lib/process.mjs"
+
 const root = path.resolve(import.meta.dirname, "..")
 const temp = await mkdtemp(path.join(tmpdir(), "mivama-ui-pack-"))
+const artifacts = path.join(temp, "artifacts")
+const packageSource = await preparePackageSource({
+  root,
+  artifacts,
+  ignoreScripts: true,
+})
+const commandOptions = { cwd: temp, maxBuffer: 16 * 1024 * 1024 }
 
 try {
-  const { stdout } = await execFileAsync(
-    "npm",
-    ["pack", "--ignore-scripts", "--json", "--pack-destination", temp],
-    { cwd: root }
+  await writeFile(
+    path.join(temp, "package.json"),
+    JSON.stringify({ private: true, type: "module" })
   )
-  const [{ filename }] = JSON.parse(stdout)
-  await execFileAsync("tar", ["-xzf", path.join(temp, filename), "-C", temp])
+  await runNpm(
+    ["install", "--ignore-scripts", "--package-lock=false", packageSource.spec],
+    commandOptions
+  )
 
   const packageDir = path.join(temp, "node_modules", "@mivama", "ui")
-  await mkdir(path.dirname(packageDir), { recursive: true })
-  await rename(path.join(temp, "package"), packageDir)
-
-  for (const dependency of [
-    "@base-ui/react",
-    "class-variance-authority",
-    "clsx",
-    "lucide-react",
-    "react",
-    "react-dom",
-    "tailwind-merge",
-    "tw-animate-css",
-  ]) {
-    const target = path.join(temp, "node_modules", dependency)
-    await mkdir(path.dirname(target), { recursive: true })
-    await symlink(
-      path.join(root, "node_modules", dependency),
-      target,
-      "junction"
-    )
-  }
-
   const packedPackage = JSON.parse(
     await readFile(path.join(packageDir, "package.json"), "utf8")
   )
-  const moduleSubpaths = Object.keys(packedPackage.exports).filter(
-    (subpath) => !subpath.endsWith(".css")
-  )
-  const importSpecifiers = moduleSubpaths.map((subpath) =>
-    subpath === "."
-      ? packedPackage.name
-      : `${packedPackage.name}/${subpath.slice(2)}`
-  )
+  const moduleSubpaths = getModuleExportSubpaths(packedPackage)
+  const importSpecifiers = getModuleImportSpecifiers(packedPackage)
 
   const checkFile = path.join(temp, "check.mjs")
   await writeFile(
@@ -72,7 +47,7 @@ try {
       "}\n" +
       "console.log(`Imported ${specifiers.length} public module entry points`);\n"
   )
-  await execFileAsync(process.execPath, [checkFile], { cwd: temp })
+  await runCommand(process.execPath, [checkFile], commandOptions)
 
   assert.deepEqual(packedPackage.sideEffects, ["**/*.css"])
   for (const stylesheet of ["styles.css", "tokens.css", "themes.css"]) {
@@ -97,8 +72,9 @@ try {
   }
 
   console.log(
-    `Validated packed ${packedPackage.name}@${packedPackage.version} with ${moduleSubpaths.length} module exports`
+    `Validated packed ${packedPackage.name}@${packedPackage.version} with ${moduleSubpaths.length} module exports using ${packageSource.label}`
   )
 } finally {
+  await packageSource.cleanup()
   await rm(temp, { recursive: true, force: true })
 }

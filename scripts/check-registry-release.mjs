@@ -1,17 +1,17 @@
 import assert from "node:assert/strict"
-import { execFile } from "node:child_process"
 import { mkdtemp, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
-import { promisify } from "node:util"
 
-const execFileAsync = promisify(execFile)
+import { runCommand, runNpm } from "./lib/process.mjs"
+
 const root = path.resolve(import.meta.dirname, "..")
 const packageName = "@mivama/ui"
 const version = process.argv[2]?.trim()
 const exactVersionPattern = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/
 const registryAttempts = 12
 const registryRetryDelayMs = 10_000
+const commandOptions = { cwd: root, maxBuffer: 32 * 1024 * 1024 }
 
 if (!version || !exactVersionPattern.test(version)) {
   throw new Error(
@@ -23,25 +23,12 @@ const packageSpec = `${packageName}@${version}`
 const sleep = (duration) =>
   new Promise((resolve) => setTimeout(resolve, duration))
 
-async function run(command, args, cwd = root, env = {}) {
-  try {
-    const result = await execFileAsync(command, args, {
-      cwd,
-      env: { ...process.env, ...env },
-      maxBuffer: 32 * 1024 * 1024,
-    })
-    if (result.stdout) process.stdout.write(result.stdout)
-    if (result.stderr) process.stderr.write(result.stderr)
-    return result.stdout.trim()
-  } catch (error) {
-    if (error.stdout) process.stdout.write(error.stdout)
-    if (error.stderr) process.stderr.write(error.stderr)
-    throw error
-  }
-}
-
 async function readRegistryJson(field) {
-  const output = await run("npm", ["view", packageSpec, field, "--json"])
+  const { stdout } = await runNpm(
+    ["view", packageSpec, field, "--json"],
+    commandOptions
+  )
+  const output = stdout.trim()
   return output ? JSON.parse(output) : null
 }
 
@@ -94,11 +81,13 @@ const consumerChecks = [
 ]
 
 for (const [script, ...args] of consumerChecks) {
-  await run(
+  await runCommand(
     process.execPath,
     [path.join(root, "scripts", script), ...args],
-    root,
-    env
+    {
+      ...commandOptions,
+      env,
+    }
   )
 }
 
@@ -108,12 +97,12 @@ try {
     path.join(auditDir, "package.json"),
     JSON.stringify({ private: true, dependencies: { [packageName]: version } })
   )
-  await run(
-    "npm",
+  const auditOptions = { ...commandOptions, cwd: auditDir }
+  await runNpm(
     ["install", "--ignore-scripts", "--package-lock=true"],
-    auditDir
+    auditOptions
   )
-  await run("npm", ["audit", "signatures"], auditDir)
+  await runNpm(["audit", "signatures"], auditOptions)
 } finally {
   await rm(auditDir, { recursive: true, force: true })
 }

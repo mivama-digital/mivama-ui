@@ -1,11 +1,13 @@
-import { execFile } from "node:child_process"
 import { mkdir, rm } from "node:fs/promises"
 import path from "node:path"
-import { promisify } from "node:util"
 
-const execFileAsync = promisify(execFile)
+import { runNpm } from "./process.mjs"
 
-export async function preparePackageSource({ root, artifacts }) {
+export async function preparePackageSource({
+  root,
+  artifacts,
+  ignoreScripts = false,
+}) {
   await rm(artifacts, { recursive: true, force: true })
 
   const registrySpec = process.env.MIVAMA_PACKAGE_SPEC?.trim()
@@ -18,11 +20,11 @@ export async function preparePackageSource({ root, artifacts }) {
   }
 
   await mkdir(artifacts, { recursive: true })
-  const { stdout } = await execFileAsync(
-    "npm",
-    ["pack", "--json", "--pack-destination", artifacts],
-    { cwd: root, maxBuffer: 16 * 1024 * 1024 }
-  )
+  const packArgs = ["pack"]
+  if (ignoreScripts) packArgs.push("--ignore-scripts")
+  packArgs.push("--json", "--pack-destination", artifacts)
+
+  const { stdout } = await runNpm(packArgs, { cwd: root, echo: false })
   const [packed] = JSON.parse(stdout)
   const tarball = path.join(artifacts, packed.filename)
 
