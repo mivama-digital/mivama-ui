@@ -1,8 +1,4 @@
-export type MivamaTheme =
-  | "product"
-  | "editorial"
-  | "portal"
-  | (string & {})
+export type MivamaTheme = "product" | "editorial" | "portal" | (string & {})
 export type MivamaDensity = "comfortable" | "compact" | (string & {})
 
 export const BUILT_IN_THEMES = ["product", "editorial", "portal"] as const
