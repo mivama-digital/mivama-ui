@@ -2,6 +2,8 @@ import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import test from "node:test"
 
+import { components } from "../config/components.mjs"
+
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8")
 
 test("MivamaProvider scopes theme, density, portal container, and refs", async () => {
@@ -62,44 +64,11 @@ test("provider-less portal compatibility is disabled inside a provider", async (
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
 })
 
-test("all public components have package subpath exports", async () => {
+test("all registry components have package subpath exports", async () => {
   const packageJson = JSON.parse(await read("package.json"))
-  const expectedSubpaths = [
-    "provider",
-    "alert",
-    "attachment",
-    "badge",
-    "bento-grid",
-    "breadcrumb",
-    "button",
-    "card",
-    "choice",
-    "container",
-    "dialog",
-    "editorial-grid",
-    "empty",
-    "field",
-    "input",
-    "message",
-    "pagination",
-    "progress",
-    "scroll-scene",
-    "section",
-    "select",
-    "separator",
-    "sheet",
-    "sidebar",
-    "skeleton",
-    "switch",
-    "tabs",
-    "textarea",
-    "tooltip",
-    "typography",
-    "forms",
-  ]
 
-  for (const name of expectedSubpaths) {
-    const subpath = `./${name}`
+  for (const { slug } of components) {
+    const subpath = `./${slug}`
     assert.ok(packageJson.exports[subpath], `missing ${subpath} export`)
     assert.equal(typeof packageJson.exports[subpath].types, "string")
     assert.equal(typeof packageJson.exports[subpath].import, "string")
