@@ -343,7 +343,7 @@ export type MivamaContextValue = {
 };
 
 // @public (undocumented)
-export type MivamaDensity = "compact" | "comfortable" | "spacious" | (string & {});
+export type MivamaDensity = "comfortable" | "compact" | (string & {});
 
 // @public (undocumented)
 export type MivamaPortalContainer = HTMLElement | ShadowRoot | React_2.RefObject<HTMLElement | ShadowRoot | null> | null;
@@ -365,7 +365,7 @@ export type MivamaProviderProps = Omit<React_2.ComponentPropsWithoutRef<"div">, 
 };
 
 // @public (undocumented)
-export type MivamaTheme = "product" | "marketing" | "dashboard" | (string & {});
+export type MivamaTheme = "product" | "editorial" | "portal" | (string & {});
 
 // @public (undocumented)
 export function Pagination(input: React_2.ComponentProps<"nav"> & {
