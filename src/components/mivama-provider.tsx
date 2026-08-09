@@ -101,8 +101,4 @@ export {
   useOptionalMivamaContext,
 }
 export type { MivamaDensity, MivamaTheme }
-export type {
-  MivamaContextValue,
-  MivamaPortalContainer,
-  MivamaProviderProps,
-}
+export type { MivamaContextValue, MivamaPortalContainer, MivamaProviderProps }
