@@ -1,15 +1,10 @@
 import assert from "node:assert/strict"
-import { readFile } from "node:fs/promises"
 import test from "node:test"
 
-const workflow = await readFile(
-  new URL("../.github/workflows/registry-release-probe.yml", import.meta.url),
-  "utf8"
-)
-const probe = await readFile(
-  new URL("../scripts/check-registry-release.mjs", import.meta.url),
-  "utf8"
-)
+import { readRoot } from "./lib/source.mjs"
+
+const workflow = await readRoot(".github/workflows/registry-release-probe.yml")
+const probe = await readRoot("scripts/check-registry-release.mjs")
 
 test("registry release probe remains manual, read-only, and main-only", () => {
   assert.match(workflow, /workflow_dispatch:/)
