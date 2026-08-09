@@ -1,9 +1,7 @@
-import { execFile } from "node:child_process"
 import { mkdir, rm } from "node:fs/promises"
 import path from "node:path"
-import { promisify } from "node:util"
 
-const execFileAsync = promisify(execFile)
+import { runNpm } from "./process.mjs"
 
 export async function preparePackageSource({ root, artifacts }) {
   await rm(artifacts, { recursive: true, force: true })
@@ -18,10 +16,9 @@ export async function preparePackageSource({ root, artifacts }) {
   }
 
   await mkdir(artifacts, { recursive: true })
-  const { stdout } = await execFileAsync(
-    "npm",
+  const { stdout } = await runNpm(
     ["pack", "--json", "--pack-destination", artifacts],
-    { cwd: root, maxBuffer: 16 * 1024 * 1024 }
+    { cwd: root, echo: false }
   )
   const [packed] = JSON.parse(stdout)
   const tarball = path.join(artifacts, packed.filename)
