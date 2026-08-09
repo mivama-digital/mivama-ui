@@ -1,17 +1,18 @@
 import assert from "node:assert/strict"
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
-import { fileURLToPath } from "node:url"
 
 import { bundleSizeMetrics, measureBundleSize } from "./lib/bundle-size.mjs"
-import { preparePackageSource } from "./lib/package-source.mjs"
+import { prepareAppConsumer } from "./lib/app-consumer.mjs"
 import { runNpm } from "./lib/process.mjs"
 
-const root = fileURLToPath(new URL("..", import.meta.url))
-const fixture = path.join(root, "fixtures", "vite-react-19")
-const artifacts = path.join(root, ".artifacts", "tree-shaking")
-const workspace = path.join(fixture, ".tree-shaking")
-const npmOptions = { cwd: fixture, maxBuffer: 16 * 1024 * 1024 }
+const root = path.resolve(import.meta.dirname, "..")
+const consumer = await prepareAppConsumer({
+  root,
+  fixtureName: "vite-react-19",
+  artifactsName: "tree-shaking",
+})
+const workspace = path.join(consumer.fixture, ".tree-shaking")
 
 const absoluteLimits = {
   raw: 64_000,
@@ -24,23 +25,8 @@ const rootOverheadLimits = {
   brotli: 512,
 }
 
-await rm(workspace, { recursive: true, force: true })
-const packageSource = await preparePackageSource({ root, artifacts })
-
 try {
-  await runNpm(["ci", "--ignore-scripts"], npmOptions)
-  await runNpm(
-    [
-      "install",
-      "--ignore-scripts",
-      "--no-save",
-      "--package-lock=false",
-      packageSource.spec,
-    ],
-    npmOptions
-  )
-  await runNpm(["ls", "@mivama/ui", "--depth=0"], npmOptions)
-
+  await rm(workspace, { recursive: true, force: true })
   await mkdir(workspace, { recursive: true })
   await writeFile(
     path.join(workspace, "direct.js"),
@@ -86,7 +72,7 @@ export default defineConfig({
         path.join(workspace, "vite.config.mjs"),
       ],
       {
-        ...npmOptions,
+        ...consumer.npmOptions,
         env: {
           TREE_ENTRY: path.join(workspace, `${name}.js`),
           TREE_OUT: outputDirectory,
@@ -116,9 +102,9 @@ export default defineConfig({
   }
 
   console.log(
-    `Tree shaking passed with ${packageSource.label}: direct=${JSON.stringify(results.direct)}, root=${JSON.stringify(results.root)}`
+    `Tree shaking passed with ${consumer.packageLabel}: direct=${JSON.stringify(results.direct)}, root=${JSON.stringify(results.root)}`
   )
 } finally {
   await rm(workspace, { recursive: true, force: true })
-  await packageSource.cleanup()
+  await consumer.cleanup()
 }
