@@ -1,6 +1,8 @@
 export function getModuleExportSubpaths(packageJson) {
   if (!packageJson.exports || typeof packageJson.exports !== "object") {
-    throw new Error(`${packageJson.name ?? "Package"} is missing package exports`)
+    throw new Error(
+      `${packageJson.name ?? "Package"} is missing package exports`
+    )
   }
 
   return Object.keys(packageJson.exports).filter(
