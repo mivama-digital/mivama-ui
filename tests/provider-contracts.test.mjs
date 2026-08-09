@@ -91,10 +91,8 @@ test("verification scripts share one canonical core pipeline", async () => {
   assert.match(scripts.verify, /npm run lint && npm run verify:core/)
   assert.match(scripts.verify, /npm run api:check/)
   assert.match(scripts.verify, /npm run test:coverage/)
-  assert.match(
-    scripts["verify:package"],
-    /npm run lint:node && npm run verify:core/
-  )
+  assert.equal(scripts["verify:package"], undefined)
+  assert.equal(scripts["lint:node"], undefined)
 
   for (const check of [
     "format:check",
