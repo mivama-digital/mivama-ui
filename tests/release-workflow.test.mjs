@@ -1,9 +1,10 @@
 import assert from "node:assert/strict"
-import { readFile } from "node:fs/promises"
 import test from "node:test"
 
-const workflow = await readFile(".github/workflows/release.yml", "utf8")
-const packageJson = JSON.parse(await readFile("package.json", "utf8"))
+import { readJson, readRoot } from "./lib/source.mjs"
+
+const workflow = await readRoot(".github/workflows/release.yml")
+const packageJson = await readJson("package.json")
 
 test("release workflow is manual, OIDC-only, and GitHub-hosted", () => {
   assert.match(workflow, /on:\n  workflow_dispatch:/)
