@@ -191,8 +191,8 @@ The consumer checks normally create the package archive themselves through the s
 consumer=/absolute/path/to/consumer
 mkdir -p "$consumer/vendor"
 npm run verify
-npm pack --ignore-scripts --pack-destination "$consumer/vendor"
-npm install --prefix "$consumer" "$consumer/vendor/mivama-ui-3.0.0.tgz"
+archive=$(npm pack --ignore-scripts --pack-destination "$consumer/vendor")
+npm install --prefix "$consumer" "$consumer/vendor/$archive"
 npm --prefix "$consumer" run verify
 ```
 

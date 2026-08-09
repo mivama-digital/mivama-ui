@@ -1,11 +1,17 @@
 import type { Decorator, Preview } from "@storybook/react-vite"
 
 import { MivamaProvider } from "../src/components/mivama-provider.js"
+import {
+  BUILT_IN_DENSITIES,
+  BUILT_IN_THEMES,
+  DEFAULT_DENSITY,
+  DEFAULT_THEME,
+} from "../src/lib/shell-contract.js"
 import "../src/styles.css"
 
 const withMivamaShell: Decorator = (Story, context) => {
-  const theme = String(context.globals.theme ?? "product")
-  const density = String(context.globals.density ?? "comfortable")
+  const theme = String(context.globals.theme ?? DEFAULT_THEME)
+  const density = String(context.globals.density ?? DEFAULT_DENSITY)
   const mode = String(context.globals.mode ?? "light")
   const direction = String(context.globals.direction ?? "ltr") as "ltr" | "rtl"
 
@@ -31,7 +37,7 @@ const preview: Preview = {
     theme: {
       description: "Mivama theme",
       toolbar: {
-        items: ["product", "editorial", "portal"],
+        items: [...BUILT_IN_THEMES],
         dynamicTitle: true,
       },
     },
@@ -45,7 +51,7 @@ const preview: Preview = {
     density: {
       description: "Control density",
       toolbar: {
-        items: ["comfortable", "compact"],
+        items: [...BUILT_IN_DENSITIES],
         dynamicTitle: true,
       },
     },
@@ -58,9 +64,9 @@ const preview: Preview = {
     },
   },
   initialGlobals: {
-    theme: "product",
+    theme: DEFAULT_THEME,
     mode: "light",
-    density: "comfortable",
+    density: DEFAULT_DENSITY,
     direction: "ltr",
   },
   parameters: {

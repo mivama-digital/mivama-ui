@@ -19,8 +19,10 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
     provider,
     /React\.forwardRef<HTMLDivElement, MivamaProviderProps>/
   )
-  assert.match(provider, /type MivamaTheme =/)
-  assert.match(provider, /type MivamaDensity =/)
+  assert.match(provider, /import type \{ MivamaDensity, MivamaTheme \}/)
+  assert.match(provider, /theme = DEFAULT_THEME/)
+  assert.match(provider, /density = DEFAULT_DENSITY/)
+  assert.doesNotMatch(provider, /"marketing"|"dashboard"|"spacious"/)
   assert.ok(
     provider.indexOf("{...props}") <
       provider.indexOf("data-mivama-theme={theme}")
@@ -32,6 +34,42 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
     provider.indexOf("{...props}") <
       provider.indexOf('className={cn("isolate", className)}')
   )
+})
+
+test("built-in shell vocabulary and public shell types have one module owner", async () => {
+  const [contract, preview, provider] = await Promise.all([
+    read("src/lib/shell-contract.ts"),
+    read(".storybook/preview.tsx"),
+    read("src/components/mivama-provider.tsx"),
+  ])
+
+  assert.match(
+    contract,
+    /MivamaTheme = "product" \| "editorial" \| "portal" \| \(string & \{\}\)/
+  )
+  assert.match(
+    contract,
+    /MivamaDensity = "comfortable" \| "compact" \| \(string & \{\}\)/
+  )
+  assert.match(
+    contract,
+    /BUILT_IN_THEMES = \["product", "editorial", "portal"\] as const/
+  )
+  assert.match(
+    contract,
+    /BUILT_IN_DENSITIES = \["comfortable", "compact"\] as const/
+  )
+  assert.match(contract, /DEFAULT_THEME = "product" satisfies MivamaTheme/)
+  assert.match(
+    contract,
+    /DEFAULT_DENSITY = "comfortable" satisfies MivamaDensity/
+  )
+  assert.doesNotMatch(contract, /marketing|dashboard|spacious/)
+  assert.match(preview, /items: \[\.\.\.BUILT_IN_THEMES\]/)
+  assert.match(preview, /items: \[\.\.\.BUILT_IN_DENSITIES\]/)
+  assert.match(preview, /theme: DEFAULT_THEME/)
+  assert.match(preview, /density: DEFAULT_DENSITY/)
+  assert.doesNotMatch(provider, /type MivamaTheme =|type MivamaDensity =/)
 })
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
@@ -49,8 +87,13 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
   )
 })
 
-test("provider-less portal compatibility is disabled inside a provider", async () => {
-  const shellAttributes = await read("src/lib/shell-attributes.ts")
+test("provider-less portal compatibility remains bounded to portaled content", async () => {
+  const [dialog, sheet, tooltip, shellAttributes] = await Promise.all([
+    read("src/components/ui/dialog.tsx"),
+    read("src/components/ui/sheet.tsx"),
+    read("src/components/ui/tooltip.tsx"),
+    read("src/lib/shell-attributes.ts"),
+  ])
 
   assert.match(
     shellAttributes,
@@ -62,6 +105,10 @@ test("provider-less portal compatibility is disabled inside a provider", async (
   )
   assert.match(shellAttributes, /if \(!enabled\) return/)
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
+  assert.match(dialog, /useShellAttributes\("\[data-slot=dialog-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-overlay\]"\)/)
+  assert.match(tooltip, /useShellAttributes\("\[data-slot=tooltip-content\]"\)/)
 })
 
 test("all registry components have package subpath exports", async () => {
