@@ -31,9 +31,16 @@ export const IndependentScenes: Story = {
         <ScrollScene key={title} className="rounded-xl border bg-card p-6">
           <ScrollLayer effect="reveal" distance={index === 0 ? 24 : 16}>
             <Heading variant="title">{title}</Heading>
-            <Text>Each layer resolves progress from its own viewport visibility.</Text>
+            <Text>
+              Each layer resolves progress from its own viewport visibility.
+            </Text>
           </ScrollLayer>
-          <ScrollLayer effect="parallax" direction="down" distance={8} className="mt-4">
+          <ScrollLayer
+            effect="parallax"
+            direction="down"
+            distance={8}
+            className="mt-4"
+          >
             <Text variant="small">Bounded supporting motion</Text>
           </ScrollLayer>
         </ScrollScene>
