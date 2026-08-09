@@ -11,43 +11,42 @@ const packageJson = JSON.parse(
 )
 const errors = []
 
-const duplicateValues = (values) =>
-  values.filter((value, index) => values.indexOf(value) !== index)
+const findDuplicates = (values) =>
+  new Set(values.filter((value, index) => values.indexOf(value) !== index))
 
-for (const duplicate of new Set(
-  duplicateValues(components.map(({ name }) => name))
-)) {
-  errors.push(`Duplicate component name: ${duplicate}`)
+const setDifference = (left, right) =>
+  [...left].filter((value) => !right.has(value))
+
+const validateModuleExport = (key, value) => {
+  if (!value || typeof value !== "object") {
+    errors.push(`Module export must define types/import/default: ${key}`)
+    return
+  }
+  if (!value.types || !value.import || !value.default) {
+    errors.push(`Incomplete package export contract: ${key}`)
+  }
+  if (value.import !== value.default) {
+    errors.push(`Import/default mismatch: ${key}`)
+  }
 }
-for (const duplicate of new Set(
-  duplicateValues(components.map(({ slug }) => slug))
-)) {
-  errors.push(`Duplicate component slug: ${duplicate}`)
-}
-for (const duplicate of new Set(
-  duplicateValues(components.map(({ source }) => source))
-)) {
-  errors.push(`Duplicate component source: ${duplicate}`)
+
+for (const [label, values] of [
+  ["component name", components.map(({ name }) => name)],
+  ["component slug", components.map(({ slug }) => slug)],
+  ["component source", components.map(({ source }) => source)],
+]) {
+  for (const duplicate of findDuplicates(values)) {
+    errors.push(`Duplicate ${label}: ${duplicate}`)
+  }
 }
 
 const rootExport = packageJson.exports?.["."]
-if (
-  !rootExport ||
-  typeof rootExport !== "object" ||
-  !rootExport.types ||
-  !rootExport.import ||
-  !rootExport.default
-) {
-  errors.push("Incomplete root package export contract: .")
-} else if (rootExport.import !== rootExport.default) {
-  errors.push("Import/default mismatch: .")
-}
+validateModuleExport(".", rootExport)
 
 for (const component of components) {
   const sourcePath = path.join(root, component.source)
   try {
-    const sourceStat = await stat(sourcePath)
-    if (!sourceStat.isFile()) {
+    if (!(await stat(sourcePath)).isFile()) {
       errors.push(`Source is not a file: ${component.source}`)
     }
   } catch {
@@ -55,62 +54,42 @@ for (const component of components) {
   }
 
   const exportKey = `./${component.slug}`
-  const packageExport = packageJson.exports?.[exportKey]
-  if (!packageExport) {
-    errors.push(`Missing package export: ${exportKey}`)
-    continue
-  }
-  if (typeof packageExport !== "object") {
-    errors.push(
-      `Component export must define types/import/default: ${exportKey}`
+  validateModuleExport(exportKey, packageJson.exports?.[exportKey])
+}
+
+const uiFiles = new Set(
+  (await readdir(path.join(root, "src/components/ui")))
+    .filter((file) => file.endsWith(".tsx"))
+    .map((file) => `src/components/ui/${file}`)
+)
+const registeredUiFiles = new Set(
+  components
+    .map(({ source }) => source)
+    .filter(
+      (source) =>
+        source.startsWith("src/components/ui/") && source.endsWith(".tsx")
     )
-    continue
-  }
-  if (!packageExport.types || !packageExport.import || !packageExport.default) {
-    errors.push(`Incomplete package export contract: ${exportKey}`)
-  }
-  if (packageExport.import !== packageExport.default) {
-    errors.push(`Import/default mismatch: ${exportKey}`)
-  }
+)
+
+for (const source of setDifference(uiFiles, registeredUiFiles)) {
+  errors.push(`Unregistered public UI source: ${source}`)
+}
+for (const source of setDifference(registeredUiFiles, uiFiles)) {
+  errors.push(`Registry references unknown UI source: ${source}`)
 }
 
-const uiFiles = (await readdir(path.join(root, "src/components/ui")))
-  .filter((file) => file.endsWith(".tsx"))
-  .map((file) => `src/components/ui/${file}`)
-  .sort()
-const registeredUiFiles = components
-  .map(({ source }) => source)
-  .filter(
-    (source) =>
-      source.startsWith("src/components/ui/") && source.endsWith(".tsx")
-  )
-  .sort()
+const moduleExportSlugs = new Set(
+  Object.entries(packageJson.exports ?? {})
+    .filter(([key, value]) => key !== "." && typeof value === "object")
+    .map(([key]) => key.slice(2))
+)
+const registeredSlugs = new Set(components.map(({ slug }) => slug))
 
-for (const source of uiFiles) {
-  if (!registeredUiFiles.includes(source)) {
-    errors.push(`Unregistered public UI source: ${source}`)
-  }
+for (const slug of setDifference(moduleExportSlugs, registeredSlugs)) {
+  errors.push(`Unregistered module export: ./${slug}`)
 }
-for (const source of registeredUiFiles) {
-  if (!uiFiles.includes(source)) {
-    errors.push(`Registry references unknown UI source: ${source}`)
-  }
-}
-
-const moduleExportKeys = Object.entries(packageJson.exports ?? {})
-  .filter(([key, value]) => key !== "." && typeof value === "object")
-  .map(([key]) => key.slice(2))
-  .sort()
-const registeredSlugs = components.map(({ slug }) => slug).sort()
-for (const slug of moduleExportKeys) {
-  if (!registeredSlugs.includes(slug)) {
-    errors.push(`Unregistered module export: ./${slug}`)
-  }
-}
-for (const slug of registeredSlugs) {
-  if (!moduleExportKeys.includes(slug)) {
-    errors.push(`Registry slug has no module export: ./${slug}`)
-  }
+for (const slug of setDifference(registeredSlugs, moduleExportSlugs)) {
+  errors.push(`Registry slug has no module export: ./${slug}`)
 }
 
 const sorted = [...components].sort((a, b) => a.slug.localeCompare(b.slug))
