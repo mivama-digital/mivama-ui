@@ -1,18 +1,20 @@
 import assert from "node:assert/strict"
-import { execFile } from "node:child_process"
 import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
-import { promisify } from "node:util"
-import { brotliCompressSync, constants, gzipSync } from "node:zlib"
 
+import {
+  bundleSizeMetrics,
+  measureBundleSize,
+} from "./lib/bundle-size.mjs"
 import { preparePackageSource } from "./lib/package-source.mjs"
+import { runNpm } from "./lib/process.mjs"
 
-const execFileAsync = promisify(execFile)
 const root = fileURLToPath(new URL("..", import.meta.url))
 const fixture = path.join(root, "fixtures", "vite-react-19")
 const artifacts = path.join(root, ".artifacts", "tree-shaking")
 const workspace = path.join(fixture, ".tree-shaking")
+const npmOptions = { cwd: fixture, maxBuffer: 16 * 1024 * 1024 }
 
 const absoluteLimits = {
   raw: 64_000,
@@ -25,40 +27,12 @@ const rootOverheadLimits = {
   brotli: 512,
 }
 
-async function run(command, args, cwd, env = {}) {
-  try {
-    const result = await execFileAsync(command, args, {
-      cwd,
-      env: { ...process.env, ...env },
-      maxBuffer: 16 * 1024 * 1024,
-    })
-    if (result.stdout) process.stdout.write(result.stdout)
-    if (result.stderr) process.stderr.write(result.stderr)
-    return result.stdout
-  } catch (error) {
-    if (error.stdout) process.stdout.write(error.stdout)
-    if (error.stderr) process.stderr.write(error.stderr)
-    throw error
-  }
-}
-
-function measure(content) {
-  return {
-    raw: content.length,
-    gzip: gzipSync(content, { level: 9 }).length,
-    brotli: brotliCompressSync(content, {
-      params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
-    }).length,
-  }
-}
-
 await rm(workspace, { recursive: true, force: true })
 const packageSource = await preparePackageSource({ root, artifacts })
 
 try {
-  await run("npm", ["ci", "--ignore-scripts"], fixture)
-  await run(
-    "npm",
+  await runNpm(["ci", "--ignore-scripts"], npmOptions)
+  await runNpm(
     [
       "install",
       "--ignore-scripts",
@@ -66,9 +40,9 @@ try {
       "--package-lock=false",
       packageSource.spec,
     ],
-    fixture
+    npmOptions
   )
-  await run("npm", ["ls", "@mivama/ui", "--depth=0"], fixture)
+  await runNpm(["ls", "@mivama/ui", "--depth=0"], npmOptions)
 
   await mkdir(workspace, { recursive: true })
   await writeFile(
@@ -105,8 +79,7 @@ export default defineConfig({
   const results = {}
   for (const name of ["direct", "root"]) {
     const outputDirectory = path.join(workspace, `dist-${name}`)
-    await run(
-      "npm",
+    await runNpm(
       [
         "exec",
         "--",
@@ -115,19 +88,21 @@ export default defineConfig({
         "--config",
         path.join(workspace, "vite.config.mjs"),
       ],
-      fixture,
       {
-        TREE_ENTRY: path.join(workspace, `${name}.js`),
-        TREE_OUT: outputDirectory,
+        ...npmOptions,
+        env: {
+          TREE_ENTRY: path.join(workspace, `${name}.js`),
+          TREE_OUT: outputDirectory,
+        },
       }
     )
 
     const bundlePath = path.join(outputDirectory, "bundle.js")
     await stat(bundlePath)
     const content = await readFile(bundlePath)
-    results[name] = measure(content)
+    results[name] = measureBundleSize(content)
 
-    for (const metric of ["raw", "gzip", "brotli"]) {
+    for (const metric of bundleSizeMetrics) {
       assert.ok(
         results[name][metric] <= absoluteLimits[metric],
         `${name} Button bundle ${metric} is ${results[name][metric]} bytes and exceeds ${absoluteLimits[metric]}`
@@ -135,7 +110,7 @@ export default defineConfig({
     }
   }
 
-  for (const metric of ["raw", "gzip", "brotli"]) {
+  for (const metric of bundleSizeMetrics) {
     const overhead = results.root[metric] - results.direct[metric]
     assert.ok(
       overhead <= rootOverheadLimits[metric],
