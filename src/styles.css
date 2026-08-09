@@ -184,11 +184,6 @@
     min-width: 0;
   }
 
-  .mivama-scroll-scene {
-    view-timeline-name: --mivama-scroll-scene;
-    view-timeline-axis: block;
-  }
-
   .mivama-scroll-layer {
     --mivama-scroll-distance: var(--motion-distance-16);
     transform: translateY(0);
@@ -266,13 +261,13 @@
     .mivama-scroll-layer[data-effect="reveal"] {
       animation: mivama-scroll-layer-reveal var(--motion-duration-slow)
         var(--motion-easing-emphasized) both;
-      animation-timeline: --mivama-scroll-scene;
+      animation-timeline: view(block);
       animation-range: entry 10% cover 45%;
     }
 
     .mivama-scroll-layer[data-effect="parallax"] {
       animation: mivama-scroll-layer-parallax linear both;
-      animation-timeline: --mivama-scroll-scene;
+      animation-timeline: view(block);
       animation-range: entry 0% exit 100%;
     }
   }
