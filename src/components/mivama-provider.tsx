@@ -2,10 +2,7 @@
 
 import * as React from "react"
 
-import {
-  DEFAULT_DENSITY,
-  DEFAULT_THEME,
-} from "../lib/shell-contract.js"
+import { DEFAULT_DENSITY, DEFAULT_THEME } from "../lib/shell-contract.js"
 import type {
   BuiltInMivamaDensity,
   BuiltInMivamaTheme,
