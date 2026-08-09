@@ -3,10 +3,8 @@
 import * as React from "react"
 
 import { DEFAULT_DENSITY, DEFAULT_THEME } from "../lib/shell-contract.js"
+import type { MivamaDensity, MivamaTheme } from "../lib/shell-contract.js"
 import { cn } from "../lib/utils.js"
-
-type MivamaTheme = "product" | "editorial" | "portal" | (string & {})
-type MivamaDensity = "comfortable" | "compact" | (string & {})
 
 type MivamaPortalContainer =
   | HTMLElement
@@ -102,10 +100,9 @@ export {
   useMivamaPortalContainer,
   useOptionalMivamaContext,
 }
+export type { MivamaDensity, MivamaTheme }
 export type {
   MivamaContextValue,
-  MivamaDensity,
   MivamaPortalContainer,
   MivamaProviderProps,
-  MivamaTheme,
 }
