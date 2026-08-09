@@ -81,10 +81,14 @@ const consumerChecks = [
 ]
 
 for (const [script, ...args] of consumerChecks) {
-  await runCommand(process.execPath, [path.join(root, "scripts", script), ...args], {
-    ...commandOptions,
-    env,
-  })
+  await runCommand(
+    process.execPath,
+    [path.join(root, "scripts", script), ...args],
+    {
+      ...commandOptions,
+      env,
+    }
+  )
 }
 
 const auditDir = await mkdtemp(path.join(tmpdir(), "mivama-ui-audit-"))
