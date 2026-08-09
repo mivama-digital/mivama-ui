@@ -45,7 +45,7 @@ test("built-in shell vocabulary and public shell types have one module owner", a
 
   assert.match(
     contract,
-    /MivamaTheme =\s*\| "product"\s*\| "editorial"\s*\| "portal"/
+    /MivamaTheme = "product" \| "editorial" \| "portal" \| \(string & \{\}\)/
   )
   assert.match(
     contract,
