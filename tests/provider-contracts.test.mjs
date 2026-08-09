@@ -19,8 +19,11 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
     provider,
     /React\.forwardRef<HTMLDivElement, MivamaProviderProps>/
   )
-  assert.match(provider, /type MivamaTheme =/)
-  assert.match(provider, /type MivamaDensity =/)
+  assert.match(provider, /type MivamaTheme = BuiltInMivamaTheme/)
+  assert.match(provider, /type MivamaDensity = BuiltInMivamaDensity/)
+  assert.match(provider, /theme = DEFAULT_THEME/)
+  assert.match(provider, /density = DEFAULT_DENSITY/)
+  assert.doesNotMatch(provider, /"marketing"|"dashboard"|"spacious"/)
   assert.ok(
     provider.indexOf("{...props}") <
       provider.indexOf("data-mivama-theme={theme}")
@@ -32,6 +35,29 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
     provider.indexOf("{...props}") <
       provider.indexOf('className={cn("isolate", className)}')
   )
+})
+
+test("built-in shell vocabulary has one source of truth", async () => {
+  const [contract, preview] = await Promise.all([
+    read("src/lib/shell-contract.ts"),
+    read(".storybook/preview.tsx"),
+  ])
+
+  assert.match(
+    contract,
+    /BUILT_IN_THEMES = \["product", "editorial", "portal"\] as const/
+  )
+  assert.match(
+    contract,
+    /BUILT_IN_DENSITIES = \["comfortable", "compact"\] as const/
+  )
+  assert.match(contract, /DEFAULT_THEME.*= "product"/)
+  assert.match(contract, /DEFAULT_DENSITY.*= "comfortable"/)
+  assert.doesNotMatch(contract, /marketing|dashboard|spacious/)
+  assert.match(preview, /items: \[\.\.\.BUILT_IN_THEMES\]/)
+  assert.match(preview, /items: \[\.\.\.BUILT_IN_DENSITIES\]/)
+  assert.match(preview, /theme: DEFAULT_THEME/)
+  assert.match(preview, /density: DEFAULT_DENSITY/)
 })
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
