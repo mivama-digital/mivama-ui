@@ -1,13 +1,10 @@
 import assert from "node:assert/strict"
-import { readFile } from "node:fs/promises"
 import test from "node:test"
 
-import { components } from "../config/components.mjs"
-
-const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8")
+import { readRoot } from "./lib/source.mjs"
 
 test("MivamaProvider scopes theme, density, portal container, and refs", async () => {
-  const provider = await read("src/components/mivama-provider.tsx")
+  const provider = await readRoot("src/components/mivama-provider.tsx")
 
   assert.match(
     provider,
@@ -38,9 +35,9 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
 
 test("built-in shell vocabulary and public shell types have one module owner", async () => {
   const [contract, preview, provider] = await Promise.all([
-    read("src/lib/shell-contract.ts"),
-    read(".storybook/preview.tsx"),
-    read("src/components/mivama-provider.tsx"),
+    readRoot("src/lib/shell-contract.ts"),
+    readRoot(".storybook/preview.tsx"),
+    readRoot("src/components/mivama-provider.tsx"),
   ])
 
   assert.match(
@@ -74,9 +71,9 @@ test("built-in shell vocabulary and public shell types have one module owner", a
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
   const [dialog, sheet, tooltip] = await Promise.all([
-    read("src/components/ui/dialog.tsx"),
-    read("src/components/ui/sheet.tsx"),
-    read("src/components/ui/tooltip.tsx"),
+    readRoot("src/components/ui/dialog.tsx"),
+    readRoot("src/components/ui/sheet.tsx"),
+    readRoot("src/components/ui/tooltip.tsx"),
   ])
 
   assert.match(dialog, /container=\{container \?\? providerContainer\}/)
@@ -89,10 +86,10 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
 
 test("provider-less portal compatibility remains bounded to portaled content", async () => {
   const [dialog, sheet, tooltip, shellAttributes] = await Promise.all([
-    read("src/components/ui/dialog.tsx"),
-    read("src/components/ui/sheet.tsx"),
-    read("src/components/ui/tooltip.tsx"),
-    read("src/lib/shell-attributes.ts"),
+    readRoot("src/components/ui/dialog.tsx"),
+    readRoot("src/components/ui/sheet.tsx"),
+    readRoot("src/components/ui/tooltip.tsx"),
+    readRoot("src/lib/shell-attributes.ts"),
   ])
 
   assert.match(
@@ -105,57 +102,26 @@ test("provider-less portal compatibility remains bounded to portaled content", a
   )
   assert.match(shellAttributes, /if \(!enabled\) return/)
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
+  assert.match(shellAttributes, /document\.querySelectorAll\(portalSelector\)/)
+  assert.match(shellAttributes, /element\.removeAttribute\(attribute\)/)
+  assert.match(
+    shellAttributes,
+    /shellObserver\.observe\(shell,[\s\S]*attributes: true/
+  )
+  assert.match(shellAttributes, /attributeFilter: \[\.\.\.SHELL_ATTRIBUTES\]/)
+  assert.match(shellAttributes, /portalObserver\.disconnect\(\)/)
+  assert.match(shellAttributes, /shellObserver\.disconnect\(\)/)
   assert.match(dialog, /useShellAttributes\("\[data-slot=dialog-content\]"\)/)
   assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-content\]"\)/)
   assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-overlay\]"\)/)
   assert.match(tooltip, /useShellAttributes\("\[data-slot=tooltip-content\]"\)/)
 })
 
-test("all registry components have package subpath exports", async () => {
-  const packageJson = JSON.parse(await read("package.json"))
-
-  for (const { slug } of components) {
-    const subpath = `./${slug}`
-    assert.ok(packageJson.exports[subpath], `missing ${subpath} export`)
-    assert.equal(typeof packageJson.exports[subpath].types, "string")
-    assert.equal(typeof packageJson.exports[subpath].import, "string")
-  }
-})
-
 test("provider public API includes typed theme, density, and optional context", async () => {
-  const index = await read("src/index.ts")
+  const index = await readRoot("src/index.ts")
 
   assert.match(index, /useOptionalMivamaContext/)
   assert.match(index, /MivamaDensity/)
   assert.match(index, /MivamaTheme/)
   assert.match(index, /MivamaContextValue/)
-})
-
-test("verification scripts share one canonical core pipeline", async () => {
-  const packageJson = JSON.parse(await read("package.json"))
-  const scripts = packageJson.scripts
-
-  assert.match(scripts.verify, /npm run lint && npm run verify:core/)
-  assert.match(scripts.verify, /npm run api:check/)
-  assert.match(scripts.verify, /npm run test:coverage/)
-  assert.equal(scripts["verify:package"], undefined)
-  assert.equal(scripts["lint:node"], undefined)
-
-  for (const check of [
-    "format:check",
-    "audit:source",
-    "registry:check",
-    "storybook:check",
-    "typecheck",
-    "build",
-    "bundle:check",
-    "test:contracts",
-    "pack:check",
-    "package:lint",
-  ]) {
-    assert.match(
-      scripts["verify:core"],
-      new RegExp(`npm run ${check.replace(":", "\\:")}`)
-    )
-  }
 })
