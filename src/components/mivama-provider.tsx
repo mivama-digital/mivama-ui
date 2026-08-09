@@ -2,10 +2,18 @@
 
 import * as React from "react"
 
+import {
+  DEFAULT_DENSITY,
+  DEFAULT_THEME,
+} from "../lib/shell-contract.js"
+import type {
+  BuiltInMivamaDensity,
+  BuiltInMivamaTheme,
+} from "../lib/shell-contract.js"
 import { cn } from "../lib/utils.js"
 
-type MivamaTheme = "product" | "marketing" | "dashboard" | (string & {})
-type MivamaDensity = "compact" | "comfortable" | "spacious" | (string & {})
+type MivamaTheme = BuiltInMivamaTheme | (string & {})
+type MivamaDensity = BuiltInMivamaDensity | (string & {})
 
 type MivamaPortalContainer =
   | HTMLElement
@@ -35,8 +43,8 @@ type MivamaProviderProps = Omit<
 const MivamaProvider = React.forwardRef<HTMLDivElement, MivamaProviderProps>(
   function MivamaProvider(
     {
-      theme = "product",
-      density = "comfortable",
+      theme = DEFAULT_THEME,
+      density = DEFAULT_DENSITY,
       portalContainer,
       className,
       children,
