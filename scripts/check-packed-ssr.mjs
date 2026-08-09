@@ -1,51 +1,32 @@
-import { execFile } from "node:child_process"
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import path from "node:path"
-import { promisify } from "node:util"
 
+import { getModuleImportSpecifiers } from "./lib/package-exports.mjs"
 import { preparePackageSource } from "./lib/package-source.mjs"
+import { runCommand, runNpm } from "./lib/process.mjs"
 
-const execFileAsync = promisify(execFile)
 const root = path.resolve(import.meta.dirname, "..")
 const temp = await mkdtemp(path.join(tmpdir(), "mivama-ui-ssr-"))
 const artifacts = path.join(temp, "artifacts")
 const packageSource = await preparePackageSource({ root, artifacts })
-
-async function runNpm(args) {
-  const result = await execFileAsync("npm", args, {
-    cwd: temp,
-    maxBuffer: 16 * 1024 * 1024,
-  })
-  if (result.stdout) process.stdout.write(result.stdout)
-  if (result.stderr) process.stderr.write(result.stderr)
-  return result.stdout
-}
+const commandOptions = { cwd: temp, maxBuffer: 16 * 1024 * 1024 }
 
 try {
   await writeFile(
     path.join(temp, "package.json"),
     JSON.stringify({ private: true, type: "module" })
   )
-  await runNpm([
-    "install",
-    "--ignore-scripts",
-    "--package-lock=false",
-    packageSource.spec,
-  ])
+  await runNpm(
+    ["install", "--ignore-scripts", "--package-lock=false", packageSource.spec],
+    commandOptions
+  )
 
   const packageDir = path.join(temp, "node_modules", "@mivama", "ui")
   const installedPackage = JSON.parse(
     await readFile(path.join(packageDir, "package.json"), "utf8")
   )
-  const moduleSubpaths = Object.keys(installedPackage.exports).filter(
-    (subpath) => !subpath.endsWith(".css")
-  )
-  const importSpecifiers = moduleSubpaths.map((subpath) =>
-    subpath === "."
-      ? installedPackage.name
-      : `${installedPackage.name}/${subpath.slice(2)}`
-  )
+  const importSpecifiers = getModuleImportSpecifiers(installedPackage)
 
   const checkFile = path.join(temp, "ssr-check.mjs")
   await writeFile(
@@ -74,16 +55,7 @@ try {
       `console.log(\`Imported \${specifiers.length} ESM entry points and rendered SSR markup\`);\n`
   )
 
-  const { stdout, stderr } = await execFileAsync(
-    process.execPath,
-    [checkFile],
-    {
-      cwd: temp,
-      maxBuffer: 16 * 1024 * 1024,
-    }
-  )
-  if (stdout) process.stdout.write(stdout)
-  if (stderr) process.stderr.write(stderr)
+  await runCommand(process.execPath, [checkFile], commandOptions)
   console.log(`SSR consumer passed with ${packageSource.label}`)
 } finally {
   await packageSource.cleanup()
