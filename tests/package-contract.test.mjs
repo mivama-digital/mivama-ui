@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 
+import { components } from "../config/components.mjs"
 import { readJson, readRoot } from "./lib/source.mjs"
 
 test("package metadata and lockfile agree on the current version", async () => {
@@ -11,6 +12,17 @@ test("package metadata and lockfile agree on the current version", async () => {
 
   assert.equal(lockfile.version, packageJson.version)
   assert.equal(lockfile.packages[""].version, packageJson.version)
+})
+
+test("all registry components have package subpath exports", async () => {
+  const packageJson = await readJson("package.json")
+
+  for (const { slug } of components) {
+    const subpath = `./${slug}`
+    assert.ok(packageJson.exports[subpath], `missing ${subpath} export`)
+    assert.equal(typeof packageJson.exports[subpath].types, "string")
+    assert.equal(typeof packageJson.exports[subpath].import, "string")
+  }
 })
 
 test("package exports cover maintained modules and stylesheets", async () => {

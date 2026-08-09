@@ -44,6 +44,18 @@ test("sidebar keyboard shortcut ignores editable targets", async () => {
   assert.match(context, /contenteditable/)
 })
 
+test("mobile detection uses the same media-query snapshot for subscription and reads", async () => {
+  const source = await readRoot("src/hooks/use-mobile.ts")
+
+  assert.match(source, /const MOBILE_QUERY =/)
+  assert.match(
+    source,
+    /useSyncExternalStore\(subscribe, getSnapshot, getServerSnapshot\)/
+  )
+  assert.match(source, /window\.matchMedia\(MOBILE_QUERY\)\.matches/)
+  assert.doesNotMatch(source, /window\.innerWidth/)
+})
+
 test("skeleton output and hidden ellipses are deterministic", async () => {
   const [sidebarMenu, pagination, breadcrumb] = await Promise.all([
     readUiSource("sidebar/menu"),
