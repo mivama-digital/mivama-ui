@@ -2,10 +2,7 @@ import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import path from "node:path"
 
-import {
-  bundleSizeMetrics,
-  measureBundleSize,
-} from "./lib/bundle-size.mjs"
+import { bundleSizeMetrics, measureBundleSize } from "./lib/bundle-size.mjs"
 
 const root = path.resolve(import.meta.dirname, "..")
 const budgets = {
