@@ -19,8 +19,7 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
     provider,
     /React\.forwardRef<HTMLDivElement, MivamaProviderProps>/
   )
-  assert.match(provider, /type MivamaTheme = BuiltInMivamaTheme/)
-  assert.match(provider, /type MivamaDensity = BuiltInMivamaDensity/)
+  assert.match(provider, /import type \{ MivamaDensity, MivamaTheme \}/)
   assert.match(provider, /theme = DEFAULT_THEME/)
   assert.match(provider, /density = DEFAULT_DENSITY/)
   assert.doesNotMatch(provider, /"marketing"|"dashboard"|"spacious"/)
@@ -37,12 +36,21 @@ test("MivamaProvider scopes theme, density, portal container, and refs", async (
   )
 })
 
-test("built-in shell vocabulary has one source of truth", async () => {
-  const [contract, preview] = await Promise.all([
+test("built-in shell vocabulary and public shell types have one module owner", async () => {
+  const [contract, preview, provider] = await Promise.all([
     read("src/lib/shell-contract.ts"),
     read(".storybook/preview.tsx"),
+    read("src/components/mivama-provider.tsx"),
   ])
 
+  assert.match(
+    contract,
+    /MivamaTheme =\s*\| "product"\s*\| "editorial"\s*\| "portal"/
+  )
+  assert.match(
+    contract,
+    /MivamaDensity = "comfortable" \| "compact" \| \(string & \{\}\)/
+  )
   assert.match(
     contract,
     /BUILT_IN_THEMES = \["product", "editorial", "portal"\] as const/
@@ -51,13 +59,17 @@ test("built-in shell vocabulary has one source of truth", async () => {
     contract,
     /BUILT_IN_DENSITIES = \["comfortable", "compact"\] as const/
   )
-  assert.match(contract, /DEFAULT_THEME.*= "product"/)
-  assert.match(contract, /DEFAULT_DENSITY.*= "comfortable"/)
+  assert.match(contract, /DEFAULT_THEME = "product" satisfies MivamaTheme/)
+  assert.match(
+    contract,
+    /DEFAULT_DENSITY = "comfortable" satisfies MivamaDensity/
+  )
   assert.doesNotMatch(contract, /marketing|dashboard|spacious/)
   assert.match(preview, /items: \[\.\.\.BUILT_IN_THEMES\]/)
   assert.match(preview, /items: \[\.\.\.BUILT_IN_DENSITIES\]/)
   assert.match(preview, /theme: DEFAULT_THEME/)
   assert.match(preview, /density: DEFAULT_DENSITY/)
+  assert.doesNotMatch(provider, /type MivamaTheme =|type MivamaDensity =/)
 })
 
 test("dialog, sheet, and tooltip use the provider portal container", async () => {
