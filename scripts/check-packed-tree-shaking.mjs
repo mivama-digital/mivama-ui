@@ -3,10 +3,7 @@ import { mkdir, readFile, rm, stat, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-import {
-  bundleSizeMetrics,
-  measureBundleSize,
-} from "./lib/bundle-size.mjs"
+import { bundleSizeMetrics, measureBundleSize } from "./lib/bundle-size.mjs"
 import { preparePackageSource } from "./lib/package-source.mjs"
 import { runNpm } from "./lib/process.mjs"
 
