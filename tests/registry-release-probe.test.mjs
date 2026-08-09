@@ -24,7 +24,7 @@ test("registry release probe requires an exact version and provenance", () => {
   assert.match(probe, /exactVersionPattern/)
   assert.match(probe, /dist\.attestations/)
   assert.match(probe, /attestations\?\.provenance/)
-  assert.match(probe, /npm["'], \["audit", "signatures"\]/)
+  assert.match(probe, /runNpm\(\["audit", "signatures"\]/)
 })
 
 test("registry release probe tolerates bounded registry propagation", () => {
