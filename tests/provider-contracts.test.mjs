@@ -75,8 +75,13 @@ test("dialog, sheet, and tooltip use the provider portal container", async () =>
   )
 })
 
-test("provider-less portal compatibility is disabled inside a provider", async () => {
-  const shellAttributes = await read("src/lib/shell-attributes.ts")
+test("provider-less portal compatibility remains bounded to portaled content", async () => {
+  const [dialog, sheet, tooltip, shellAttributes] = await Promise.all([
+    read("src/components/ui/dialog.tsx"),
+    read("src/components/ui/sheet.tsx"),
+    read("src/components/ui/tooltip.tsx"),
+    read("src/lib/shell-attributes.ts"),
+  ])
 
   assert.match(
     shellAttributes,
@@ -88,6 +93,10 @@ test("provider-less portal compatibility is disabled inside a provider", async (
   )
   assert.match(shellAttributes, /if \(!enabled\) return/)
   assert.match(shellAttributes, /\[enabled, portalSelector\]/)
+  assert.match(dialog, /useShellAttributes\("\[data-slot=dialog-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-content\]"\)/)
+  assert.match(sheet, /useShellAttributes\("\[data-slot=sheet-overlay\]"\)/)
+  assert.match(tooltip, /useShellAttributes\("\[data-slot=tooltip-content\]"\)/)
 })
 
 test("all registry components have package subpath exports", async () => {
