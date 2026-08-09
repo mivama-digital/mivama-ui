@@ -1,7 +1,11 @@
 import assert from "node:assert/strict"
 import { readFile } from "node:fs/promises"
 import path from "node:path"
-import { brotliCompressSync, constants, gzipSync } from "node:zlib"
+
+import {
+  bundleSizeMetrics,
+  measureBundleSize,
+} from "./lib/bundle-size.mjs"
 
 const root = path.resolve(import.meta.dirname, "..")
 const budgets = {
@@ -16,23 +20,13 @@ const budgets = {
   "dist/themes.css": { raw: 8_500, gzip: 1_750, brotli: 1_500 },
 }
 
-function measure(content) {
-  return {
-    raw: content.length,
-    gzip: gzipSync(content, { level: 9 }).length,
-    brotli: brotliCompressSync(content, {
-      params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
-    }).length,
-  }
-}
-
 const results = []
 for (const [relativePath, limits] of Object.entries(budgets)) {
   const content = await readFile(path.join(root, relativePath))
-  const sizes = measure(content)
+  const sizes = measureBundleSize(content)
   results.push({ relativePath, sizes, limits })
 
-  for (const metric of ["raw", "gzip", "brotli"]) {
+  for (const metric of bundleSizeMetrics) {
     assert.ok(
       sizes[metric] <= limits[metric],
       `${relativePath} ${metric} is ${sizes[metric]} bytes and exceeds its ${limits[metric]} byte budget`
@@ -41,7 +35,7 @@ for (const [relativePath, limits] of Object.entries(budgets)) {
 }
 
 for (const { relativePath, sizes, limits } of results) {
-  const metrics = ["raw", "gzip", "brotli"].map((metric) => {
+  const metrics = bundleSizeMetrics.map((metric) => {
     const percentage = Math.round((sizes[metric] / limits[metric]) * 100)
     return `${metric}=${sizes[metric]}/${limits[metric]} (${percentage}%)`
   })
