@@ -1,11 +1,10 @@
 import assert from "node:assert/strict"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
-import { fileURLToPath } from "node:url"
 
 import { components } from "../config/components.mjs"
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
+const root = path.resolve(import.meta.dirname, "..")
 const storiesRoot = path.join(root, "stories")
 const files = await readdir(storiesRoot)
 const actualStoryFiles = files
