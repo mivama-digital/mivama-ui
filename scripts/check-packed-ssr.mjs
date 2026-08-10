@@ -10,7 +10,7 @@ const root = path.resolve(import.meta.dirname, "..")
 const temp = await mkdtemp(path.join(tmpdir(), "mivama-ui-ssr-"))
 const artifacts = path.join(temp, "artifacts")
 const packageSource = await preparePackageSource({ root, artifacts })
-const commandOptions = { cwd: temp, maxBuffer: 16 * 1024 * 1024 }
+const commandOptions = { cwd: temp }
 
 try {
   await writeFile(
