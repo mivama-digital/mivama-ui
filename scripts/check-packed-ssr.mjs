@@ -1,34 +1,19 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
-import { tmpdir } from "node:os"
+import { writeFile } from "node:fs/promises"
 import path from "node:path"
 
 import { getModuleImportSpecifiers } from "./lib/package-exports.mjs"
-import { preparePackageSource } from "./lib/package-source.mjs"
-import { runCommand, runNpm } from "./lib/process.mjs"
+import { prepareIsolatedPackageConsumer } from "./lib/isolated-package-consumer.mjs"
+import { runCommand } from "./lib/process.mjs"
 
 const root = path.resolve(import.meta.dirname, "..")
-const temp = await mkdtemp(path.join(tmpdir(), "mivama-ui-ssr-"))
-const artifacts = path.join(temp, "artifacts")
-const packageSource = await preparePackageSource({ root, artifacts })
-const commandOptions = { cwd: temp }
+const consumer = await prepareIsolatedPackageConsumer({
+  root,
+  tempPrefix: "mivama-ui-ssr-",
+})
 
 try {
-  await writeFile(
-    path.join(temp, "package.json"),
-    JSON.stringify({ private: true, type: "module" })
-  )
-  await runNpm(
-    ["install", "--ignore-scripts", "--package-lock=false", packageSource.spec],
-    commandOptions
-  )
-
-  const packageDir = path.join(temp, "node_modules", "@mivama", "ui")
-  const installedPackage = JSON.parse(
-    await readFile(path.join(packageDir, "package.json"), "utf8")
-  )
-  const importSpecifiers = getModuleImportSpecifiers(installedPackage)
-
-  const checkFile = path.join(temp, "ssr-check.mjs")
+  const importSpecifiers = getModuleImportSpecifiers(consumer.installedPackage)
+  const checkFile = path.join(consumer.workspace, "ssr-check.mjs")
   await writeFile(
     checkFile,
     `import * as React from "react";\n` +
@@ -55,9 +40,8 @@ try {
       `console.log(\`Imported \${specifiers.length} ESM entry points and rendered SSR markup\`);\n`
   )
 
-  await runCommand(process.execPath, [checkFile], commandOptions)
-  console.log(`SSR consumer passed with ${packageSource.label}`)
+  await runCommand(process.execPath, [checkFile], consumer.commandOptions)
+  console.log(`SSR consumer passed with ${consumer.packageLabel}`)
 } finally {
-  await packageSource.cleanup()
-  await rm(temp, { recursive: true, force: true })
+  await consumer.cleanup()
 }
