@@ -1,7 +1,6 @@
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
 import { isDeepStrictEqual } from "node:util"
-import { fileURLToPath } from "node:url"
 
 const RELEASE_RELEVANT_PACKAGE_FIELDS = [
   "bin",
@@ -137,7 +136,7 @@ export function runReleasePolicy({
   console.log(`Release policy passed: ${result.reason}`)
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+if (process.argv[1] && import.meta.filename === process.argv[1]) {
   runReleasePolicy({
     base: parseArgument("--base"),
     head: parseArgument("--head"),
