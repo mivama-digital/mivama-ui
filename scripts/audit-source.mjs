@@ -1,9 +1,8 @@
 import assert from "node:assert/strict"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
-import { fileURLToPath } from "node:url"
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
+const root = path.resolve(import.meta.dirname, "..")
 const sourceRoot = path.join(root, "src")
 const workflowRoot = path.join(root, ".github", "workflows")
 
