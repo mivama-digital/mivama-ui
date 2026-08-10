@@ -6,9 +6,7 @@ import {
   getModuleExportSubpaths,
   getModuleImportSpecifiers,
 } from "./lib/package-exports.mjs"
-import {
-  prepareIsolatedPackageConsumer,
-} from "./lib/isolated-package-consumer.mjs"
+import { prepareIsolatedPackageConsumer } from "./lib/isolated-package-consumer.mjs"
 import { runCommand } from "./lib/process.mjs"
 
 const root = path.resolve(import.meta.dirname, "..")
