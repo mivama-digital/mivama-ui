@@ -14,6 +14,14 @@ export async function prepareIsolatedPackageConsumer({
   const artifacts = path.join(workspace, "artifacts")
   let packageSource
 
+  const cleanup = async () => {
+    try {
+      if (packageSource) await packageSource.cleanup()
+    } finally {
+      await rm(workspace, { recursive: true, force: true })
+    }
+  }
+
   try {
     packageSource = await preparePackageSource({
       root,
@@ -27,7 +35,12 @@ export async function prepareIsolatedPackageConsumer({
 
     const commandOptions = { cwd: workspace }
     await runNpm(
-      ["install", "--ignore-scripts", "--package-lock=false", packageSource.spec],
+      [
+        "install",
+        "--ignore-scripts",
+        "--package-lock=false",
+        packageSource.spec,
+      ],
       commandOptions
     )
 
@@ -42,14 +55,10 @@ export async function prepareIsolatedPackageConsumer({
       installedPackage,
       commandOptions,
       packageLabel: packageSource.label,
-      cleanup: async () => {
-        await packageSource.cleanup()
-        await rm(workspace, { recursive: true, force: true })
-      },
+      cleanup,
     }
   } catch (error) {
-    if (packageSource) await packageSource.cleanup()
-    await rm(workspace, { recursive: true, force: true })
+    await cleanup()
     throw error
   }
 }
