@@ -18,7 +18,7 @@ const packageSource = await preparePackageSource({
   artifacts,
   ignoreScripts: true,
 })
-const commandOptions = { cwd: temp, maxBuffer: 16 * 1024 * 1024 }
+const commandOptions = { cwd: temp }
 
 try {
   await writeFile(
