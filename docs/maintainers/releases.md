@@ -67,15 +67,32 @@ The workflow then:
 3. pins npm 11.18.0, which supports npm OIDC trusted publishing
 4. performs a clean install without dependency lifecycle scripts
 5. validates branch, repository visibility, version, repository metadata, pending Changesets, and dist-tag rules
-6. refuses to publish a version that already exists on npm
-7. runs the production dependency audit and full `npm run verify` gate through `prepublishOnly`
-8. publishes with `npm publish` using the short-lived OIDC identity supplied by GitHub Actions
-9. waits for the exact registry version and provenance attestation to become visible
-10. runs the canonical registry release probe against that exact published version
+6. refuses to publish when the matching `v<version>` Git tag already exists
+7. refuses to publish a version that already exists on npm
+8. runs the production dependency audit and full `npm run verify` gate through `prepublishOnly`
+9. publishes with `npm publish` using the short-lived OIDC identity supplied by GitHub Actions
+10. waits for the exact registry version and provenance attestation to become visible, then runs the canonical registry release probe against that exact published version
+11. after the publish job succeeds, creates the matching `v<version>` tag and GitHub Release at the exact workflow commit; releases using the `next` npm tag are marked as GitHub pre-releases
 
-The release is not considered successful merely because `npm publish` returns success. The same workflow must also prove the published artifact through the registry.
+The release is not considered successful merely because `npm publish` returns success. The same workflow must also prove the published artifact through the registry before GitHub release metadata is created.
 
 No `NPM_TOKEN` or other long-lived npm write credential is required for publishing.
+
+## GitHub release synchronization
+
+npm and GitHub release metadata are one release identity:
+
+- package version: `<version>`
+- npm package: `@mivama/ui@<version>`
+- Git tag: `v<version>`
+- GitHub Release: `v<version>`
+- source revision: the `main` commit that the `Release` workflow published
+
+The publish job keeps `contents: read` plus the OIDC `id-token: write` permission required by npm Trusted Publishing. A separate downstream job receives `contents: write` only after the publish and registry-verification job succeeds. This prevents package installation, build, and publish verification from running with repository write permissions.
+
+The downstream job uses the GitHub CLI already available on GitHub-hosted runners to create the tag and release. It does not publish to npm and does not receive npm credentials or OIDC permissions.
+
+If only GitHub release synchronization fails after npm publication has already succeeded, re-run the failed `Sync GitHub release` job. Do not dispatch a second npm release for the same version.
 
 ## Registry release verification
 
@@ -101,7 +118,7 @@ If repository visibility intentionally changes, update the release policy and ac
 
 ## After the first successful OIDC release
 
-Once trusted publishing is confirmed to work and the exact registry version passes the probe, remove or revoke obsolete npm automation write tokens. Keep any token needed for unrelated private-package installation read-only and scoped as narrowly as possible.
+Once trusted publishing is confirmed to work, the exact registry version passes the probe, and the matching GitHub Release exists, remove or revoke obsolete npm automation write tokens. Keep any token needed for unrelated private-package installation read-only and scoped as narrowly as possible.
 
 ## Failure modes
 
@@ -110,7 +127,9 @@ Once trusted publishing is confirmed to work and the exact registry version pass
 - Environment waiting for approval: expected when deployment protection is enabled.
 - Repository visibility failure: provenance is a required release contract; do not publish until the repository visibility and release policy agree.
 - Version mismatch: enter the exact `package.json` version or merge the correct version PR first.
+- Existing Git tag: the version is already associated with a source revision; create a new version instead of moving or replacing the tag.
 - Version already published: create and merge a new version instead of retrying the same package version.
 - Pending Changesets: run the versioning step and merge the resulting release change before publishing.
 - Registry/attestation propagation: the canonical probe retries for a bounded period before failing.
+- GitHub release synchronization failure after successful npm publication: re-run only the failed synchronization job; do not republish the package.
 - Release policy failure: add release intent or explicitly declare a strictly internal no-release change in the PR template.
