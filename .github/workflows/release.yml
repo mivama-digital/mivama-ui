@@ -90,6 +90,17 @@ jobs:
             throw new Error("Pre-release versions must use the next dist-tag")
           }
           NODE
+      - name: Ensure Git tag is unused
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION}"
+          existing="$(git ls-remote --tags origin "refs/tags/${tag}")"
+          if [ -n "$existing" ]; then
+            echo "Git tag ${tag} already exists; release versions must map to one immutable source revision." >&2
+            exit 1
+          fi
       - name: Ensure version is unpublished
         env:
           VERSION: ${{ inputs.version }}
@@ -115,3 +126,30 @@ jobs:
         run: npm publish --access public --tag "$NPM_TAG"
       - name: Verify exact published registry release
         run: node scripts/check-registry-release.mjs "${{ inputs.version }}"
+
+  github-release:
+    name: Sync GitHub release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create matching GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          NPM_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          release_tag="v${VERSION}"
+          args=(
+            release create "$release_tag"
+            --repo "$GITHUB_REPOSITORY"
+            --target "$GITHUB_SHA"
+            --title "$release_tag"
+            --generate-notes
+          )
+          if [ "$NPM_TAG" = "next" ]; then
+            args+=(--prerelease)
+          fi
+          gh "${args[@]}"
