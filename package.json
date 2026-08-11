@@ -213,7 +213,7 @@
     "api:report": "api-extractor run --local",
     "changeset": "changeset",
     "release:status": "changeset status",
-    "release:version": "changeset version"
+    "release:version": "changeset version && node scripts/sync-package-lock-version.mjs"
   },
   "peerDependencies": {
     "react": ">=18 <20",
