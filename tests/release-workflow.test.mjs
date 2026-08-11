@@ -42,8 +42,14 @@ test("release workflow reserves the matching Git tag before publishing", () => {
   )
 
   assert.ok(tagCheckIndex >= 0, "release workflow must check the Git tag")
-  assert.ok(tagCheckIndex < publishIndex, "Git tag conflicts must fail before npm publish")
-  assert.match(workflow, /release versions must map to one immutable source revision/)
+  assert.ok(
+    tagCheckIndex < publishIndex,
+    "Git tag conflicts must fail before npm publish"
+  )
+  assert.match(
+    workflow,
+    /release versions must map to one immutable source revision/
+  )
 })
 
 test("release workflow verifies the exact published version after publish", () => {
@@ -66,7 +72,10 @@ test("GitHub release synchronization runs only after verified publishing", () =>
   const publishJob = workflow.slice(0, syncJobIndex)
   const syncJob = workflow.slice(syncJobIndex)
 
-  assert.ok(syncJobIndex > probeIndex, "GitHub release job must be declared after the registry probe")
+  assert.ok(
+    syncJobIndex > probeIndex,
+    "GitHub release job must be declared after the registry probe"
+  )
   assert.match(syncJob, /needs: publish/)
   assert.match(syncJob, /permissions:\n      contents: write/)
   assert.doesNotMatch(publishJob, /contents: write/)
