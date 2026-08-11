@@ -1,6 +1,6 @@
 {
   "name": "@mivama/ui",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Shared Mivama design tokens and React UI primitives.",
   "license": "MIT",
   "private": false,
