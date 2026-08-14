@@ -54,7 +54,7 @@ jobs:
           import fs from "node:fs"
 
           const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
-          const expectedRepository = "https://github.com/mivama-digital/mivama-ui.git"
+          const expectedRepository = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}.git`
           const repository =
             typeof pkg.repository === "string" ? pkg.repository : pkg.repository?.url
 

@@ -36,12 +36,12 @@ The repository contains `.github/workflows/release.yml`, but npm must trust that
 Configure the `@mivama/ui` package on npm with a GitHub Actions trusted publisher using exactly:
 
 - GitHub organization: `mivama-digital`
-- Repository: `mivama-ui`
+- Repository: `ui`
 - Workflow filename: `release.yml`
 - Environment: `npm`
 - Allowed action: `npm publish`
 
-The workflow filename and environment are part of the OIDC trust relationship and must match exactly.
+The workflow filename, repository, and environment are part of the OIDC trust relationship and must match exactly.
 
 ## GitHub environment
 
@@ -66,7 +66,7 @@ The workflow then:
 2. uses a GitHub-hosted Node 24 runner
 3. pins npm 11.18.0, which supports npm OIDC trusted publishing
 4. performs a clean install without dependency lifecycle scripts
-5. validates branch, repository visibility, version, repository metadata, pending Changesets, and dist-tag rules
+5. validates branch, repository visibility, version, canonical repository metadata derived from the current GitHub repository, pending Changesets, and dist-tag rules
 6. refuses to publish when the matching `v<version>` Git tag already exists
 7. refuses to publish a version that already exists on npm
 8. runs the production dependency audit and full `npm run verify` gate through `prepublishOnly`
@@ -122,11 +122,12 @@ Once trusted publishing is confirmed to work, the exact registry version passes 
 
 ## Failure modes
 
-- `ENEEDAUTH`: verify the npm Trusted Publisher configuration matches `mivama-digital/mivama-ui`, `release.yml`, and environment `npm` exactly.
+- `ENEEDAUTH`: verify the npm Trusted Publisher configuration matches `mivama-digital/ui`, `release.yml`, and environment `npm` exactly.
 - Missing `npm` GitHub environment: create the environment before dispatching the release workflow.
 - Environment waiting for approval: expected when deployment protection is enabled.
 - Repository visibility failure: provenance is a required release contract; do not publish until the repository visibility and release policy agree.
 - Version mismatch: enter the exact `package.json` version or merge the correct version PR first.
+- Repository metadata mismatch: `package.json` must point at the current GitHub repository; the workflow derives the expected URL from `GITHUB_SERVER_URL` and `GITHUB_REPOSITORY` instead of hard-coding a historical repository name.
 - Existing Git tag: the version is already associated with a source revision; create a new version instead of moving or replacing the tag.
 - Version already published: create and merge a new version instead of retrying the same package version.
 - Pending Changesets: run the versioning step and merge the resulting release change before publishing.
