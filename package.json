@@ -269,10 +269,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mivama-digital/mivama-ui.git"
+    "url": "https://github.com/mivama-digital/ui.git"
   },
   "bugs": {
-    "url": "https://github.com/mivama-digital/mivama-ui/issues"
+    "url": "https://github.com/mivama-digital/ui/issues"
   },
-  "homepage": "https://github.com/mivama-digital/mivama-ui#readme"
+  "homepage": "https://github.com/mivama-digital/ui#readme"
 }
