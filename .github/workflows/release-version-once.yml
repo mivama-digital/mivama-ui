@@ -1,0 +1,65 @@
+name: Generate release version once
+
+on:
+  push:
+    branches:
+      - agent/release-3.0.1-generated
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-version-once
+  cancel-in-progress: false
+
+jobs:
+  version:
+    name: Generate canonical Changesets release diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run release:status
+      - run: npm run release:version
+      - name: Validate generated release diff
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import fs from "node:fs"
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
+          if (pkg.version !== "3.0.1") {
+            throw new Error(`Expected generated package version 3.0.1, got ${pkg.version}`)
+          }
+          const pending = fs
+            .readdirSync(".changeset")
+            .filter((file) => file.endsWith(".md") && file !== "README.md")
+          if (pending.length !== 0) {
+            throw new Error(`Expected all package changesets to be consumed, found: ${pending.join(", ")}`)
+          }
+          NODE
+          allowed='^(package\.json|package-lock\.json|CHANGELOG\.md|\.changeset/(quiet-scroll-isolation|clean-repository-identity)\.md)$'
+          unexpected="$(git diff --name-only HEAD -- . ':!.github/workflows/release-version-once.yml' | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected release-version output:" >&2
+            echo "$unexpected" >&2
+            exit 1
+          fi
+      - name: Remove one-time workflow before validation
+        run: rm .github/workflows/release-version-once.yml
+      - run: npm run verify
+      - name: Commit canonical generated release diff
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md .changeset .github/workflows/release-version-once.yml
+          git diff --cached --check
+          git commit -m "chore: version @mivama/ui 3.0.1"
+          git push origin HEAD:agent/release-3.0.1-generated
